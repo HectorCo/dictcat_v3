@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.hectorco.twa",
+        "sha256_cert_fingerprints": ["3A:F4:4C:C9:C4:62:C4:CD:C1:0B:7C:B4:2B:30:D0:5D:F8:11:C0:CD:DC:DD:1D:0C:1B:5B:DC:AC:6A:7B:C8:17"]
+      }
+    }]
