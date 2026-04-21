@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#8B4513">
     <title>DICTCAT - Dictats en Català</title>
     <link rel="manifest" href="manifest.json">
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
         * {
             margin: 0;
@@ -287,6 +286,33 @@
             <canvas id="canvas" width="800" height="600"></canvas>
         </div>
 
+        <div style="margin: 30px 0;">
+            <label for="textInput" style="display: block; font-size: 1.3em; color: #8B4513; margin-bottom: 15px; font-weight: 700; text-align: center;">
+                ✍️ Escriu aquí el text amb el S-Pen (amb reconeixement automàtic):
+            </label>
+            <textarea 
+                id="textInput" 
+                placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita i la convertirà a text digital... ✨"
+                style="
+                    width: 100%;
+                    min-height: 180px;
+                    padding: 20px;
+                    font-size: 20px;
+                    border: 4px solid #8B4513;
+                    border-radius: 15px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    resize: vertical;
+                    line-height: 2;
+                    background: white;
+                    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
+                    color: #1f2937;
+                "
+            ></textarea>
+            <p style="text-align: center; color: #6b7280; margin-top: 10px; font-size: 0.9em;">
+                💡 Consell: El canvas de dalt és per practicar visualment. Escriu el text aquí per corregir-lo.
+            </p>
+        </div>
+
         <div id="resultContainer" class="result-container">
             <div class="result-title">📊 Resultats de la correcció</div>
             
@@ -370,8 +396,10 @@
 
         function empezarDictado() {
             borrarCanvas();
+            document.getElementById('textInput').value = '';
             document.getElementById('resultContainer').classList.remove('show');
-            alert('Escolta el dictat i escriu amb el S-Pen! ✍️');
+            document.getElementById('textInput').focus();
+            alert('Practica al canvas i després escriu el text amb el S-Pen al camp de sota! ✍️');
         }
 
         function obtenerPosicion(e) {
@@ -434,62 +462,20 @@
         }
 
         async function corregirDictado() {
-            // Obtener la imagen del canvas
-            const imageData = canvas.toDataURL('image/png');
+            // Obtener el texto del textarea
+            const textInput = document.getElementById('textInput');
+            textoEscrito = textInput.value.trim();
             
-            // Mostrar mensaje de carga
-            document.getElementById('resultContainer').classList.add('show');
-            document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Reconeixent text manuscrit...</p>';
-            
-            try {
-                // Usar Tesseract.js para reconocer el texto escrito a mano
-                const result = await Tesseract.recognize(
-                    imageData,
-                    'cat',  // Catalán
-                    {
-                        logger: info => {
-                            if (info.status === 'recognizing text') {
-                                const progress = Math.round(info.progress * 100);
-                                document.getElementById('correccionText').innerHTML = 
-                                    `<p style="text-align:center;">⏳ Reconeixent text: ${progress}%</p>`;
-                            }
-                        }
-                    }
-                );
-                
-                textoEscrito = result.data.text.trim();
-                
-                if (!textoEscrito || textoEscrito.length < 2) {
-                    // Si el OCR no detecta nada o muy poco, permitir entrada manual
-                    const manualText = prompt('❌ El reconeixement automàtic no ha funcionat bé.\n\n✍️ Si us plau, escriu el text que has posat al canvas:');
-                    if (!manualText || !manualText.trim()) {
-                        document.getElementById('resultContainer').classList.remove('show');
-                        return;
-                    }
-                    textoEscrito = manualText.trim();
-                } else {
-                    // Mostrar el texto reconocido y dar opción a corregirlo
-                    const confirmar = confirm(`📝 Text reconegut: "${textoEscrito}"\n\n✅ És correcte?\n\nPrem OK si és correcte, o Cancel·la per escriure'l manualment.`);
-                    if (!confirmar) {
-                        const manualText = prompt('✍️ Escriu el text correcte:', textoEscrito);
-                        if (!manualText || !manualText.trim()) {
-                            document.getElementById('resultContainer').classList.remove('show');
-                            return;
-                        }
-                        textoEscrito = manualText.trim();
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Error OCR:', error);
-                // Si falla el OCR, permitir entrada manual
-                const manualText = prompt('❌ Error en el reconeixement automàtic.\n\n✍️ Si us plau, escriu el text que has posat al canvas:');
-                if (!manualText || !manualText.trim()) {
-                    document.getElementById('resultContainer').classList.remove('show');
-                    return;
-                }
-                textoEscrito = manualText.trim();
+            // Verificar que hay texto
+            if (!textoEscrito) {
+                alert('❌ Si us plau, escriu el text amb el S-Pen al camp de text abans de corregir.');
+                textInput.focus();
+                return;
             }
+            
+            // Mostrar contenedor de resultados
+            document.getElementById('resultContainer').classList.add('show');
+            document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Comprovant ortografia...</p>';
             document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Comprovant ortografia...</p>';
             
             // Corrección mejorada con diccionario ampliado
@@ -741,10 +727,11 @@
 
         function nuevoIntento() {
             borrarCanvas();
+            document.getElementById('textInput').value = '';
             textoEscrito = '';
             document.getElementById('resultContainer').classList.remove('show');
             seleccionarLapiz(); // Volver al lápiz
-            alert('Canvas esborrat. Pots començar un nou intent! ✍️');
+            alert('Canvas i text esborrats. Pots començar un nou intent! ✍️');
         }
 
         // Registrar Service Worker para PWA
