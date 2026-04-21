@@ -39,36 +39,6 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        .canvas-container {
-            border: 3px solid #8B4513;
-            border-radius: 15px;
-            background: white;
-            background-image: 
-                repeating-linear-gradient(
-                    transparent,
-                    transparent 29px,
-                    #e8d5c4 29px,
-                    #e8d5c4 30px,
-                    transparent 30px,
-                    transparent 60px
-                ),
-                linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 40px, transparent 40px);
-            background-size: 100% 60px, 100% 100%;
-            margin-bottom: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            cursor: crosshair;
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
         .toolbar {
             display: flex;
             gap: 10px;
@@ -95,34 +65,6 @@
 
         button:active {
             transform: scale(0.95);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
-        }
-
-        .btn-primary.active {
-            background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #D2691E 0%, #CD853F 100%);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #CD853F 0%, #D2691E 100%);
-        }
-
-        .btn-secondary.active {
-            background: linear-gradient(135deg, #B8860B 0%, #D2691E 100%);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .btn-success {
@@ -238,35 +180,86 @@
             margin-top: 5px;
         }
 
-        .input-area {
-            margin-bottom: 20px;
+        /* Área de escritura con líneas de renglón */
+        .writing-area {
+            margin: 30px 0;
         }
 
-        textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        label {
+        .writing-label {
             display: block;
-            margin-bottom: 8px;
-            color: #374151;
-            font-weight: 600;
+            font-size: 1.3em;
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-align: center;
         }
 
-        .hidden {
-            display: none;
+        .textarea-wrapper {
+            position: relative;
+            border: 4px solid #8B4513;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
+        }
+
+        .lined-textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px 20px 20px 60px; /* padding-left para el margen rosa */
+            font-size: 22px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 2.5;
+            border: none;
+            outline: none;
+            resize: vertical;
+            color: #1f2937;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Líneas de renglón */
+        .lines-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                /* Margen rosa vertical */
+                linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 40px, transparent 40px),
+                /* Líneas horizontales de renglón */
+                repeating-linear-gradient(
+                    transparent,
+                    transparent 59px,
+                    #e8d5c4 59px,
+                    #e8d5c4 60px,
+                    transparent 60px,
+                    transparent 62px
+                );
+            background-size: 100% 100%, 100% 62px;
+        }
+
+        /* Línea de margen vertical más oscura */
+        .margin-line {
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #d4a574;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .writing-tip {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 10px;
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -275,41 +268,27 @@
         <h1>📝 DICTCAT</h1>
         
         <div class="toolbar">
-            <button id="btnLapiz" class="btn-primary" onclick="seleccionarLapiz()">✏️ Llapis</button>
-            <button id="btnBorrador" class="btn-secondary" onclick="seleccionarBorrador()">🧽 Goma</button>
-            <button class="btn-danger" onclick="borrarCanvas()">🗑️ Esborrar tot</button>
+            <button class="btn-danger" onclick="borrarTodo()">🗑️ Esborrar tot</button>
             <button class="btn-success" onclick="corregirDictado()">✅ Corregir</button>
             <button class="btn-warning" onclick="nuevoIntento()">🔄 Nou intent</button>
         </div>
 
-        <div class="canvas-container">
-            <canvas id="canvas" width="800" height="600"></canvas>
-        </div>
-
-        <div style="margin: 30px 0;">
-            <label for="textInput" style="display: block; font-size: 1.3em; color: #8B4513; margin-bottom: 15px; font-weight: 700; text-align: center;">
+        <!-- Área de escritura con líneas de renglón -->
+        <div class="writing-area">
+            <label for="textInput" class="writing-label">
                 ✍️ Escriu aquí el text amb el S-Pen (amb reconeixement automàtic):
             </label>
-            <textarea 
-                id="textInput" 
-                placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita i la convertirà a text digital... ✨"
-                style="
-                    width: 100%;
-                    min-height: 180px;
-                    padding: 20px;
-                    font-size: 20px;
-                    border: 4px solid #8B4513;
-                    border-radius: 15px;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-                    resize: vertical;
-                    line-height: 2;
-                    background: white;
-                    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
-                    color: #1f2937;
-                "
-            ></textarea>
-            <p style="text-align: center; color: #6b7280; margin-top: 10px; font-size: 0.9em;">
-                💡 Consell: El canvas de dalt és per practicar visualment. Escriu el text aquí per corregir-lo.
+            <div class="textarea-wrapper">
+                <div class="lines-background"></div>
+                <div class="margin-line"></div>
+                <textarea 
+                    id="textInput" 
+                    class="lined-textarea"
+                    placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita i la convertirà a text digital... ✨"
+                ></textarea>
+            </div>
+            <p class="writing-tip">
+                💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació del text.
             </p>
         </div>
 
@@ -345,143 +324,24 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let dibujando = false;
         let textoOriginal = '';
         let textoEscrito = '';
-        let herramientaActual = 'lapiz'; // 'lapiz' o 'borrador'
-
-        // Configuración del canvas
-        ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#1f2937';
-
-        function seleccionarLapiz() {
-            herramientaActual = 'lapiz';
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.strokeStyle = '#1f2937';
-            ctx.lineWidth = 3;
-            
-            // Actualizar botones
-            document.getElementById('btnLapiz').classList.add('active');
-            document.getElementById('btnBorrador').classList.remove('active');
-        }
-
-        function seleccionarBorrador() {
-            herramientaActual = 'borrador';
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.lineWidth = 20;
-            
-            // Actualizar botones
-            document.getElementById('btnBorrador').classList.add('active');
-            document.getElementById('btnLapiz').classList.remove('active');
-        }
-
-        // Inicializar con el lápiz seleccionado
-        document.addEventListener('DOMContentLoaded', () => {
-            seleccionarLapiz();
-        });
-
-        function ajustarCanvas() {
-            const container = canvas.parentElement;
-            const rect = container.getBoundingClientRect();
-            canvas.width = rect.width - 6;
-            canvas.height = Math.min(600, window.innerHeight * 0.5);
-        }
-
-        ajustarCanvas();
-        window.addEventListener('resize', ajustarCanvas);
-
-        function empezarDictado() {
-            borrarCanvas();
-            document.getElementById('textInput').value = '';
-            document.getElementById('resultContainer').classList.remove('show');
-            document.getElementById('textInput').focus();
-            alert('Practica al canvas i després escriu el text amb el S-Pen al camp de sota! ✍️');
-        }
-
-        function obtenerPosicion(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            
-            if (e.touches) {
-                return {
-                    x: (e.touches[0].clientX - rect.left) * scaleX,
-                    y: (e.touches[0].clientY - rect.top) * scaleY
-                };
-            }
-            return {
-                x: (e.clientX - rect.left) * scaleX,
-                y: (e.clientY - rect.top) * scaleY
-            };
-        }
-
-        function iniciarDibujo(e) {
-            e.preventDefault();
-            dibujando = true;
-            const pos = obtenerPosicion(e);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-        }
-
-        function dibujar(e) {
-            if (!dibujando) return;
-            e.preventDefault();
-            const pos = obtenerPosicion(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-        }
-
-        function detenerDibujo(e) {
-            e.preventDefault();
-            dibujando = false;
-            ctx.beginPath();
-        }
-
-        // Eventos para mouse
-        canvas.addEventListener('mousedown', iniciarDibujo);
-        canvas.addEventListener('mousemove', dibujar);
-        canvas.addEventListener('mouseup', detenerDibujo);
-        canvas.addEventListener('mouseout', detenerDibujo);
-
-        // Eventos para touch/S-Pen
-        canvas.addEventListener('touchstart', iniciarDibujo, { passive: false });
-        canvas.addEventListener('touchmove', dibujar, { passive: false });
-        canvas.addEventListener('touchend', detenerDibujo, { passive: false });
-
-        // Soporte para pointer events (S-Pen)
-        canvas.addEventListener('pointerdown', iniciarDibujo);
-        canvas.addEventListener('pointermove', dibujar);
-        canvas.addEventListener('pointerup', detenerDibujo);
-
-        function borrarCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
 
         async function corregirDictado() {
-            // Obtener el texto del textarea
             const textInput = document.getElementById('textInput');
             textoEscrito = textInput.value.trim();
             
-            // Verificar que hay texto
             if (!textoEscrito) {
                 alert('❌ Si us plau, escriu el text amb el S-Pen al camp de text abans de corregir.');
                 textInput.focus();
                 return;
             }
             
-            // Mostrar contenedor de resultados
             document.getElementById('resultContainer').classList.add('show');
             document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Comprovant ortografia...</p>';
-            document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Comprovant ortografia...</p>';
             
-            // Corrección mejorada con diccionario ampliado
             const erroresEncontrados = validarTextoCatalan(textoEscrito);
             
-            // Mostrar resultados
             const totalPalabras = textoEscrito.split(/\s+/).filter(p => p.length > 0).length;
             const precision = totalPalabras > 0 ? Math.max(0, Math.round((1 - erroresEncontrados.length / totalPalabras) * 100)) : 100;
 
@@ -492,7 +352,6 @@
             if (erroresEncontrados.length === 0) {
                 document.getElementById('correccionText').innerHTML = '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
             } else {
-                // Mostrar palabras incorrectas
                 let htmlErrores = '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
                 htmlErrores += '<div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">';
                 
@@ -524,10 +383,8 @@
                 document.getElementById('correccionText').innerHTML = htmlErrores;
             }
             
-            // Ocultar el campo de texto original
             document.getElementById('originalText').parentElement.style.display = 'none';
             
-            // Scroll a resultados
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
@@ -537,30 +394,20 @@
             const errores = [];
             const palabras = texto.split(/\s+/);
             
-            // Diccionario de palabras VÁLIDAS en catalán (las más comunes)
             const palabrasValidas = new Set([
-                // Artículos y determinantes
                 'el', 'la', 'els', 'les', 'un', 'una', 'uns', 'unes',
                 "l'", 'd', 's', 'al', 'als', 'del', 'dels',
-                
-                // Pronombres
                 'jo', 'tu', 'ell', 'ella', 'nosaltres', 'vosaltres', 'ells', 'elles',
                 'em', 'et', 'es', 'ens', 'us', 'me', 'te', 'se', 'li', 'ho', 'hi', 'en',
-                
-                // Verbos ser/estar comunes
                 'soc', 'ets', 'és', 'som', 'sou', 'són',
                 'era', 'eres', 'èrem', 'éreu', 'eren',
                 'seré', 'seràs', 'serà', 'serem', 'sereu', 'seran',
                 'estic', 'estàs', 'està', 'estem', 'esteu', 'estan',
                 'estava', 'estaves', 'estàvem', 'estàveu', 'estaven',
                 'ser', 'estat', 'estar',
-                
-                // Verbos haver comunes
                 'he', 'has', 'ha', 'hem', 'heu', 'han',
                 'havia', 'havies', 'havíem', 'havíeu', 'havien',
                 'haver', 'hagut',
-                
-                // Verbos regulares comunes
                 'parlar', 'parla', 'parles', 'parlem', 'parleu', 'parlen',
                 'menjar', 'menja', 'menges', 'mengem', 'mengeu', 'mengen',
                 'viure', 'viu', 'vius', 'vivim', 'viviu', 'viuen',
@@ -573,22 +420,14 @@
                 'saber', 'sé', 'saps', 'sap', 'sabem', 'sabeu', 'saben', 'sabut',
                 'tenir', 'tinc', 'tens', 'té', 'tenim', 'teniu', 'tenen', 'tingut',
                 'donar', 'dono', 'dones', 'dona', 'donem', 'doneu', 'donen', 'donat',
-                
-                // Preposiciones
                 'a', 'amb', 'de', 'des', 'en', 'entre', 'per', 'sense', 'sobre', 'sota',
                 'cap', 'contra', 'durant', 'segons', 'vers', 'envers',
-                
-                // Conjunciones
                 'i', 'o', 'però', 'perquè', 'que', 'si', 'com', 'quan', 'mentre',
                 'encara', 'tampoc', 'també', 'ni', 'ja', 'així', 'doncs',
-                
-                // Adverbios comunes
                 'avui', 'ahir', 'demà', 'ara', 'aquí', 'allà', 'allí',
                 'sempre', 'mai', 'sovint', 'gairebé', 'molt', 'poc', 'més', 'menys',
                 'sí', 'no', 'bé', 'mal', 'millor', 'pitjor',
                 'abans', 'després', 'encara', 'ja', 'llavors', 'potser',
-                
-                // Adjetivos comunes
                 'bo', 'bona', 'bons', 'bones', 'dolent', 'dolenta', 'dolents', 'dolentes',
                 'gran', 'grans', 'petit', 'petita', 'petits', 'petites',
                 'nou', 'nova', 'nous', 'noves', 'vell', 'vella', 'vells', 'velles',
@@ -597,17 +436,11 @@
                 'blau', 'blava', 'blaus', 'blaves', 'verd', 'verda', 'verds', 'verdes',
                 'groc', 'groga', 'grocs', 'grogues', 'taronja', 'taronges',
                 'rosa', 'roses', 'violeta', 'violetes', 'gris', 'grisos',
-                
-                // Colores
                 'color', 'colors', 'clar', 'clara', 'clars', 'clares',
                 'fosc', 'fosca', 'foscos', 'fosques',
-                
-                // Números
                 'zero', 'un', 'una', 'dos', 'dues', 'tres', 'quatre', 'cinc',
                 'sis', 'set', 'vuit', 'nou', 'deu', 'onze', 'dotze',
                 'primer', 'primera', 'segon', 'segona', 'tercer', 'tercera',
-                
-                // Sustantivos comunes
                 'casa', 'cases', 'home', 'homes', 'dona', 'dones',
                 'nen', 'nena', 'nens', 'nenes', 'fill', 'filla', 'fills', 'fillos',
                 'pare', 'mare', 'pares', 'mares', 'germà', 'germana', 'germans', 'germanes',
@@ -630,14 +463,10 @@
                 'vida', 'mort', 'temps', 'cosa', 'coses',
                 'cap', 'caps', 'ull', 'ulls', 'nas', 'nasos', 'boca', 'boques',
                 'mà', 'mans', 'peu', 'peus', 'cor', 'cors',
-                
-                // Palabras del ejemplo común
-                'azul', 'blau', // nota: azul es castellano
+                'azul', 'blau',
             ]);
             
-            // Diccionario de ERRORES comunes (castellanismos y errores ortográficos)
             const erroresComunes = {
-                // Castellanismos MUY comunes
                 'porque': { correcta: 'perquè', mensaje: 'Castellanisme' },
                 'tambien': { correcta: 'també', mensaje: 'Castellanisme' },
                 'también': { correcta: 'també', mensaje: 'Castellanisme' },
@@ -678,8 +507,6 @@
                 'aqui': { correcta: 'aquí', mensaje: 'Castellanisme (falta accent)' },
                 'ahi': { correcta: 'allà', mensaje: 'Castellanisme' },
                 'alli': { correcta: 'allí', mensaje: 'Castellanisme' },
-                
-                // Errores ortográficos comunes (acentos)
                 'es': { correcta: 'és', mensaje: 'Falta accent. El verb "ser" 3a persona: és' },
                 'esta': { correcta: 'està', mensaje: 'Falta accent. El verb "estar" 3a persona: està' },
                 'mes': { correcta: 'més', mensaje: 'Falta accent si és "més" (adverbi)' },
@@ -691,8 +518,6 @@
                 'si': { correcta: 'sí', mensaje: 'Falta accent si és afirmatiu' },
                 'te': { correcta: 'té', mensaje: 'Falta accent si és verb "tenir"' },
                 'ja': { correcta: 'ja', mensaje: 'Correcte (no porta accent)' },
-                
-                // Confusiones comunes
                 'a': { correcta: 'ha', mensaje: 'Podria ser "ha" (verb haver)?' },
                 'an': { correcta: 'han', mensaje: 'Podria ser "han" (verb haver)?' },
             };
@@ -700,9 +525,8 @@
             palabras.forEach(palabra => {
                 const palabraLimpia = palabra.toLowerCase().replace(/[.,;:!?¿¡()]/g, '');
                 
-                if (!palabraLimpia) return; // Saltar palabras vacías
+                if (!palabraLimpia) return;
                 
-                // Primero verificar si es un error conocido
                 if (erroresComunes[palabraLimpia]) {
                     errores.push({
                         palabra: palabra,
@@ -710,10 +534,7 @@
                         mensaje: erroresComunes[palabraLimpia].mensaje
                     });
                 }
-                // Si no es error conocido y NO está en el diccionario válido, marcar como posible error
                 else if (!palabrasValidas.has(palabraLimpia) && palabraLimpia.length > 2) {
-                    // Solo marcar palabras de más de 2 letras que no estén en el diccionario
-                    // Esto reduce falsos positivos
                     errores.push({
                         palabra: palabra,
                         sugerencia: '',
@@ -725,13 +546,15 @@
             return errores;
         }
 
-        function nuevoIntento() {
-            borrarCanvas();
+        function borrarTodo() {
             document.getElementById('textInput').value = '';
             textoEscrito = '';
             document.getElementById('resultContainer').classList.remove('show');
-            seleccionarLapiz(); // Volver al lápiz
-            alert('Canvas i text esborrats. Pots començar un nou intent! ✍️');
+        }
+
+        function nuevoIntento() {
+            borrarTodo();
+            alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
         // Registrar Service Worker para PWA
