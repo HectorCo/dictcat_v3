@@ -431,15 +431,21 @@
         }
 
         async function corregirConLanguageTool(texto) {
-            // Usar el endpoint público de LanguageTool con GET (más compatible con CORS)
-            const encodedText = encodeURIComponent(texto);
-            const url = `https://api.languagetool.org/api/v2/check?text=${encodedText}&language=ca-ES&enabledOnly=false`;
+            // Endpoint correcto según la documentación oficial de LanguageTool
+            const url = 'https://api.languagetool.org/api/v2/check';
+            
+            const body = new URLSearchParams();
+            body.append('text', texto);
+            body.append('language', 'ca-ES');
+            body.append('enabledOnly', 'false');
             
             const response = await fetch(url, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
-                }
+                },
+                body: body.toString()
             });
             
             if (!response.ok) {
