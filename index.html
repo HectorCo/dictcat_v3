@@ -186,7 +186,6 @@
             margin-top: 5px;
         }
 
-        /* Área de escritura con líneas de renglón */
         .writing-area {
             margin: 30px 0;
         }
@@ -402,7 +401,6 @@
                 return;
             }
             
-            // Deshabilitar botones durante la corrección
             setLoading(true);
             
             document.getElementById('resultContainer').classList.add('show');
@@ -413,11 +411,11 @@
                 const errores = await corregirConLanguageTool(textoEscrito);
                 mostrarResultados(errores);
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error completo:', error);
                 document.getElementById('correccionText').innerHTML = `
                     <div class="api-error">
                         ⚠️ No s'ha pogut connectar amb el corrector.<br>
-                        <small>Error: ${error.message}</small><br><br>
+                        <small>${error.message}</small><br><br>
                         <button onclick="corregirDictado()" class="btn-success" style="margin-top: 10px;">
                             🔄 Reintentar
                         </button>
@@ -433,26 +431,20 @@
         }
 
         async function corregirConLanguageTool(texto) {
-            // LanguageTool API pública gratuita
-            const url = 'https://api.languagetool.org/api/v2/check';
-            
-            const params = new URLSearchParams({
-                text: texto,
-                language: 'ca-ES', // Catalán
-                enabledOnly: 'false'
-            });
+            // Usar el endpoint público de LanguageTool con GET (más compatible con CORS)
+            const encodedText = encodeURIComponent(texto);
+            const url = `https://api.languagetool.org/api/v2/check?text=${encodedText}&language=ca-ES&enabledOnly=false`;
             
             const response = await fetch(url, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
-                },
-                body: params.toString()
+                }
             });
             
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${errorText}`);
             }
             
             const data = await response.json();
