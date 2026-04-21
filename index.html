@@ -67,12 +67,18 @@
             transform: scale(0.95);
         }
 
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-success {
             background: linear-gradient(135deg, #90EE90 0%, #98D98E 100%);
             color: #2d5016;
         }
 
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             background: linear-gradient(135deg, #98D98E 0%, #90EE90 100%);
         }
 
@@ -81,7 +87,7 @@
             color: white;
         }
 
-        .btn-danger:hover {
+        .btn-danger:hover:not(:disabled) {
             background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
         }
 
@@ -90,7 +96,7 @@
             color: #5c4200;
         }
 
-        .btn-warning:hover {
+        .btn-warning:hover:not(:disabled) {
             background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
         }
 
@@ -206,7 +212,7 @@
         .lined-textarea {
             width: 100%;
             min-height: 400px;
-            padding: 20px 20px 20px 60px; /* padding-left para el margen rosa */
+            padding: 20px 20px 20px 60px;
             font-size: 22px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 2.5;
@@ -219,7 +225,6 @@
             z-index: 2;
         }
 
-        /* Líneas de renglón */
         .lines-background {
             position: absolute;
             top: 0;
@@ -229,9 +234,7 @@
             pointer-events: none;
             z-index: 1;
             background-image: 
-                /* Margen rosa vertical */
                 linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 40px, transparent 40px),
-                /* Líneas horizontales de renglón */
                 repeating-linear-gradient(
                     transparent,
                     transparent 59px,
@@ -243,7 +246,6 @@
             background-size: 100% 100%, 100% 62px;
         }
 
-        /* Línea de margen vertical más oscura */
         .margin-line {
             position: absolute;
             left: 40px;
@@ -261,6 +263,75 @@
             margin-top: 10px;
             font-size: 0.9em;
         }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #8B4513;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #8B4513;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ef4444;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .error-word {
+            font-weight: bold;
+            color: #ef4444;
+            font-size: 1.2em;
+        }
+
+        .error-message {
+            color: #374151;
+            margin: 8px 0;
+        }
+
+        .error-suggestion {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .softcatala-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .api-error {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 15px;
+            color: #92400e;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -268,12 +339,11 @@
         <h1>📝 DICTCAT</h1>
         
         <div class="toolbar">
-            <button class="btn-danger" onclick="borrarTodo()">🗑️ Esborrar tot</button>
-            <button class="btn-success" onclick="corregirDictado()">✅ Corregir</button>
-            <button class="btn-warning" onclick="nuevoIntento()">🔄 Nou intent</button>
+            <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar tot</button>
+            <button class="btn-success" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
+            <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou intent</button>
         </div>
 
-        <!-- Área de escritura con líneas de renglón -->
         <div class="writing-area">
             <label for="textInput" class="writing-label">
                 ✍️ Escriu aquí el text amb el S-Pen (amb reconeixement automàtic):
@@ -308,10 +378,6 @@
 
             <div class="comparison">
                 <div class="text-block">
-                    <h3>📄 Text original</h3>
-                    <div class="text-content" id="originalText"></div>
-                </div>
-                <div class="text-block">
                     <h3>✏️ El teu text</h3>
                     <div class="text-content" id="escritoText"></div>
                 </div>
@@ -324,7 +390,6 @@
     </div>
 
     <script>
-        let textoOriginal = '';
         let textoEscrito = '';
 
         async function corregirDictado() {
@@ -332,218 +397,120 @@
             textoEscrito = textInput.value.trim();
             
             if (!textoEscrito) {
-                alert('❌ Si us plau, escriu el text amb el S-Pen al camp de text abans de corregir.');
+                alert('❌ Si us plau, escriu el text abans de corregir.');
                 textInput.focus();
                 return;
             }
             
+            // Deshabilitar botones durante la corrección
+            setLoading(true);
+            
             document.getElementById('resultContainer').classList.add('show');
-            document.getElementById('correccionText').innerHTML = '<p style="text-align:center;">⏳ Comprovant ortografia...</p>';
-            
-            const erroresEncontrados = validarTextoCatalan(textoEscrito);
-            
-            const totalPalabras = textoEscrito.split(/\s+/).filter(p => p.length > 0).length;
-            const precision = totalPalabras > 0 ? Math.max(0, Math.round((1 - erroresEncontrados.length / totalPalabras) * 100)) : 100;
-
-            document.getElementById('errorCount').textContent = erroresEncontrados.length;
-            document.getElementById('accuracy').textContent = precision + '%';
+            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia amb LanguageTool</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
             
-            if (erroresEncontrados.length === 0) {
-                document.getElementById('correccionText').innerHTML = '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
+            try {
+                const errores = await corregirConLanguageTool(textoEscrito);
+                mostrarResultados(errores);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('correccionText').innerHTML = `
+                    <div class="api-error">
+                        ⚠️ No s'ha pogut connectar amb el corrector.<br>
+                        <small>Error: ${error.message}</small><br><br>
+                        <button onclick="corregirDictado()" class="btn-success" style="margin-top: 10px;">
+                            🔄 Reintentar
+                        </button>
+                    </div>
+                `;
+            } finally {
+                setLoading(false);
+            }
+            
+            setTimeout(() => {
+                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        async function corregirConLanguageTool(texto) {
+            // LanguageTool API pública gratuita
+            const url = 'https://api.languagetool.org/api/v2/check';
+            
+            const params = new URLSearchParams({
+                text: texto,
+                language: 'ca-ES', // Catalán
+                enabledOnly: 'false'
+            });
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: params.toString()
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data.matches || [];
+        }
+
+        function mostrarResultados(matches) {
+            const totalPalabras = textoEscrito.split(/\s+/).filter(p => p.length > 0).length;
+            const numErrores = matches.length;
+            const precision = totalPalabras > 0 ? Math.max(0, Math.round((1 - numErrores / totalPalabras) * 100)) : 100;
+
+            document.getElementById('errorCount').textContent = numErrores;
+            document.getElementById('accuracy').textContent = precision + '%';
+            
+            if (numErrores === 0) {
+                document.getElementById('correccionText').innerHTML = 
+                    '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
             } else {
                 let htmlErrores = '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
-                htmlErrores += '<div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">';
                 
-                erroresEncontrados.forEach((error, i) => {
-                    const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(error.sugerencia || error.palabra)}`;
+                matches.forEach((match, i) => {
+                    const palabraErronea = textoEscrito.substring(match.offset, match.offset + match.length);
+                    const sugerencias = match.replacements.map(r => r.value).slice(0, 3);
+                    const sugerenciaPrincipal = sugerencias[0] || '';
+                    
+                    const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
                     
                     htmlErrores += `
-                        <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #ef4444; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div class="error-card">
                             <div style="margin-bottom: 8px;">
-                                <span style="font-weight: bold; color: #ef4444; font-size: 1.2em;">${i + 1}. "${error.palabra}"</span>
+                                <span class="error-word">${i + 1}. "${palabraErronea}"</span>
                             </div>
-                            <div style="margin-bottom: 8px; color: #374151;">
-                                💡 ${error.mensaje}
+                            <div class="error-message">
+                                💡 ${match.message}
                             </div>
-                            ${error.sugerencia ? `
+                            ${sugerenciaPrincipal ? `
                             <div style="margin-bottom: 10px;">
-                                <span style="color: #10b981; font-weight: 600;">✓ Correcció: </span>
-                                <span style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #065f46;">${error.sugerencia}</span>
+                                <span class="error-suggestion">✓ Correcció: </span>
+                                <span style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #065f46;">
+                                    ${sugerencias.join(', ')}
+                                </span>
                             </div>
                             ` : ''}
-                            <a href="${urlSoftcatala}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-weight: 600; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <a href="${urlSoftcatala}" target="_blank" class="softcatala-link">
                                 🔍 Consultar a Softcatalà
                             </a>
                         </div>
                     `;
                 });
                 
-                htmlErrores += '</div></div>';
+                htmlErrores += '</div>';
                 document.getElementById('correccionText').innerHTML = htmlErrores;
             }
-            
-            document.getElementById('originalText').parentElement.style.display = 'none';
-            
-            setTimeout(() => {
-                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
         }
-        
-        function validarTextoCatalan(texto) {
-            const errores = [];
-            const palabras = texto.split(/\s+/);
-            
-            const palabrasValidas = new Set([
-                'el', 'la', 'els', 'les', 'un', 'una', 'uns', 'unes',
-                "l'", 'd', 's', 'al', 'als', 'del', 'dels',
-                'jo', 'tu', 'ell', 'ella', 'nosaltres', 'vosaltres', 'ells', 'elles',
-                'em', 'et', 'es', 'ens', 'us', 'me', 'te', 'se', 'li', 'ho', 'hi', 'en',
-                'soc', 'ets', 'és', 'som', 'sou', 'són',
-                'era', 'eres', 'èrem', 'éreu', 'eren',
-                'seré', 'seràs', 'serà', 'serem', 'sereu', 'seran',
-                'estic', 'estàs', 'està', 'estem', 'esteu', 'estan',
-                'estava', 'estaves', 'estàvem', 'estàveu', 'estaven',
-                'ser', 'estat', 'estar',
-                'he', 'has', 'ha', 'hem', 'heu', 'han',
-                'havia', 'havies', 'havíem', 'havíeu', 'havien',
-                'haver', 'hagut',
-                'parlar', 'parla', 'parles', 'parlem', 'parleu', 'parlen',
-                'menjar', 'menja', 'menges', 'mengem', 'mengeu', 'mengen',
-                'viure', 'viu', 'vius', 'vivim', 'viviu', 'viuen',
-                'anar', 'vaig', 'vas', 'va', 'anem', 'aneu', 'van',
-                'fer', 'faig', 'fas', 'fa', 'fem', 'feu', 'fan', 'fet',
-                'dir', 'dic', 'dius', 'diu', 'diem', 'dieu', 'diuen', 'dit',
-                'veure', 'veig', 'veus', 'veu', 'veiem', 'veieu', 'veuen', 'vist',
-                'poder', 'puc', 'pots', 'pot', 'podem', 'podeu', 'poden', 'pogut',
-                'voler', 'vull', 'vols', 'vol', 'volem', 'voleu', 'volen', 'volgut',
-                'saber', 'sé', 'saps', 'sap', 'sabem', 'sabeu', 'saben', 'sabut',
-                'tenir', 'tinc', 'tens', 'té', 'tenim', 'teniu', 'tenen', 'tingut',
-                'donar', 'dono', 'dones', 'dona', 'donem', 'doneu', 'donen', 'donat',
-                'a', 'amb', 'de', 'des', 'en', 'entre', 'per', 'sense', 'sobre', 'sota',
-                'cap', 'contra', 'durant', 'segons', 'vers', 'envers',
-                'i', 'o', 'però', 'perquè', 'que', 'si', 'com', 'quan', 'mentre',
-                'encara', 'tampoc', 'també', 'ni', 'ja', 'així', 'doncs',
-                'avui', 'ahir', 'demà', 'ara', 'aquí', 'allà', 'allí',
-                'sempre', 'mai', 'sovint', 'gairebé', 'molt', 'poc', 'més', 'menys',
-                'sí', 'no', 'bé', 'mal', 'millor', 'pitjor',
-                'abans', 'després', 'encara', 'ja', 'llavors', 'potser',
-                'bo', 'bona', 'bons', 'bones', 'dolent', 'dolenta', 'dolents', 'dolentes',
-                'gran', 'grans', 'petit', 'petita', 'petits', 'petites',
-                'nou', 'nova', 'nous', 'noves', 'vell', 'vella', 'vells', 'velles',
-                'blanc', 'blanca', 'blancs', 'blanques', 'negre', 'negra', 'negres',
-                'vermell', 'vermella', 'vermells', 'vermelles',
-                'blau', 'blava', 'blaus', 'blaves', 'verd', 'verda', 'verds', 'verdes',
-                'groc', 'groga', 'grocs', 'grogues', 'taronja', 'taronges',
-                'rosa', 'roses', 'violeta', 'violetes', 'gris', 'grisos',
-                'color', 'colors', 'clar', 'clara', 'clars', 'clares',
-                'fosc', 'fosca', 'foscos', 'fosques',
-                'zero', 'un', 'una', 'dos', 'dues', 'tres', 'quatre', 'cinc',
-                'sis', 'set', 'vuit', 'nou', 'deu', 'onze', 'dotze',
-                'primer', 'primera', 'segon', 'segona', 'tercer', 'tercera',
-                'casa', 'cases', 'home', 'homes', 'dona', 'dones',
-                'nen', 'nena', 'nens', 'nenes', 'fill', 'filla', 'fills', 'fillos',
-                'pare', 'mare', 'pares', 'mares', 'germà', 'germana', 'germans', 'germanes',
-                'amic', 'amiga', 'amics', 'amigues', 'dia', 'dies', 'nit', 'nits',
-                'any', 'anys', 'mes', 'mesos', 'setmana', 'setmanes',
-                'hora', 'hores', 'minut', 'minuts', 'segon', 'segons',
-                'món', 'terra', 'cel', 'sol', 'lluna', 'estrella', 'estrelles',
-                'aigua', 'foc', 'aire', 'terra',
-                'llibre', 'llibres', 'escola', 'escoles', 'classe', 'classes',
-                'ciutat', 'ciutats', 'poble', 'pobles', 'país', 'països',
-                'carrer', 'carrers', 'plaça', 'places', 'parc', 'parcs',
-                'cotxe', 'cotxes', 'bus', 'busos', 'tren', 'trens',
-                'gat', 'gats', 'gata', 'gates', 'gos', 'gossos', 'gossa', 'gosses',
-                'ocell', 'ocells', 'peix', 'peixos', 'flor', 'flors',
-                'arbre', 'arbres', 'bosc', 'boscos', 'muntanya', 'muntanyes',
-                'mar', 'mars', 'riu', 'rius', 'llac', 'llacs',
-                'menjar', 'beguda', 'pa', 'pans', 'vi', 'vins',
-                'música', 'cançó', 'cançons', 'ball', 'balls',
-                'treball', 'treballs', 'feina', 'feines',
-                'vida', 'mort', 'temps', 'cosa', 'coses',
-                'cap', 'caps', 'ull', 'ulls', 'nas', 'nasos', 'boca', 'boques',
-                'mà', 'mans', 'peu', 'peus', 'cor', 'cors',
-                'azul', 'blau',
-            ]);
-            
-            const erroresComunes = {
-                'porque': { correcta: 'perquè', mensaje: 'Castellanisme' },
-                'tambien': { correcta: 'també', mensaje: 'Castellanisme' },
-                'también': { correcta: 'també', mensaje: 'Castellanisme' },
-                'pero': { correcta: 'però', mensaje: 'Castellanisme' },
-                'muy': { correcta: 'molt', mensaje: 'Castellanisme' },
-                'bueno': { correcta: 'bo', mensaje: 'Castellanisme' },
-                'buena': { correcta: 'bona', mensaje: 'Castellanisme' },
-                'cuando': { correcta: 'quan', mensaje: 'Castellanisme' },
-                'siempre': { correcta: 'sempre', mensaje: 'Castellanisme' },
-                'nunca': { correcta: 'mai', mensaje: 'Castellanisme' },
-                'hacer': { correcta: 'fer', mensaje: 'Castellanisme' },
-                'tener': { correcta: 'tenir', mensaje: 'Castellanisme' },
-                'decir': { correcta: 'dir', mensaje: 'Castellanisme' },
-                'hombre': { correcta: 'home', mensaje: 'Castellanisme' },
-                'mujer': { correcta: 'dona', mensaje: 'Castellanisme' },
-                'niño': { correcta: 'nen', mensaje: 'Castellanisme' },
-                'niña': { correcta: 'nena', mensaje: 'Castellanisme' },
-                'año': { correcta: 'any', mensaje: 'Castellanisme' },
-                'años': { correcta: 'anys', mensaje: 'Castellanisme' },
-                'día': { correcta: 'dia', mensaje: 'Castellanisme' },
-                'días': { correcta: 'dies', mensaje: 'Castellanisme' },
-                'bien': { correcta: 'bé', mensaje: 'Castellanisme' },
-                'mal': { correcta: 'malament', mensaje: 'Castellanisme' },
-                'otro': { correcta: 'altre', mensaje: 'Castellanisme' },
-                'otra': { correcta: 'altra', mensaje: 'Castellanisme' },
-                'mismo': { correcta: 'mateix', mensaje: 'Castellanisme' },
-                'misma': { correcta: 'mateixa', mensaje: 'Castellanisme' },
-                'todo': { correcta: 'tot', mensaje: 'Castellanisme' },
-                'toda': { correcta: 'tota', mensaje: 'Castellanisme' },
-                'nada': { correcta: 'res', mensaje: 'Castellanisme' },
-                'nadie': { correcta: 'ningú', mensaje: 'Castellanisme' },
-                'algo': { correcta: 'alguna cosa', mensaje: 'Castellanisme' },
-                'alguien': { correcta: 'algú', mensaje: 'Castellanisme' },
-                'donde': { correcta: 'on', mensaje: 'Castellanisme' },
-                'como': { correcta: 'com', mensaje: 'Castellanisme' },
-                'cual': { correcta: 'quin', mensaje: 'Castellanisme' },
-                'quien': { correcta: 'qui', mensaje: 'Castellanisme' },
-                'aqui': { correcta: 'aquí', mensaje: 'Castellanisme (falta accent)' },
-                'ahi': { correcta: 'allà', mensaje: 'Castellanisme' },
-                'alli': { correcta: 'allí', mensaje: 'Castellanisme' },
-                'es': { correcta: 'és', mensaje: 'Falta accent. El verb "ser" 3a persona: és' },
-                'esta': { correcta: 'està', mensaje: 'Falta accent. El verb "estar" 3a persona: està' },
-                'mes': { correcta: 'més', mensaje: 'Falta accent si és "més" (adverbi)' },
-                'be': { correcta: 'bé', mensaje: 'Falta accent' },
-                'aixo': { correcta: 'això', mensaje: 'Falta accent' },
-                'aqui': { correcta: 'aquí', mensaje: 'Falta accent' },
-                'alli': { correcta: 'allí', mensaje: 'Falta accent' },
-                'alla': { correcta: 'allà', mensaje: 'Falta accent' },
-                'si': { correcta: 'sí', mensaje: 'Falta accent si és afirmatiu' },
-                'te': { correcta: 'té', mensaje: 'Falta accent si és verb "tenir"' },
-                'ja': { correcta: 'ja', mensaje: 'Correcte (no porta accent)' },
-                'a': { correcta: 'ha', mensaje: 'Podria ser "ha" (verb haver)?' },
-                'an': { correcta: 'han', mensaje: 'Podria ser "han" (verb haver)?' },
-            };
-            
-            palabras.forEach(palabra => {
-                const palabraLimpia = palabra.toLowerCase().replace(/[.,;:!?¿¡()]/g, '');
-                
-                if (!palabraLimpia) return;
-                
-                if (erroresComunes[palabraLimpia]) {
-                    errores.push({
-                        palabra: palabra,
-                        sugerencia: erroresComunes[palabraLimpia].correcta,
-                        mensaje: erroresComunes[palabraLimpia].mensaje
-                    });
-                }
-                else if (!palabrasValidas.has(palabraLimpia) && palabraLimpia.length > 2) {
-                    errores.push({
-                        palabra: palabra,
-                        sugerencia: '',
-                        mensaje: 'Paraula no reconeguda. Verifica l\'ortografia'
-                    });
-                }
-            });
-            
-            return errores;
+
+        function setLoading(loading) {
+            const buttons = document.querySelectorAll('.toolbar button');
+            buttons.forEach(btn => btn.disabled = loading);
         }
 
         function borrarTodo() {
