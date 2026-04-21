@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "io.github.hectorco.twa",
-        "sha256_cert_fingerprints": ["3A:F4:4C:C9:C4:62:C4:CD:C1:0B:7C:B4:2B:30:D0:5D:F8:11:C0:CD:DC:DD:1D:0C:1B:5B:DC:AC:6A:7B:C8:17"]
+        "package_name": "app.vercel.dictcatv3.twa",
+        "sha256_cert_fingerprints": ["3C:22:EC:86:FF:C3:ED:11:5F:D9:2C:87:04:50:17:6E:1F:20:45:8F:17:C3:6C:62:03:5D:DA:FE:6B:70:C4:A9"]
       }
     }]
