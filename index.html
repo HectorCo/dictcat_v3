@@ -391,102 +391,58 @@
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
             textoEscrito = textInput.value.trim();
-            
+
             if (!textoEscrito) {
                 alert('❌ Si us plau, escriu el text abans de corregir.');
                 textInput.focus();
                 return;
             }
-            
+
             setLoading(true);
-            
+
             document.getElementById('resultContainer').classList.add('show');
             document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
-            
+
             let errores = [];
             let source = 'local';
-            
+
             try {
-                // Intentar LanguageTool directamente con proxy CORS
-                const result = await corregirConLanguageToolDirecto(textoEscrito);
-                
-                if (result && result.matches && result.matches.length >= 0) {
-                    errores = result.matches;
-                    source = 'languagetool';
-                } else {
-                    throw new Error('No se obtuvieron resultados');
+                // Cridar la funció serverless de Vercel — evita problemes de CORS
+                const response = await fetch('/api/corrector', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: textoEscrito })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API HTTP ${response.status}`);
                 }
+
+                const result = await response.json();
+
+                if (result.fallback) {
+                    // La serverless function va fallar, usem corrector local
+                    console.warn('API fallback actiu:', result.error);
+                    throw new Error(result.error || 'Fallback');
+                }
+
+                errores = result.matches || [];
+                source = result.source || 'api';
+
             } catch (error) {
-                console.error('Error API:', error);
-                // Fallback al corrector local mejorado
+                console.error('Error API:', error.message);
+                // Últim recurs: corrector local
                 errores = validarTextoCatalanLocal(textoEscrito);
                 source = 'local';
             }
-            
+
             mostrarResultados(errores, source);
             setLoading(false);
-            
+
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
-        }
-
-        async function corregirConLanguageToolDirecto(texto) {
-            // LanguageTool API pública - sin proxy, directo
-            // Nota: Esto puede fallar por CORS en algunos navegadores
-            const url = 'https://api.languagetool.org/api/v2/check';
-            
-            const body = new URLSearchParams();
-            body.append('text', texto);
-            body.append('language', 'ca-ES');
-            body.append('enabledOnly', 'false');
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Accept': 'application/json'
-                    },
-                    body: body.toString()
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                return await response.json();
-            } catch (e) {
-                // Si falla por CORS, intentar con proxy
-                console.log('Directo falló, intentando proxy...');
-                return await corregirConProxy(texto);
-            }
-        }
-
-        async function corregirConProxy(texto) {
-            // Proxy CORS gratuito como fallback
-            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://api.languagetool.org/api/v2/check');
-            
-            const body = new URLSearchParams();
-            body.append('text', texto);
-            body.append('language', 'ca-ES');
-            body.append('enabledOnly', 'false');
-            
-            const response = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: body.toString()
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Proxy HTTP ${response.status}`);
-            }
-            
-            return await response.json();
         }
 
         function validarTextoCatalanLocal(texto) {
@@ -778,6 +734,8 @@
                 htmlResultado += '<div class="fallback-notice">⚠️ Usant corrector local (API no disponible). La correcció pot ser limitada.</div>';
             } else if (source === 'languagetool') {
                 htmlResultado += '<div class="success-notice">✅ Correcció amb LanguageTool</div>';
+            } else if (source === 'softcatala') {
+                htmlResultado += '<div class="success-notice">✅ Correcció amb Softcatalà</div>';
             }
             
             if (numErrores === 0) {
