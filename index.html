@@ -404,23 +404,18 @@
             setLoading(true);
             
             document.getElementById('resultContainer').classList.add('show');
-            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia amb LanguageTool</div>';
+            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
             
             try {
+                // Intentar primero con LanguageTool
                 const errores = await corregirConLanguageTool(textoEscrito);
                 mostrarResultados(errores);
             } catch (error) {
-                console.error('Error completo:', error);
-                document.getElementById('correccionText').innerHTML = `
-                    <div class="api-error">
-                        ⚠️ No s'ha pogut connectar amb el corrector.<br>
-                        <small>${error.message}</small><br><br>
-                        <button onclick="corregirDictado()" class="btn-success" style="margin-top: 10px;">
-                            🔄 Reintentar
-                        </button>
-                    </div>
-                `;
+                console.error('Error LanguageTool:', error);
+                // Si falla, usar corrector local
+                const erroresLocales = validarTextoCatalanLocal(textoEscrito);
+                mostrarResultados(erroresLocales);
             } finally {
                 setLoading(false);
             }
@@ -431,32 +426,244 @@
         }
 
         async function corregirConLanguageTool(texto) {
-            // Añadir timestamp para evitar cacheo
-            const timestamp = new Date().getTime();
-            const url = `https://api.languagetool.org/api/v2/check?_=${timestamp}`;
+            // Usar CORS proxy si es necesario, o directo
+            const urls = [
+                'https://api.languagetool.org/api/v2/check',
+                'https://languagetool.org/api/v2/check'
+            ];
             
-            const body = new URLSearchParams();
-            body.append('text', texto);
-            body.append('language', 'ca-ES');
-            body.append('enabledOnly', 'false');
+            let lastError = null;
             
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: body.toString(),
-                cache: 'no-store' // Importante: no usar cache
-            });
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error ${response.status}: ${errorText}`);
+            for (const url of urls) {
+                try {
+                    const body = new URLSearchParams();
+                    body.append('text', texto);
+                    body.append('language', 'ca-ES');
+                    body.append('enabledOnly', 'false');
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json'
+                        },
+                        body: body.toString(),
+                        cache: 'no-store'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.matches || [];
+                    }
+                } catch (e) {
+                    lastError = e;
+                    continue;
+                }
             }
             
-            const data = await response.json();
-            return data.matches || [];
+            throw lastError || new Error('No se pudo conectar con ningún endpoint');
+        }
+
+        function validarTextoCatalanLocal(texto) {
+            const errores = [];
+            const palabras = texto.toLowerCase().split(/[\s.,;:!?¿¡()]+/).filter(p => p.length > 0);
+            
+            // Diccionario exhaustivo de castellanismos y errores comunes
+            const erroresComunes = {
+                'yo': { correcta: 'jo', mensaje: 'Castellanisme: "yo" → "jo"' },
+                'me': { correcta: 'em', mensaje: 'Castellanisme: "me" → "em"' },
+                'mi': { correcta: 'el meu', mensaje: 'Castellanisme: "mi" → "el meu"' },
+                'tu': { correcta: 'tu', mensaje: 'Possibles confusions amb "tu" (castellà) vs "tu" (català, pronom)' },
+                'su': { correcta: 'el seu', mensaje: 'Castellanisme: "su" → "el seu"' },
+                'porque': { correcta: 'perquè', mensaje: 'Castellanisme' },
+                'tambien': { correcta: 'també', mensaje: 'Castellanisme' },
+                'también': { correcta: 'també', mensaje: 'Castellanisme' },
+                'pero': { correcta: 'però', mensaje: 'Castellanisme' },
+                'muy': { correcta: 'molt', mensaje: 'Castellanisme' },
+                'bueno': { correcta: 'bo', mensaje: 'Castellanisme' },
+                'buena': { correcta: 'bona', mensaje: 'Castellanisme' },
+                'cuando': { correcta: 'quan', mensaje: 'Castellanisme' },
+                'siempre': { correcta: 'sempre', mensaje: 'Castellanisme' },
+                'nunca': { correcta: 'mai', mensaje: 'Castellanisme' },
+                'hacer': { correcta: 'fer', mensaje: 'Castellanisme' },
+                'tener': { correcta: 'tenir', mensaje: 'Castellanisme' },
+                'decir': { correcta: 'dir', mensaje: 'Castellanisme' },
+                'hombre': { correcta: 'home', mensaje: 'Castellanisme' },
+                'mujer': { correcta: 'dona', mensaje: 'Castellanisme' },
+                'niño': { correcta: 'nen', mensaje: 'Castellanisme' },
+                'niña': { correcta: 'nena', mensaje: 'Castellanisme' },
+                'año': { correcta: 'any', mensaje: 'Castellanisme' },
+                'años': { correcta: 'anys', mensaje: 'Castellanisme' },
+                'día': { correcta: 'dia', mensaje: 'Castellanisme' },
+                'días': { correcta: 'dies', mensaje: 'Castellanisme' },
+                'bien': { correcta: 'bé', mensaje: 'Castellanisme' },
+                'mal': { correcta: 'malament', mensaje: 'Castellanisme' },
+                'otro': { correcta: 'altre', mensaje: 'Castellanisme' },
+                'otra': { correcta: 'altra', mensaje: 'Castellanisme' },
+                'mismo': { correcta: 'mateix', mensaje: 'Castellanisme' },
+                'misma': { correcta: 'mateixa', mensaje: 'Castellanisme' },
+                'todo': { correcta: 'tot', mensaje: 'Castellanisme' },
+                'toda': { correcta: 'tota', mensaje: 'Castellanisme' },
+                'nada': { correcta: 'res', mensaje: 'Castellanisme' },
+                'nadie': { correcta: 'ningú', mensaje: 'Castellanisme' },
+                'algo': { correcta: 'alguna cosa', mensaje: 'Castellanisme' },
+                'alguien': { correcta: 'algú', mensaje: 'Castellanisme' },
+                'donde': { correcta: 'on', mensaje: 'Castellanisme' },
+                'como': { correcta: 'com', mensaje: 'Castellanisme' },
+                'cual': { correcta: 'quin', mensaje: 'Castellanisme' },
+                'quien': { correcta: 'qui', mensaje: 'Castellanisme' },
+                'aqui': { correcta: 'aquí', mensaje: 'Castellanisme (falta accent)' },
+                'ahi': { correcta: 'allà', mensaje: 'Castellanisme' },
+                'alli': { correcta: 'allí', mensaje: 'Castellanisme' },
+                'luego': { correcta: 'després', mensaje: 'Castellanisme' },
+                'entonces': { correcta: 'llavors', mensaje: 'Castellanisme' },
+                'ahora': { correcta: 'ara', mensaje: 'Castellanisme' },
+                'antes': { correcta: 'abans', mensaje: 'Castellanisme' },
+                'después': { correcta: 'després', mensaje: 'Castellanisme' },
+                'mucho': { correcta: 'molt', mensaje: 'Castellanisme' },
+                'mucha': { correcta: 'molta', mensaje: 'Castellanisme' },
+                'muchos': { correcta: 'molts', mensaje: 'Castellanisme' },
+                'muchas': { correcta: 'moltes', mensaje: 'Castellanisme' },
+                'poco': { correcta: 'poc', mensaje: 'Castellanisme' },
+                'poca': { correcta: 'poca', mensaje: 'Castellanisme' },
+                'pocos': { correcta: 'pocs', mensaje: 'Castellanisme' },
+                'pocas': { correcta: 'poques', mensaje: 'Castellanisme' },
+                'más': { correcta: 'més', mensaje: 'Castellanisme' },
+                'menos': { correcta: 'menys', mensaje: 'Castellanisme' },
+                'tan': { correcta: 'tan', mensaje: 'Correcte en català' },
+                'tanto': { correcta: 'tant', mensaje: 'Castellanisme' },
+                'tanta': { correcta: 'tanta', mensaje: 'Castellanisme' },
+                'tantos': { correcta: 'tants', mensaje: 'Castellanisme' },
+                'tantas': { correcta: 'tantes', mensaje: 'Castellanisme' },
+                'asi': { correcta: 'així', mensaje: 'Castellanisme' },
+                'así': { correcta: 'així', mensaje: 'Castellanisme' },
+                'mejor': { correcta: 'millor', mensaje: 'Castellanisme' },
+                'peor': { correcta: 'pitjor', mensaje: 'Castellanisme' },
+                'pequeño': { correcta: 'petit', mensaje: 'Castellanisme' },
+                'pequeña': { correcta: 'petita', mensaje: 'Castellanisme' },
+                'pequeños': { correcta: 'petits', mensaje: 'Castellanisme' },
+                'pequeñas': { correcta: 'petites', mensaje: 'Castellanisme' },
+                'grande': { correcta: 'gran', mensaje: 'Castellanisme' },
+                'grandes': { correcta: 'grans', mensaje: 'Castellanisme' },
+                'nuevo': { correcta: 'nou', mensaje: 'Castellanisme' },
+                'nueva': { correcta: 'nova', mensaje: 'Castellanisme' },
+                'nuevos': { correcta: 'nous', mensaje: 'Castellanisme' },
+                'nuevas': { correcta: 'noves', mensaje: 'Castellanisme' },
+                'viejo': { correcta: 'vell', mensaje: 'Castellanisme' },
+                'vieja': { correcta: 'vella', mensaje: 'Castellanisme' },
+                'viejos': { correcta: 'vells', mensaje: 'Castellanisme' },
+                'viejas': { correcta: 'velles', mensaje: 'Castellanisme' },
+                'primero': { correcta: 'primer', mensaje: 'Castellanisme' },
+                'primera': { correcta: 'primera', mensaje: 'Castellanisme' },
+                'segundo': { correcta: 'segon', mensaje: 'Castellanisme' },
+                'segunda': { correcta: 'segona', mensaje: 'Castellanisme' },
+                'tercero': { correcta: 'tercer', mensaje: 'Castellanisme' },
+                'tercera': { correcta: 'tercera', mensaje: 'Castellanisme' },
+                'con': { correcta: 'amb', mensaje: 'Castellanisme: "con" → "amb"' },
+                'por': { correcta: 'per', mensaje: 'Castellanisme: "por" → "per"' },
+                'para': { correcta: 'per a', mensaje: 'Castellanisme: "para" → "per a"' },
+                'sin': { correcta: 'sense', mensaje: 'Castellanisme: "sin" → "sense"' },
+                'desde': { correcta: 'des de', mensaje: 'Castellanisme: "desde" → "des de"' },
+                'hasta': { correcta: 'fins', mensaje: 'Castellanisme: "hasta" → "fins"' },
+                'hacia': { correcta: 'cap a', mensaje: 'Castellanisme: "hacia" → "cap a"' },
+                'durante': { correcta: 'durant', mensaje: 'Castellanisme: "durante" → "durant"' },
+                'segun': { correcta: 'segons', mensaje: 'Castellanisme: "según" → "segons"' },
+                'según': { correcta: 'segons', mensaje: 'Castellanisme: "según" → "segons"' },
+                'mediante': { correcta: 'mitjançant', mensaje: 'Castellanisme: "mediante" → "mitjançant"' },
+                'excepto': { correcta: 'excepte', mensaje: 'Castellanisme: "excepto" → "excepte"' },
+                'salvo': { correcta: 'llevat', mensaje: 'Castellanisme: "salvo" → "llevat"' },
+                'es': { correcta: 'és', mensaje: 'Falta accent: "és" (verb ser)' },
+                'esta': { correcta: 'està', mensaje: 'Falta accent: "està" (verb estar)' },
+                'be': { correcta: 'bé', mensaje: 'Falta accent' },
+                'aqui': { correcta: 'aquí', mensaje: 'Falta accent' },
+                'alli': { correcta: 'allí', mensaje: 'Falta accent' },
+                'alla': { correcta: 'allà', mensaje: 'Falta accent' },
+                'si': { correcta: 'sí', mensaje: 'Falta accent si és afirmatiu' },
+                'te': { correcta: 'té', mensaje: 'Falta accent si és verb "tenir"' },
+                'a': { correcta: 'ha', mensaje: 'Podria ser "ha" (verb haver)?' },
+                'an': { correcta: 'han', mensaje: 'Podria ser "han" (verb haver)?' },
+            };
+            
+            // Palabras válidas en catalán (para comparar)
+            const palabrasValidas = new Set([
+                'jo', 'tu', 'ell', 'ella', 'nosaltres', 'vosaltres', 'ells', 'elles',
+                'em', 'et', 'es', 'ens', 'us', 'me', 'te', 'se', 'li', 'ho', 'hi', 'en',
+                'soc', 'ets', 'és', 'som', 'sou', 'són', 'era', 'eres', 'èrem', 'éreu', 'eren',
+                'estic', 'estàs', 'està', 'estem', 'esteu', 'estan',
+                'he', 'has', 'ha', 'hem', 'heu', 'han',
+                'parla', 'parles', 'parlem', 'parleu', 'parlen',
+                'menja', 'menges', 'mengem', 'mengeu', 'mengen',
+                'viu', 'vius', 'vivim', 'viviu', 'viuen',
+                'vaig', 'vas', 'va', 'anem', 'aneu', 'van',
+                'faig', 'fas', 'fa', 'fem', 'feu', 'fan',
+                'dic', 'dius', 'diu', 'diem', 'dieu', 'diuen',
+                'veig', 'veus', 'veu', 'veiem', 'veieu', 'veuen',
+                'puc', 'pots', 'pot', 'podem', 'podeu', 'poden',
+                'vull', 'vols', 'vol', 'volem', 'voleu', 'volen',
+                'sé', 'saps', 'sap', 'sabem', 'sabeu', 'saben',
+                'tinc', 'tens', 'té', 'tenim', 'teniu', 'tenen',
+                'dono', 'dones', 'dona', 'donem', 'doneu', 'donen',
+                'el', 'la', 'els', 'les', 'un', 'una', 'uns', 'unes',
+                'a', 'amb', 'de', 'des', 'en', 'entre', 'per', 'sense', 'sobre', 'sota',
+                'i', 'o', 'però', 'perquè', 'que', 'si', 'com', 'quan', 'mentre',
+                'avui', 'ahir', 'demà', 'ara', 'aquí', 'allà', 'allí',
+                'sempre', 'mai', 'sovint', 'gairebé', 'molt', 'poc', 'més', 'menys',
+                'sí', 'no', 'bé', 'mal', 'millor', 'pitjor',
+                'abans', 'després', 'encara', 'ja', 'llavors', 'potser',
+                'bo', 'bona', 'bons', 'bones', 'dolent', 'dolenta', 'dolents', 'dolentes',
+                'gran', 'grans', 'petit', 'petita', 'petits', 'petites',
+                'nou', 'nova', 'nous', 'noves', 'vell', 'vella', 'vells', 'velles',
+                'casa', 'cases', 'home', 'homes', 'dona', 'dones',
+                'nen', 'nena', 'nens', 'nenes', 'fill', 'filla', 'fills',
+                'pare', 'mare', 'pares', 'mares', 'germà', 'germana', 'germans', 'germanes',
+                'amic', 'amiga', 'amics', 'amigues', 'dia', 'dies', 'nit', 'nits',
+                'any', 'anys', 'mes', 'mesos', 'setmana', 'setmanes',
+                'hora', 'hores', 'minut', 'minuts',
+                'món', 'terra', 'cel', 'sol', 'lluna', 'estrella', 'estrelles',
+                'aigua', 'foc', 'aire',
+                'llibre', 'llibres', 'escola', 'escoles', 'classe', 'classes',
+                'ciutat', 'ciutats', 'poble', 'pobles',
+                'carrer', 'carrers', 'plaça', 'places', 'parc', 'parcs',
+                'cotxe', 'cotxes', 'bus', 'busos', 'tren', 'trens',
+                'gat', 'gats', 'gata', 'gates', 'gos', 'gossos', 'gossa', 'gosses',
+                'ocell', 'ocells', 'peix', 'peixos', 'flor', 'flors',
+                'arbre', 'arbres', 'bosc', 'boscos', 'muntanya', 'muntanyes',
+                'mar', 'mars', 'riu', 'rius', 'llac', 'llacs',
+                'menjar', 'beguda', 'pa', 'pans', 'vi', 'vins',
+                'música', 'cançó', 'cançons', 'ball', 'balls',
+                'treball', 'treballs', 'feina', 'feines',
+                'vida', 'mort', 'temps', 'cosa', 'coses',
+                'cap', 'caps', 'ull', 'ulls', 'nas', 'nasos', 'boca', 'boques',
+                'mà', 'mans', 'peu', 'peus', 'cor', 'cors',
+                'soc', 'un', 'home'
+            ]);
+            
+            palabras.forEach((palabra, index) => {
+                if (!palabra) return;
+                
+                // Verificar si es un error conocido
+                if (erroresComunes[palabra]) {
+                    errores.push({
+                        palabra: palabra,
+                        sugerencia: erroresComunes[palabra].correcta,
+                        mensaje: erroresComunes[palabra].mensaje,
+                        offset: texto.toLowerCase().indexOf(palabra),
+                        length: palabra.length
+                    });
+                }
+                // Si no está en palabras válidas y tiene más de 2 letras
+                else if (!palabrasValidas.has(palabra) && palabra.length > 2) {
+                    errores.push({
+                        palabra: palabra,
+                        sugerencia: '',
+                        mensaje: 'Paraula no reconeguda. Possible error ortogràfic o castellanisme.',
+                        offset: texto.toLowerCase().indexOf(palabra),
+                        length: palabra.length
+                    });
+                }
+            });
+            
+            return errores;
         }
 
         function mostrarResultados(matches) {
@@ -474,8 +681,8 @@
                 let htmlErrores = '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
                 
                 matches.forEach((match, i) => {
-                    const palabraErronea = textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = match.replacements.map(r => r.value).slice(0, 3);
+                    const palabraErronea = match.palabra || textoEscrito.substring(match.offset, match.offset + match.length);
+                    const sugerencias = match.sugerencia ? [match.sugerencia] : [];
                     const sugerenciaPrincipal = sugerencias[0] || '';
                     
                     const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
@@ -486,7 +693,7 @@
                                 <span class="error-word">${i + 1}. "${palabraErronea}"</span>
                             </div>
                             <div class="error-message">
-                                💡 ${match.message}
+                                💡 ${match.mensaje || match.message}
                             </div>
                             ${sugerenciaPrincipal ? `
                             <div style="margin-bottom: 10px;">
@@ -530,7 +737,6 @@
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => {
                         console.log('Service Worker registrat');
-                        // Forzar actualización
                         reg.update();
                     })
                     .catch(err => console.log('Error en Service Worker:', err));
