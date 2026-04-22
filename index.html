@@ -408,21 +408,18 @@
             let source = 'local';
             
             try {
-                // Llamar a tu API interna de Vercel
-                const result = await corregirConApiPropia(textoEscrito);
+                // Intentar LanguageTool directamente con proxy CORS
+                const result = await corregirConLanguageToolDirecto(textoEscrito);
                 
-                if (result.matches && result.matches.length > 0) {
+                if (result && result.matches && result.matches.length >= 0) {
                     errores = result.matches;
-                    source = result.source || 'api';
-                } else if (result.fallback) {
-                    // La API devolvió fallback, usar local
-                    errores = validarTextoCatalanLocal(textoEscrito);
-                    source = 'local';
+                    source = 'languagetool';
                 } else {
-                    errores = [];
+                    throw new Error('No se obtuvieron resultados');
                 }
             } catch (error) {
                 console.error('Error API:', error);
+                // Fallback al corrector local mejorado
                 errores = validarTextoCatalanLocal(textoEscrito);
                 source = 'local';
             }
@@ -435,20 +432,58 @@
             }, 100);
         }
 
-        async function corregirConApiPropia(texto) {
-            const url = '/api/corrector';
+        async function corregirConLanguageToolDirecto(texto) {
+            // LanguageTool API pública - sin proxy, directo
+            // Nota: Esto puede fallar por CORS en algunos navegadores
+            const url = 'https://api.languagetool.org/api/v2/check';
             
-            const response = await fetch(url, {
+            const body = new URLSearchParams();
+            body.append('text', texto);
+            body.append('language', 'ca-ES');
+            body.append('enabledOnly', 'false');
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: body.toString()
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (e) {
+                // Si falla por CORS, intentar con proxy
+                console.log('Directo falló, intentando proxy...');
+                return await corregirConProxy(texto);
+            }
+        }
+
+        async function corregirConProxy(texto) {
+            // Proxy CORS gratuito como fallback
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://api.languagetool.org/api/v2/check');
+            
+            const body = new URLSearchParams();
+            body.append('text', texto);
+            body.append('language', 'ca-ES');
+            body.append('enabledOnly', 'false');
+            
+            const response = await fetch(proxyUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ text: texto })
+                body: body.toString()
             });
             
             if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
+                throw new Error(`Proxy HTTP ${response.status}`);
             }
             
             return await response.json();
@@ -458,7 +493,6 @@
             const errores = [];
             const palabras = texto.toLowerCase().split(/[\s.,;:!?¿¡()]+/).filter(p => p.length > 0);
             
-            // DICCIONARIO MASIVO de castellanismos y errores comunes
             const erroresComunes = {
                 // Castellanismos básicos
                 'yo': { correcta: 'jo', mensaje: 'Castellanisme: "yo" → "jo"' },
@@ -471,11 +505,9 @@
                 // Sustantivos comunes
                 'cielo': { correcta: 'cel', mensaje: 'Castellanisme: "cielo" → "cel"' },
                 'azul': { correcta: 'blau', mensaje: 'Castellanisme: "azul" → "blau"' },
-                'casa': { correcta: 'casa', mensaje: 'Correcte en català' },
                 'perro': { correcta: 'gos', mensaje: 'Castellanisme: "perro" → "gos"' },
                 'perra': { correcta: 'gossa', mensaje: 'Castellanisme: "perra" → "gossa"' },
                 'gato': { correcta: 'gat', mensaje: 'Castellanisme: "gato" → "gat"' },
-                'gata': { correcta: 'gata', mensaje: 'Castellanisme: "gata" → "gata"' },
                 'libro': { correcta: 'llibre', mensaje: 'Castellanisme: "libro" → "llibre"' },
                 'libros': { correcta: 'llibres', mensaje: 'Castellanisme: "libros" → "llibres"' },
                 'mesa': { correcta: 'taula', mensaje: 'Castellanisme: "mesa" → "taula"' },
@@ -488,10 +520,7 @@
                 'agua': { correcta: 'aigua', mensaje: 'Castellanisme: "agua" → "aigua"' },
                 'fuego': { correcta: 'foc', mensaje: 'Castellanisme: "fuego" → "foc"' },
                 'tierra': { correcta: 'terra', mensaje: 'Castellanisme: "tierra" → "terra"' },
-                'sol': { correcta: 'sol', mensaje: 'Correcte en català' },
                 'luna': { correcta: 'lluna', mensaje: 'Castellanisme: "luna" → "lluna"' },
-                'estrella': { correcta: 'estrella', mensaje: 'Correcte en català' },
-                'flor': { correcta: 'flor', mensaje: 'Correcte en català' },
                 'árbol': { correcta: 'arbre', mensaje: 'Castellanisme: "árbol" → "arbre"' },
                 'flores': { correcta: 'flors', mensaje: 'Castellanisme: "flores" → "flors"' },
                 'árboles': { correcta: 'arbres', mensaje: 'Castellanisme: "árboles" → "arbres"' },
@@ -504,7 +533,6 @@
                 'maestro': { correcta: 'mestre', mensaje: 'Castellanisme: "maestro" → "mestre"' },
                 'maestra': { correcta: 'mestra', mensaje: 'Castellanisme: "maestra" → "mestra"' },
                 'alumno': { correcta: 'alumne', mensaje: 'Castellanisme: "alumno" → "alumne"' },
-                'alumna': { correcta: 'alumna', mensaje: 'Castellanisme: "alumna" → "alumna"' },
                 'hijo': { correcta: 'fill', mensaje: 'Castellanisme: "hijo" → "fill"' },
                 'hija': { correcta: 'filla', mensaje: 'Castellanisme: "hija" → "filla"' },
                 'padre': { correcta: 'pare', mensaje: 'Castellanisme: "padre" → "pare"' },
@@ -572,7 +600,6 @@
                 'queréis': { correcta: 'voleu', mensaje: 'Castellanisme: "queréis" → "voleu"' },
                 'quieren': { correcta: 'volen', mensaje: 'Castellanisme: "quieren" → "volen"' },
                 'saber': { correcta: 'saber', mensaje: 'Castellanisme: "saber" → "saber"' },
-                'sé': { correcta: 'sé', mensaje: 'Correcte en català' },
                 'sabes': { correcta: 'saps', mensaje: 'Castellanisme: "sabes" → "saps"' },
                 'sabe': { correcta: 'sap', mensaje: 'Castellanisme: "sabe" → "sap"' },
                 'sabemos': { correcta: 'sabem', mensaje: 'Castellanisme: "sabemos" → "sabem"' },
@@ -604,13 +631,11 @@
                 'lento': { correcta: 'lent', mensaje: 'Castellanisme: "lento" → "lent"' },
                 'lenta': { correcta: 'lenta', mensaje: 'Castellanisme: "lenta" → "lenta"' },
                 'fácil': { correcta: 'fàcil', mensaje: 'Castellanisme: "fácil" → "fàcil"' },
-                'difícil': { correcta: 'difícil', mensaje: 'Correcte en català' },
                 'importante': { correcta: 'important', mensaje: 'Castellanisme: "importante" → "important"' },
                 'necesario': { correcta: 'necessari', mensaje: 'Castellanisme: "necesario" → "necessari"' },
                 'necesaria': { correcta: 'necessària', mensaje: 'Castellanisme: "necesaria" → "necessària"' },
                 'posible': { correcta: 'possible', mensaje: 'Castellanisme: "posible" → "possible"' },
                 'imposible': { correcta: 'impossible', mensaje: 'Castellanisme: "imposible" → "impossible"' },
-                'probable': { correcta: 'probable', mensaje: 'Correcte en català' },
                 'seguro': { correcta: 'segur', mensaje: 'Castellanisme: "seguro" → "segur"' },
                 'segura': { correcta: 'segura', mensaje: 'Castellanisme: "segura" → "segura"' },
                 'cierto': { correcta: 'cert', mensaje: 'Castellanisme: "cierto" → "cert"' },
@@ -634,14 +659,11 @@
                 'mediante': { correcta: 'mitjançant', mensaje: 'Castellanisme: "mediante" → "mitjançant"' },
                 'excepto': { correcta: 'excepte', mensaje: 'Castellanisme: "excepto" → "excepte"' },
                 'salvo': { correcta: 'llevat', mensaje: 'Castellanisme: "salvo" → "llevat"' },
-                'mediante': { correcta: 'mitjançant', mensaje: 'Castellanisme: "mediante" → "mitjançant"' },
-                'según': { correcta: 'segons', mensaje: 'Castellanisme: "según" → "segons"' },
                 'mientras': { correcta: 'mentre', mensaje: 'Castellanisme: "mientras" → "mentre"' },
                 'aunque': { correcta: 'encara que', mensaje: 'Castellanisme: "aunque" → "encara que"' },
                 'como': { correcta: 'com', mensaje: 'Castellanisme: "como" → "com"' },
                 'cuando': { correcta: 'quan', mensaje: 'Castellanisme: "cuando" → "quan"' },
                 'donde': { correcta: 'on', mensaje: 'Castellanisme: "donde" → "on"' },
-                'que': { correcta: 'que', mensaje: 'Correcte en català' },
                 'quien': { correcta: 'qui', mensaje: 'Castellanisme: "quien" → "qui"' },
                 'cual': { correcta: 'quin', mensaje: 'Castellanisme: "cual" → "quin"' },
                 'cuales': { correcta: 'quins', mensaje: 'Castellanisme: "cuales" → "quins"' },
@@ -680,9 +702,7 @@
                 'peor': { correcta: 'pitjor', mensaje: 'Castellanisme: "peor" → "pitjor"' },
                 'bien': { correcta: 'bé', mensaje: 'Castellanisme: "bien" → "bé"' },
                 'mal': { correcta: 'malament', mensaje: 'Castellanisme: "mal" → "malament"' },
-                'aquí': { correcta: 'aquí', mensaje: 'Correcte en català' },
                 'ahí': { correcta: 'allà', mensaje: 'Castellanisme: "ahí" → "allà"' },
-                'allí': { correcta: 'allí', mensaje: 'Correcte en català' },
                 'allá': { correcta: 'allà', mensaje: 'Castellanisme: "allá" → "allà"' },
                 'cerca': { correcta: 'a prop', mensaje: 'Castellanisme: "cerca" → "a prop"' },
                 'lejos': { correcta: 'lluny', mensaje: 'Castellanisme: "lejos" → "lluny"' },
@@ -728,7 +748,6 @@
                 if (!palabra) return;
                 
                 if (erroresComunes[palabra]) {
-                    // Evitar duplicados
                     const yaExiste = errores.some(e => e.palabra === palabra);
                     if (!yaExiste) {
                         errores.push({
@@ -757,8 +776,6 @@
             
             if (source === 'local') {
                 htmlResultado += '<div class="fallback-notice">⚠️ Usant corrector local (API no disponible). La correcció pot ser limitada.</div>';
-            } else if (source === 'softcatala') {
-                htmlResultado += '<div class="success-notice">✅ Correcció amb Softcatalà</div>';
             } else if (source === 'languagetool') {
                 htmlResultado += '<div class="success-notice">✅ Correcció amb LanguageTool</div>';
             }
