@@ -331,6 +331,17 @@
             color: #92400e;
             text-align: center;
         }
+
+        .fallback-notice {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px;
+            color: #1e40af;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -407,18 +418,21 @@
             document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
             
+            let errores = [];
+            let usoLocal = false;
+            
             try {
-                // Intentar primero con LanguageTool
-                const errores = await corregirConLanguageTool(textoEscrito);
-                mostrarResultados(errores);
+                // Intentar con LanguageTool primero
+                errores = await corregirConLanguageTool(textoEscrito);
             } catch (error) {
                 console.error('Error LanguageTool:', error);
-                // Si falla, usar corrector local
-                const erroresLocales = validarTextoCatalanLocal(textoEscrito);
-                mostrarResultados(erroresLocales);
-            } finally {
-                setLoading(false);
+                // Fallback al corrector local
+                errores = validarTextoCatalanLocal(textoEscrito);
+                usoLocal = true;
             }
+            
+            mostrarResultados(errores, usoLocal);
+            setLoading(false);
             
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -426,54 +440,40 @@
         }
 
         async function corregirConLanguageTool(texto) {
-            // Usar CORS proxy si es necesario, o directo
-            const urls = [
-                'https://api.languagetool.org/api/v2/check',
-                'https://languagetool.org/api/v2/check'
-            ];
+            const url = 'https://api.languagetool.org/api/v2/check';
             
-            let lastError = null;
+            const body = new URLSearchParams();
+            body.append('text', texto);
+            body.append('language', 'ca-ES');
+            body.append('enabledOnly', 'false');
             
-            for (const url of urls) {
-                try {
-                    const body = new URLSearchParams();
-                    body.append('text', texto);
-                    body.append('language', 'ca-ES');
-                    body.append('enabledOnly', 'false');
-                    
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Accept': 'application/json'
-                        },
-                        body: body.toString(),
-                        cache: 'no-store'
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        return data.matches || [];
-                    }
-                } catch (e) {
-                    lastError = e;
-                    continue;
-                }
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: body.toString(),
+                cache: 'no-store'
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${errorText}`);
             }
             
-            throw lastError || new Error('No se pudo conectar con ningún endpoint');
+            const data = await response.json();
+            return data.matches || [];
         }
 
         function validarTextoCatalanLocal(texto) {
             const errores = [];
             const palabras = texto.toLowerCase().split(/[\s.,;:!?¿¡()]+/).filter(p => p.length > 0);
             
-            // Diccionario exhaustivo de castellanismos y errores comunes
             const erroresComunes = {
                 'yo': { correcta: 'jo', mensaje: 'Castellanisme: "yo" → "jo"' },
                 'me': { correcta: 'em', mensaje: 'Castellanisme: "me" → "em"' },
                 'mi': { correcta: 'el meu', mensaje: 'Castellanisme: "mi" → "el meu"' },
-                'tu': { correcta: 'tu', mensaje: 'Possibles confusions amb "tu" (castellà) vs "tu" (català, pronom)' },
                 'su': { correcta: 'el seu', mensaje: 'Castellanisme: "su" → "el seu"' },
                 'porque': { correcta: 'perquè', mensaje: 'Castellanisme' },
                 'tambien': { correcta: 'també', mensaje: 'Castellanisme' },
@@ -530,7 +530,6 @@
                 'pocas': { correcta: 'poques', mensaje: 'Castellanisme' },
                 'más': { correcta: 'més', mensaje: 'Castellanisme' },
                 'menos': { correcta: 'menys', mensaje: 'Castellanisme' },
-                'tan': { correcta: 'tan', mensaje: 'Correcte en català' },
                 'tanto': { correcta: 'tant', mensaje: 'Castellanisme' },
                 'tanta': { correcta: 'tanta', mensaje: 'Castellanisme' },
                 'tantos': { correcta: 'tants', mensaje: 'Castellanisme' },
@@ -584,64 +583,9 @@
                 'an': { correcta: 'han', mensaje: 'Podria ser "han" (verb haver)?' },
             };
             
-            // Palabras válidas en catalán (para comparar)
-            const palabrasValidas = new Set([
-                'jo', 'tu', 'ell', 'ella', 'nosaltres', 'vosaltres', 'ells', 'elles',
-                'em', 'et', 'es', 'ens', 'us', 'me', 'te', 'se', 'li', 'ho', 'hi', 'en',
-                'soc', 'ets', 'és', 'som', 'sou', 'són', 'era', 'eres', 'èrem', 'éreu', 'eren',
-                'estic', 'estàs', 'està', 'estem', 'esteu', 'estan',
-                'he', 'has', 'ha', 'hem', 'heu', 'han',
-                'parla', 'parles', 'parlem', 'parleu', 'parlen',
-                'menja', 'menges', 'mengem', 'mengeu', 'mengen',
-                'viu', 'vius', 'vivim', 'viviu', 'viuen',
-                'vaig', 'vas', 'va', 'anem', 'aneu', 'van',
-                'faig', 'fas', 'fa', 'fem', 'feu', 'fan',
-                'dic', 'dius', 'diu', 'diem', 'dieu', 'diuen',
-                'veig', 'veus', 'veu', 'veiem', 'veieu', 'veuen',
-                'puc', 'pots', 'pot', 'podem', 'podeu', 'poden',
-                'vull', 'vols', 'vol', 'volem', 'voleu', 'volen',
-                'sé', 'saps', 'sap', 'sabem', 'sabeu', 'saben',
-                'tinc', 'tens', 'té', 'tenim', 'teniu', 'tenen',
-                'dono', 'dones', 'dona', 'donem', 'doneu', 'donen',
-                'el', 'la', 'els', 'les', 'un', 'una', 'uns', 'unes',
-                'a', 'amb', 'de', 'des', 'en', 'entre', 'per', 'sense', 'sobre', 'sota',
-                'i', 'o', 'però', 'perquè', 'que', 'si', 'com', 'quan', 'mentre',
-                'avui', 'ahir', 'demà', 'ara', 'aquí', 'allà', 'allí',
-                'sempre', 'mai', 'sovint', 'gairebé', 'molt', 'poc', 'més', 'menys',
-                'sí', 'no', 'bé', 'mal', 'millor', 'pitjor',
-                'abans', 'després', 'encara', 'ja', 'llavors', 'potser',
-                'bo', 'bona', 'bons', 'bones', 'dolent', 'dolenta', 'dolents', 'dolentes',
-                'gran', 'grans', 'petit', 'petita', 'petits', 'petites',
-                'nou', 'nova', 'nous', 'noves', 'vell', 'vella', 'vells', 'velles',
-                'casa', 'cases', 'home', 'homes', 'dona', 'dones',
-                'nen', 'nena', 'nens', 'nenes', 'fill', 'filla', 'fills',
-                'pare', 'mare', 'pares', 'mares', 'germà', 'germana', 'germans', 'germanes',
-                'amic', 'amiga', 'amics', 'amigues', 'dia', 'dies', 'nit', 'nits',
-                'any', 'anys', 'mes', 'mesos', 'setmana', 'setmanes',
-                'hora', 'hores', 'minut', 'minuts',
-                'món', 'terra', 'cel', 'sol', 'lluna', 'estrella', 'estrelles',
-                'aigua', 'foc', 'aire',
-                'llibre', 'llibres', 'escola', 'escoles', 'classe', 'classes',
-                'ciutat', 'ciutats', 'poble', 'pobles',
-                'carrer', 'carrers', 'plaça', 'places', 'parc', 'parcs',
-                'cotxe', 'cotxes', 'bus', 'busos', 'tren', 'trens',
-                'gat', 'gats', 'gata', 'gates', 'gos', 'gossos', 'gossa', 'gosses',
-                'ocell', 'ocells', 'peix', 'peixos', 'flor', 'flors',
-                'arbre', 'arbres', 'bosc', 'boscos', 'muntanya', 'muntanyes',
-                'mar', 'mars', 'riu', 'rius', 'llac', 'llacs',
-                'menjar', 'beguda', 'pa', 'pans', 'vi', 'vins',
-                'música', 'cançó', 'cançons', 'ball', 'balls',
-                'treball', 'treballs', 'feina', 'feines',
-                'vida', 'mort', 'temps', 'cosa', 'coses',
-                'cap', 'caps', 'ull', 'ulls', 'nas', 'nasos', 'boca', 'boques',
-                'mà', 'mans', 'peu', 'peus', 'cor', 'cors',
-                'soc', 'un', 'home'
-            ]);
-            
-            palabras.forEach((palabra, index) => {
+            palabras.forEach(palabra => {
                 if (!palabra) return;
                 
-                // Verificar si es un error conocido
                 if (erroresComunes[palabra]) {
                     errores.push({
                         palabra: palabra,
@@ -651,22 +595,12 @@
                         length: palabra.length
                     });
                 }
-                // Si no está en palabras válidas y tiene más de 2 letras
-                else if (!palabrasValidas.has(palabra) && palabra.length > 2) {
-                    errores.push({
-                        palabra: palabra,
-                        sugerencia: '',
-                        mensaje: 'Paraula no reconeguda. Possible error ortogràfic o castellanisme.',
-                        offset: texto.toLowerCase().indexOf(palabra),
-                        length: palabra.length
-                    });
-                }
             });
             
             return errores;
         }
 
-        function mostrarResultados(matches) {
+        function mostrarResultados(matches, usoLocal) {
             const totalPalabras = textoEscrito.split(/\s+/).filter(p => p.length > 0).length;
             const numErrores = matches.length;
             const precision = totalPalabras > 0 ? Math.max(0, Math.round((1 - numErrores / totalPalabras) * 100)) : 100;
@@ -674,20 +608,25 @@
             document.getElementById('errorCount').textContent = numErrores;
             document.getElementById('accuracy').textContent = precision + '%';
             
+            let htmlResultado = '';
+            
+            if (usoLocal) {
+                htmlResultado += '<div class="fallback-notice">ℹ️ Usant corrector local (LanguageTool no disponible)</div>';
+            }
+            
             if (numErrores === 0) {
-                document.getElementById('correccionText').innerHTML = 
-                    '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
+                htmlResultado += '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
             } else {
-                let htmlErrores = '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
+                htmlResultado += '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
                 
                 matches.forEach((match, i) => {
                     const palabraErronea = match.palabra || textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = match.sugerencia ? [match.sugerencia] : [];
+                    const sugerencias = match.sugerencia ? [match.sugerencia] : (match.replacements || []).map(r => r.value).slice(0, 3);
                     const sugerenciaPrincipal = sugerencias[0] || '';
                     
                     const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
                     
-                    htmlErrores += `
+                    htmlResultado += `
                         <div class="error-card">
                             <div style="margin-bottom: 8px;">
                                 <span class="error-word">${i + 1}. "${palabraErronea}"</span>
@@ -710,9 +649,10 @@
                     `;
                 });
                 
-                htmlErrores += '</div>';
-                document.getElementById('correccionText').innerHTML = htmlErrores;
+                htmlResultado += '</div>';
             }
+            
+            document.getElementById('correccionText').innerHTML = htmlResultado;
         }
 
         function setLoading(loading) {
