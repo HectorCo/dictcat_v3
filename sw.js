@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dictcat-v4';
+const CACHE_NAME = 'dictcat-v5';
 const urlsToCache = [
   '/index.html',
   '/manifest.json',
@@ -28,23 +28,21 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // IMPORTANTE: No interceptar NUNCA peticiones a LanguageTool
-  if (url.hostname === 'api.languagetool.org') {
+  // NO interceptar NUNCA peticiones a LanguageTool u otras APIs externas
+  if (url.hostname !== self.location.hostname) {
     return;
   }
   
-  // Para recursos locales, usar cache-first
-  if (url.hostname === self.location.hostname) {
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request).then(networkResponse => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
-          return networkResponse;
-        });
-      })
-    );
-  }
+  // Solo cachear recursos locales
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      });
+    })
+  );
 });
