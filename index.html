@@ -143,22 +143,6 @@
             line-height: 1.8;
         }
 
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 3px 6px;
-            border-radius: 4px;
-            text-decoration: line-through;
-        }
-
-        .correct {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
         .stats {
             display: flex;
             gap: 20px;
@@ -323,15 +307,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .api-error {
-            background: #fef3c7;
-            border: 2px solid #f59e0b;
-            border-radius: 10px;
-            padding: 15px;
-            color: #92400e;
-            text-align: center;
-        }
-
         .fallback-notice {
             background: #dbeafe;
             border: 1px solid #3b82f6;
@@ -422,10 +397,10 @@
             let usoLocal = false;
             
             try {
-                // Intentar con LanguageTool primero
-                errores = await corregirConLanguageTool(textoEscrito);
+                // Intentar con LanguageTool a través de proxy CORS
+                errores = await corregirConProxy(textoEscrito);
             } catch (error) {
-                console.error('Error LanguageTool:', error);
+                console.error('Error API:', error);
                 // Fallback al corrector local
                 errores = validarTextoCatalanLocal(textoEscrito);
                 usoLocal = true;
@@ -439,31 +414,42 @@
             }, 100);
         }
 
-        async function corregirConLanguageTool(texto) {
-            const url = 'https://api.languagetool.org/api/v2/check';
+        async function corregirConProxy(texto) {
+            // Usar proxy CORS gratuito para evitar problemas con Vercel/LanguageTool
+            const proxyUrls = [
+                'https://corsproxy.io/?https://api.languagetool.org/api/v2/check',
+                'https://api.allorigins.win/raw?url=https://api.languagetool.org/api/v2/check'
+            ];
             
-            const body = new URLSearchParams();
-            body.append('text', texto);
-            body.append('language', 'ca-ES');
-            body.append('enabledOnly', 'false');
+            let lastError = null;
             
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: body.toString(),
-                cache: 'no-store'
-            });
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error ${response.status}: ${errorText}`);
+            for (const proxyUrl of proxyUrls) {
+                try {
+                    const body = new URLSearchParams();
+                    body.append('text', texto);
+                    body.append('language', 'ca-ES');
+                    body.append('enabledOnly', 'false');
+                    
+                    const response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json'
+                        },
+                        body: body.toString()
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.matches || [];
+                    }
+                } catch (e) {
+                    lastError = e;
+                    continue;
+                }
             }
             
-            const data = await response.json();
-            return data.matches || [];
+            throw lastError || new Error('No se pudo conectar con ningún proxy');
         }
 
         function validarTextoCatalanLocal(texto) {
@@ -611,7 +597,7 @@
             let htmlResultado = '';
             
             if (usoLocal) {
-                htmlResultado += '<div class="fallback-notice">ℹ️ Usant corrector local (LanguageTool no disponible)</div>';
+                htmlResultado += '<div class="fallback-notice">ℹ️ Usant corrector local (API no disponible)</div>';
             }
             
             if (numErrores === 0) {
@@ -621,7 +607,7 @@
                 
                 matches.forEach((match, i) => {
                     const palabraErronea = match.palabra || textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = match.sugerencia ? [match.sugerencia] : (match.replacements || []).map(r => r.value).slice(0, 3);
+                    const sugerencias = match.sugerencia ? [match.sugerencia] : [];
                     const sugerenciaPrincipal = sugerencias[0] || '';
                     
                     const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
@@ -671,12 +657,12 @@
             alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
-        // Registrar Service Worker para PWA
+        // Registrar Service Worker para PWA (desactivado temporalmente)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => {
-                        console.log('Service Worker registrat');
+                        console.log('Service Worker registrat (passthrough mode)');
                         reg.update();
                     })
                     .catch(err => console.log('Error en Service Worker:', err));
