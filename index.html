@@ -431,8 +431,9 @@
         }
 
         async function corregirConLanguageTool(texto) {
-            // Endpoint correcto según la documentación oficial de LanguageTool
-            const url = 'https://api.languagetool.org/api/v2/check';
+            // Añadir timestamp para evitar cacheo
+            const timestamp = new Date().getTime();
+            const url = `https://api.languagetool.org/api/v2/check?_=${timestamp}`;
             
             const body = new URLSearchParams();
             body.append('text', texto);
@@ -445,7 +446,8 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
                 },
-                body: body.toString()
+                body: body.toString(),
+                cache: 'no-store' // Importante: no usar cache
             });
             
             if (!response.ok) {
@@ -526,7 +528,11 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registrat'))
+                    .then(reg => {
+                        console.log('Service Worker registrat');
+                        // Forzar actualización
+                        reg.update();
+                    })
                     .catch(err => console.log('Error en Service Worker:', err));
             });
         }
