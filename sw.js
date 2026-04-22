@@ -1,48 +1,14 @@
-const CACHE_NAME = 'dictcat-v5';
-const urlsToCache = [
-  '/index.html',
-  '/manifest.json',
-  '/image.png'
-];
-
+// Service Worker desactivado temporalmente para evitar conflictos con API externa
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name !== CACHE_NAME)
-          .map(name => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
-  );
+  event.waitUntil(self.clients.claim());
 });
 
+// NO interceptar NINGUNA petición - dejar todo pasar
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  
-  // NO interceptar NUNCA peticiones a LanguageTool u otras APIs externas
-  if (url.hostname !== self.location.hostname) {
-    return;
-  }
-  
-  // Solo cachear recursos locales
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request).then(networkResponse => {
-        if (networkResponse && networkResponse.status === 200) {
-          const clone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return networkResponse;
-      });
-    })
-  );
+  // Passthrough completo - no cachear nada
+  return;
 });
