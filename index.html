@@ -390,17 +390,17 @@
             setLoading(true);
             
             document.getElementById('resultContainer').classList.add('show');
-            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
+            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia amb Softcatalà...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
             
             let errores = [];
             let usoLocal = false;
             
             try {
-                // Intentar con LanguageTool a través de proxy CORS
-                errores = await corregirConProxy(textoEscrito);
+                // Intentar con Softcatalà primero
+                errores = await corregirConSoftcatala(textoEscrito);
             } catch (error) {
-                console.error('Error API:', error);
+                console.error('Error Softcatalà:', error);
                 // Fallback al corrector local
                 errores = validarTextoCatalanLocal(textoEscrito);
                 usoLocal = true;
@@ -414,42 +414,29 @@
             }, 100);
         }
 
-        async function corregirConProxy(texto) {
-            // Usar proxy CORS gratuito para evitar problemas con Vercel/LanguageTool
-            const proxyUrls = [
-                'https://corsproxy.io/?https://api.languagetool.org/api/v2/check',
-                'https://api.allorigins.win/raw?url=https://api.languagetool.org/api/v2/check'
-            ];
+        async function corregirConSoftcatala(texto) {
+            const url = 'https://api.softcatala.org/corrector/v1/check';
             
-            let lastError = null;
+            const body = new URLSearchParams();
+            body.append('text', texto);
+            body.append('language', 'ca');
             
-            for (const proxyUrl of proxyUrls) {
-                try {
-                    const body = new URLSearchParams();
-                    body.append('text', texto);
-                    body.append('language', 'ca-ES');
-                    body.append('enabledOnly', 'false');
-                    
-                    const response = await fetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Accept': 'application/json'
-                        },
-                        body: body.toString()
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        return data.matches || [];
-                    }
-                } catch (e) {
-                    lastError = e;
-                    continue;
-                }
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: body.toString()
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${errorText}`);
             }
             
-            throw lastError || new Error('No se pudo conectar con ningún proxy');
+            const data = await response.json();
+            return data.matches || [];
         }
 
         function validarTextoCatalanLocal(texto) {
@@ -597,7 +584,7 @@
             let htmlResultado = '';
             
             if (usoLocal) {
-                htmlResultado += '<div class="fallback-notice">ℹ️ Usant corrector local (API no disponible)</div>';
+                htmlResultado += '<div class="fallback-notice">ℹ️ Usant corrector local (Softcatalà no disponible)</div>';
             }
             
             if (numErrores === 0) {
@@ -607,7 +594,7 @@
                 
                 matches.forEach((match, i) => {
                     const palabraErronea = match.palabra || textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = match.sugerencia ? [match.sugerencia] : [];
+                    const sugerencias = match.sugerencia ? [match.sugerencia] : (match.replacements || []).map(r => r.value).slice(0, 3);
                     const sugerenciaPrincipal = sugerencias[0] || '';
                     
                     const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
