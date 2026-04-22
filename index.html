@@ -397,10 +397,10 @@
             let usoLocal = false;
             
             try {
-                // Intentar con Softcatalà primero
-                errores = await corregirConSoftcatala(textoEscrito);
+                // Llamar a tu API interna de Vercel (sin CORS)
+                errores = await corregirConApiPropia(textoEscrito);
             } catch (error) {
-                console.error('Error Softcatalà:', error);
+                console.error('Error API:', error);
                 // Fallback al corrector local
                 errores = validarTextoCatalanLocal(textoEscrito);
                 usoLocal = true;
@@ -414,25 +414,22 @@
             }, 100);
         }
 
-        async function corregirConSoftcatala(texto) {
-            const url = 'https://api.softcatala.org/corrector/v1/check';
-            
-            const body = new URLSearchParams();
-            body.append('text', texto);
-            body.append('language', 'ca');
+        async function corregirConApiPropia(texto) {
+            // Llamar a tu propia API en Vercel (mismo dominio, sin CORS)
+            const url = '/api/corrector';
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: body.toString()
+                body: JSON.stringify({ text: texto })
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error ${response.status}: ${errorText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Error ${response.status}`);
             }
             
             const data = await response.json();
