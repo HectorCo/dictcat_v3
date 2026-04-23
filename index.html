@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="screen-orientation" content="auto">
+    <meta name="x5-orientation" content="auto">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
     <meta name="theme-color" content="#8B4513">
     <title>DICTCAT - Dictats en Català</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json?v=2">
     <style>
         * {
             margin: 0;
@@ -61,7 +67,6 @@
             line-height: 1.2;
         }
 
-        /* Sección de dictados */
         .dictats-section {
             margin-bottom: 20px;
         }
@@ -125,7 +130,6 @@
             margin-top: 4px;
         }
 
-        /* Reproductor */
         .audio-player {
             background: var(--audio-bg);
             border: 2px solid #fecaca;
@@ -261,7 +265,6 @@
             font-style: italic;
         }
 
-        /* Toolbar */
         .toolbar {
             display: flex;
             gap: 8px;
@@ -676,7 +679,6 @@
     <div class="container">
         <h1>📝 DICTCAT</h1>
 
-        <!-- Selección de dictados -->
         <div class="dictats-section">
             <h2>🎧 Tria un dictat</h2>
             <div class="dictats-grid" id="dictatsGrid">
@@ -703,7 +705,6 @@
             </div>
         </div>
 
-        <!-- Reproductor de audio -->
         <div id="audioPlayer" class="audio-player">
             <div class="audio-info">
                 <span class="audio-icon">🎵</span>
@@ -724,14 +725,12 @@
             <p class="audio-hint">💡 Pausa l'àudio per escriure, reprèn quan estiguis llest</p>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
             <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
             <button class="btn-success" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
             <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
         </div>
 
-        <!-- Área de escritura -->
         <div class="writing-area">
             <label for="textInput" class="writing-label">✍️ Escriu aquí el text amb el S-Pen:</label>
             <div class="textarea-wrapper">
@@ -750,7 +749,6 @@
             <p class="writing-tip">💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació.</p>
         </div>
 
-        <!-- Resultados -->
         <div id="resultContainer" class="result-container">
             <div class="result-title">📊 Resultats de la correcció</div>
             <div class="stats">
@@ -775,7 +773,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="app-footer">
             <div>
                 DICTCAT - Dictats en Català · 
@@ -794,34 +791,27 @@
         let currentDictat = null;
         let progressInterval = null;
 
-        // ========== AUDIO / DICTATS ==========
-
         function seleccionarDictat(card) {
             const src = card.dataset.audio;
             const nombre = card.querySelector('.dictat-name').textContent;
 
-            // Resetear selección anterior
             document.querySelectorAll('.dictat-card').forEach(c => {
                 c.classList.remove('active');
                 c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
             });
 
-            // Si ya estaba seleccionado, solo pausar
             if (currentDictat === src && audio && !audio.paused) {
                 pauseAudio();
                 return;
             }
 
-            // Seleccionar nuevo
             card.classList.add('active');
             card.querySelector('.dictat-status').textContent = 'Reproduint...';
             currentDictat = src;
 
-            // Mostrar reproductor
             document.getElementById('audioPlayer').classList.add('show');
             document.getElementById('audioTitle').textContent = nombre;
 
-            // Crear o recargar audio
             if (audio) {
                 audio.pause();
                 audio.src = '';
@@ -866,7 +856,6 @@
 
         function togglePlayPause() {
             if (!audio) return;
-
             const btn = document.getElementById('playPauseBtn');
             const statusEl = document.querySelector('.dictat-card.active .dictat-status');
 
@@ -935,8 +924,6 @@
             const s = Math.floor(seconds % 60);
             return m + ':' + (s < 10 ? '0' : '') + s;
         }
-
-        // ========== CORRECCIÓ ==========
 
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
@@ -1026,16 +1013,13 @@
             document.getElementById('textInput').value = '';
             textoEscrito = '';
             document.getElementById('resultContainer').classList.remove('show');
-            // No paramos el audio para que pueda seguir escuchando mientras borra
         }
 
         function nuevoIntento() {
             borrarTodo();
-            // Pausar audio si está sonando
             if (audio && !audio.paused) {
                 pauseAudio();
             }
-            // Resetear selección de dictado
             document.querySelectorAll('.dictat-card').forEach(c => {
                 c.classList.remove('active');
                 c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
@@ -1049,10 +1033,9 @@
             alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
-        // PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
+                navigator.serviceWorker.register('sw.js?v=2')
                     .then(reg => { console.log('Service Worker registrat'); reg.update(); })
                     .catch(err => console.log('Error en Service Worker:', err));
             });
