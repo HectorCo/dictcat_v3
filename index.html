@@ -374,7 +374,6 @@
             text-align: center;
         }
 
-        /* Footer / Credits */
         .app-footer {
             margin-top: auto;
             padding-top: 16px;
@@ -405,181 +404,58 @@
             margin-top: 4px;
         }
 
-        /* Tablet Portrait & Mobile optimizations */
         @media (max-width: 768px) {
-            body {
-                padding: 8px;
-            }
-
-            .container {
-                padding: 16px;
-                border-radius: 12px;
-                min-height: calc(100vh - 16px);
-            }
-
-            h1 {
-                margin-bottom: 16px;
-            }
-
-            .toolbar {
-                gap: 6px;
-            }
-
-            button {
-                padding: 10px 16px;
-                font-size: 14px;
-                flex: 1;
-                min-width: 100px;
-            }
-
-            .textarea-wrapper {
-                min-height: 200px;
-            }
-
-            .lined-textarea {
-                min-height: 200px;
-                padding: 12px 12px 12px 48px;
-                font-size: 18px;
-                line-height: 2;
-            }
-
+            body { padding: 8px; }
+            .container { padding: 16px; border-radius: 12px; min-height: calc(100vh - 16px); }
+            h1 { margin-bottom: 16px; }
+            .toolbar { gap: 6px; }
+            button { padding: 10px 16px; font-size: 14px; flex: 1; min-width: 100px; }
+            .textarea-wrapper { min-height: 200px; }
+            .lined-textarea { min-height: 200px; padding: 12px 12px 12px 48px; font-size: 18px; line-height: 2; }
             .lines-background {
                 background-image: 
                     linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 32px, transparent 32px),
-                    repeating-linear-gradient(
-                        transparent,
-                        transparent 47px,
-                        #e8d5c4 47px,
-                        #e8d5c4 48px,
-                        transparent 48px,
-                        transparent 50px
-                    );
+                    repeating-linear-gradient(transparent, transparent 47px, #e8d5c4 47px, #e8d5c4 48px, transparent 48px, transparent 50px);
                 background-size: 100% 100%, 100% 50px;
             }
-
-            .margin-line {
-                left: 32px;
-            }
-
-            .stats {
-                gap: 8px;
-            }
-
-            .stat-card {
-                min-width: 100px;
-                padding: 10px;
-            }
+            .margin-line { left: 32px; }
+            .stats { gap: 8px; }
+            .stat-card { min-width: 100px; padding: 10px; }
         }
 
-        /* Small phones */
         @media (max-width: 380px) {
-            .toolbar button {
-                font-size: 13px;
-                padding: 8px 12px;
-            }
-
-            .lined-textarea {
-                font-size: 16px;
-            }
+            .toolbar button { font-size: 13px; padding: 8px 12px; }
+            .lined-textarea { font-size: 16px; }
         }
 
-        /* Landscape mode on phones - maximize writing area */
         @media (max-height: 500px) and (orientation: landscape) {
-            .container {
-                padding: 12px;
-            }
-
-            h1 {
-                font-size: 1.4em;
-                margin-bottom: 8px;
-            }
-
-            .toolbar {
-                margin-bottom: 8px;
-            }
-
-            button {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-
-            .writing-area {
-                margin: 8px 0;
-            }
-
-            .textarea-wrapper {
-                min-height: 150px;
-            }
-
-            .lined-textarea {
-                min-height: 150px;
-                line-height: 1.8;
-            }
+            .container { padding: 12px; }
+            h1 { font-size: 1.4em; margin-bottom: 8px; }
+            .toolbar { margin-bottom: 8px; }
+            button { padding: 8px 14px; font-size: 13px; }
+            .writing-area { margin: 8px 0; }
+            .textarea-wrapper { min-height: 150px; }
+            .lined-textarea { min-height: 150px; line-height: 1.8; }
         }
 
-        /* Large tablets landscape */
         @media (min-width: 1024px) {
-            .container {
-                padding: 40px;
-            }
-
-            .textarea-wrapper {
-                min-height: 500px;
-            }
-
-            .lined-textarea {
-                min-height: 500px;
-            }
+            .container { padding: 40px; }
+            .textarea-wrapper { min-height: 500px; }
+            .lined-textarea { min-height: 500px; }
         }
 
-        /* Dark mode support */
         @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(135deg, #2d1b1e 0%, #3d1e24 50%, #4a2520 100%);
-            }
-
-            .container {
-                background: #1f1f1f;
-                color: #e5e5e5;
-            }
-
-            h1 {
-                color: #d4a574;
-            }
-
-            .writing-label {
-                color: #d4a574;
-            }
-
-            .lined-textarea {
-                color: #e5e5e5;
-            }
-
-            .text-block {
-                background: #2a2a2a;
-                border-left-color: #d4a574;
-            }
-
-            .text-block h3 {
-                color: #d4a574;
-            }
-
-            .stat-card {
-                background: #2a2a2a;
-            }
-
-            .result-container {
-                background: #2a2a2a;
-            }
-
-            .result-title {
-                color: #e5e5e5;
-            }
-
-            .app-footer {
-                border-top-color: #3a3a3a;
-                color: #999;
-            }
+            body { background: linear-gradient(135deg, #2d1b1e 0%, #3d1e24 50%, #4a2520 100%); }
+            .container { background: #1f1f1f; color: #e5e5e5; }
+            h1 { color: #d4a574; }
+            .writing-label { color: #d4a574; }
+            .lined-textarea { color: #e5e5e5; }
+            .text-block { background: #2a2a2a; border-left-color: #d4a574; }
+            .text-block h3 { color: #d4a574; }
+            .stat-card { background: #2a2a2a; }
+            .result-container { background: #2a2a2a; }
+            .result-title { color: #e5e5e5; }
+            .app-footer { border-top-color: #3a3a3a; color: #999; }
         }
     </style>
 </head>
@@ -594,9 +470,7 @@
         </div>
 
         <div class="writing-area">
-            <label for="textInput" class="writing-label">
-                ✍️ Escriu aquí el text amb el S-Pen:
-            </label>
+            <label for="textInput" class="writing-label">✍️ Escriu aquí el text amb el S-Pen:</label>
             <div class="textarea-wrapper">
                 <div class="lines-background"></div>
                 <div class="margin-line"></div>
@@ -610,14 +484,11 @@
                     spellcheck="false"
                 ></textarea>
             </div>
-            <p class="writing-tip">
-                💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació.
-            </p>
+            <p class="writing-tip">💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació.</p>
         </div>
 
         <div id="resultContainer" class="result-container">
             <div class="result-title">📊 Resultats de la correcció</div>
-            
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number" id="errorCount">0</div>
@@ -628,7 +499,6 @@
                     <div class="stat-label">Encerts</div>
                 </div>
             </div>
-
             <div class="comparison">
                 <div class="text-block">
                     <h3>✏️ El teu text</h3>
@@ -641,7 +511,6 @@
             </div>
         </div>
 
-        <!-- Footer con créditos -->
         <div class="app-footer">
             <div>
                 DICTCAT - Dictats en Català · 
@@ -668,7 +537,6 @@
             }
 
             setLoading(true);
-
             document.getElementById('resultContainer').classList.add('show');
             document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
@@ -680,15 +548,10 @@
                     body: JSON.stringify({ text: textoEscrito })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`API HTTP ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`API HTTP ${response.status}`);
 
                 const result = await response.json();
-
-                if (result.fallback) {
-                    throw new Error(result.error || 'El servei de correcció no està disponible');
-                }
+                if (result.fallback) throw new Error(result.error || 'El servei de correcció no està disponible');
 
                 mostrarResultados(result.matches || [], result.source || 'languagetool');
 
@@ -698,7 +561,6 @@
             }
 
             setLoading(false);
-
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
@@ -712,51 +574,26 @@
             document.getElementById('errorCount').textContent = numErrores;
             document.getElementById('accuracy').textContent = precision + '%';
             
-            let htmlResultado = '';
-            
-            if (source === 'languagetool') {
-                htmlResultado += '<div class="success-notice">✅ Correcció amb LanguageTool</div>';
-            }
+            let html = source === 'languagetool' ? '<div class="success-notice">✅ Correcció amb LanguageTool</div>' : '';
             
             if (numErrores === 0) {
-                htmlResultado += '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
+                html += '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
             } else {
-                htmlResultado += '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
-                
+                html += '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
                 matches.forEach((match, i) => {
-                    const palabraErronea = textoEscrito.substring(match.offset, match.offset + match.length);
+                    const palabra = textoEscrito.substring(match.offset, match.offset + match.length);
                     const sugerencias = (match.replacements || []).map(r => r.value).slice(0, 3);
-                    const sugerenciaPrincipal = sugerencias[0] || '';
-                    
-                    const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
-                    
-                    htmlResultado += `
+                    html += `
                         <div class="error-card">
-                            <div style="margin-bottom: 8px;">
-                                <span class="error-word">${i + 1}. "${palabraErronea}"</span>
-                            </div>
-                            <div class="error-message">
-                                💡 ${match.message}
-                            </div>
-                            ${sugerenciaPrincipal ? `
-                            <div style="margin-bottom: 10px;">
-                                <span class="error-suggestion">✓ Correcció: </span>
-                                <span style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #065f46;">
-                                    ${sugerencias.join(', ')}
-                                </span>
-                            </div>
-                            ` : ''}
-                            <a href="${urlSoftcatala}" target="_blank" class="softcatala-link">
-                                🔍 Consultar a Softcatalà
-                            </a>
-                        </div>
-                    `;
+                            <div style="margin-bottom: 8px;"><span class="error-word">${i + 1}. "${palabra}"</span></div>
+                            <div class="error-message">💡 ${match.message}</div>
+                            ${sugerencias.length ? `<div style="margin-bottom: 10px;"><span class="error-suggestion">✓ Correcció: </span><span style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #065f46;">${sugerencias.join(', ')}</span></div>` : ''}
+                            <a href="https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabra)}" target="_blank" class="softcatala-link">🔍 Consultar a Softcatalà</a>
+                        </div>`;
                 });
-                
-                htmlResultado += '</div>';
+                html += '</div>';
             }
-            
-            document.getElementById('correccionText').innerHTML = htmlResultado;
+            document.getElementById('correccionText').innerHTML = html;
         }
 
         function mostrarError(mensaje) {
@@ -764,16 +601,13 @@
             document.getElementById('accuracy').textContent = '—';
             document.getElementById('correccionText').innerHTML = `
                 <div class="error-notice">
-                    <strong>❌ Error de connexió</strong><br>
-                    ${mensaje}<br><br>
+                    <strong>❌ Error de connexió</strong><br>${mensaje}<br><br>
                     <small>Torna-ho a provar d'aquí uns moments.</small>
-                </div>
-            `;
+                </div>`;
         }
 
         function setLoading(loading) {
-            const buttons = document.querySelectorAll('.toolbar button');
-            buttons.forEach(btn => btn.disabled = loading);
+            document.querySelectorAll('.toolbar button').forEach(btn => btn.disabled = loading);
         }
 
         function borrarTodo() {
@@ -787,14 +621,10 @@
             alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
-        // Registrar Service Worker para PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => {
-                        console.log('Service Worker registrat');
-                        reg.update();
-                    })
+                    .then(reg => { console.log('Service Worker registrat'); reg.update(); })
                     .catch(err => console.log('Error en Service Worker:', err));
             });
         }
