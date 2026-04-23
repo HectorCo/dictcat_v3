@@ -22,6 +22,7 @@
             --bg-gradient-end: #ffa07a;
             --shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
             --radius: 16px;
+            --audio-bg: #fff5f5;
         }
 
         html, body {
@@ -60,6 +61,207 @@
             line-height: 1.2;
         }
 
+        /* Sección de dictados */
+        .dictats-section {
+            margin-bottom: 20px;
+        }
+
+        .dictats-section h2 {
+            color: var(--primary);
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .dictats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .dictat-card {
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe4e9 100%);
+            border: 2px solid #ffb6c1;
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dictat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.25);
+            border-color: #ff69b4;
+        }
+
+        .dictat-card:active {
+            transform: scale(0.97);
+        }
+
+        .dictat-card.active {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-color: #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .dictat-icon {
+            font-size: 2em;
+            margin-bottom: 6px;
+        }
+
+        .dictat-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.95em;
+        }
+
+        .dictat-status {
+            font-size: 0.75em;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* Reproductor */
+        .audio-player {
+            background: var(--audio-bg);
+            border: 2px solid #fecaca;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .audio-player.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .audio-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .audio-info .audio-icon {
+            font-size: 2em;
+        }
+
+        .audio-info .audio-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .audio-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.6em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .audio-btn.play {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .audio-btn.pause {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .audio-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .audio-btn:hover:not(:disabled) {
+            transform: scale(1.08);
+        }
+
+        .audio-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .progress-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .progress-bar-wrapper {
+            position: relative;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #6b7280;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .audio-hint {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        /* Toolbar */
         .toolbar {
             display: flex;
             gap: 8px;
@@ -421,11 +623,15 @@
             .margin-line { left: 32px; }
             .stats { gap: 8px; }
             .stat-card { min-width: 100px; padding: 10px; }
+            .dictats-grid { grid-template-columns: repeat(2, 1fr); }
+            .audio-controls { gap: 8px; }
+            .audio-btn { width: 48px; height: 48px; font-size: 1.4em; }
         }
 
         @media (max-width: 380px) {
             .toolbar button { font-size: 13px; padding: 8px 12px; }
             .lined-textarea { font-size: 16px; }
+            .dictat-name { font-size: 0.85em; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
@@ -436,6 +642,9 @@
             .writing-area { margin: 8px 0; }
             .textarea-wrapper { min-height: 150px; }
             .lined-textarea { min-height: 150px; line-height: 1.8; }
+            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .dictat-card { padding: 8px 4px; }
+            .dictat-icon { font-size: 1.4em; }
         }
 
         @media (min-width: 1024px) {
@@ -456,19 +665,73 @@
             .result-container { background: #2a2a2a; }
             .result-title { color: #e5e5e5; }
             .app-footer { border-top-color: #3a3a3a; color: #999; }
+            .dictat-card { background: linear-gradient(135deg, #3a2a2e 0%, #2d2024 100%); border-color: #5a3a42; }
+            .dictat-card.active { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); border-color: #10b981; }
+            .audio-player { background: #2a2020; border-color: #5a3a3a; }
+            .progress-bar-wrapper { background: #3a3a3a; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📝 DICTCAT</h1>
-        
+
+        <!-- Selección de dictados -->
+        <div class="dictats-section">
+            <h2>🎧 Tria un dictat</h2>
+            <div class="dictats-grid" id="dictatsGrid">
+                <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="seleccionarDictat(this)">
+                    <div class="dictat-icon">🏆</div>
+                    <div class="dictat-name">Campionat</div>
+                    <div class="dictat-status">Toca per escoltar</div>
+                </div>
+                <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="seleccionarDictat(this)">
+                    <div class="dictat-icon">🐱</div>
+                    <div class="dictat-name">El gat</div>
+                    <div class="dictat-status">Toca per escoltar</div>
+                </div>
+                <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="seleccionarDictat(this)">
+                    <div class="dictat-icon">☀️</div>
+                    <div class="dictat-name">Estiu</div>
+                    <div class="dictat-status">Toca per escoltar</div>
+                </div>
+                <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="seleccionarDictat(this)">
+                    <div class="dictat-icon">📅</div>
+                    <div class="dictat-name">Juliols</div>
+                    <div class="dictat-status">Toca per escoltar</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reproductor de audio -->
+        <div id="audioPlayer" class="audio-player">
+            <div class="audio-info">
+                <span class="audio-icon">🎵</span>
+                <span class="audio-title" id="audioTitle">Cap dictat seleccionat</span>
+            </div>
+            <div class="audio-controls">
+                <button class="audio-btn play" id="playPauseBtn" onclick="togglePlayPause()" disabled>▶️</button>
+                <div class="progress-container">
+                    <div class="progress-bar-wrapper" id="progressBarWrapper" onclick="seekAudio(event)">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+            </div>
+            <p class="audio-hint">💡 Pausa l'àudio per escriure, reprèn quan estiguis llest</p>
+        </div>
+
+        <!-- Toolbar -->
         <div class="toolbar">
             <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
             <button class="btn-success" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
             <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
         </div>
 
+        <!-- Área de escritura -->
         <div class="writing-area">
             <label for="textInput" class="writing-label">✍️ Escriu aquí el text amb el S-Pen:</label>
             <div class="textarea-wrapper">
@@ -487,6 +750,7 @@
             <p class="writing-tip">💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació.</p>
         </div>
 
+        <!-- Resultados -->
         <div id="resultContainer" class="result-container">
             <div class="result-title">📊 Resultats de la correcció</div>
             <div class="stats">
@@ -511,6 +775,7 @@
             </div>
         </div>
 
+        <!-- Footer -->
         <div class="app-footer">
             <div>
                 DICTCAT - Dictats en Català · 
@@ -525,6 +790,153 @@
 
     <script>
         let textoEscrito = '';
+        let audio = null;
+        let currentDictat = null;
+        let progressInterval = null;
+
+        // ========== AUDIO / DICTATS ==========
+
+        function seleccionarDictat(card) {
+            const src = card.dataset.audio;
+            const nombre = card.querySelector('.dictat-name').textContent;
+
+            // Resetear selección anterior
+            document.querySelectorAll('.dictat-card').forEach(c => {
+                c.classList.remove('active');
+                c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
+            });
+
+            // Si ya estaba seleccionado, solo pausar
+            if (currentDictat === src && audio && !audio.paused) {
+                pauseAudio();
+                return;
+            }
+
+            // Seleccionar nuevo
+            card.classList.add('active');
+            card.querySelector('.dictat-status').textContent = 'Reproduint...';
+            currentDictat = src;
+
+            // Mostrar reproductor
+            document.getElementById('audioPlayer').classList.add('show');
+            document.getElementById('audioTitle').textContent = nombre;
+
+            // Crear o recargar audio
+            if (audio) {
+                audio.pause();
+                audio.src = '';
+            }
+
+            audio = new Audio(src);
+            audio.preload = 'auto';
+
+            const btn = document.getElementById('playPauseBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳';
+
+            audio.addEventListener('canplaythrough', () => {
+                btn.disabled = false;
+                btn.textContent = '⏸️';
+                btn.classList.remove('play');
+                btn.classList.add('pause');
+                updateDuration();
+                audio.play();
+                startProgress();
+            });
+
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', () => {
+                btn.textContent = '▶️';
+                btn.classList.remove('pause');
+                btn.classList.add('play');
+                card.querySelector('.dictat-status').textContent = 'Finalitzat';
+                stopProgress();
+                document.getElementById('progressBar').style.width = '100%';
+            });
+
+            audio.addEventListener('error', () => {
+                btn.disabled = true;
+                btn.textContent = '❌';
+                card.querySelector('.dictat-status').textContent = 'Error';
+                alert('No s\'ha pogut carregar l\'àudio. Verifica que el fitxer existeix a: ' + src);
+            });
+
+            audio.load();
+        }
+
+        function togglePlayPause() {
+            if (!audio) return;
+
+            const btn = document.getElementById('playPauseBtn');
+            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
+
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = '⏸️';
+                btn.classList.remove('play');
+                btn.classList.add('pause');
+                if (statusEl) statusEl.textContent = 'Reproduint...';
+                startProgress();
+            } else {
+                pauseAudio();
+            }
+        }
+
+        function pauseAudio() {
+            if (!audio) return;
+            audio.pause();
+            const btn = document.getElementById('playPauseBtn');
+            btn.textContent = '▶️';
+            btn.classList.remove('pause');
+            btn.classList.add('play');
+            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
+            if (statusEl) statusEl.textContent = 'Pausat';
+            stopProgress();
+        }
+
+        function startProgress() {
+            stopProgress();
+            progressInterval = setInterval(updateProgress, 100);
+        }
+
+        function stopProgress() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function updateProgress() {
+            if (!audio || !audio.duration) return;
+            const pct = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+        }
+
+        function updateDuration() {
+            if (audio && audio.duration) {
+                document.getElementById('duration').textContent = formatTime(audio.duration);
+            }
+        }
+
+        function seekAudio(event) {
+            if (!audio || !audio.duration) return;
+            const wrapper = document.getElementById('progressBarWrapper');
+            const rect = wrapper.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const pct = Math.max(0, Math.min(1, x / rect.width));
+            audio.currentTime = pct * audio.duration;
+            updateProgress();
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        // ========== CORRECCIÓ ==========
 
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
@@ -614,13 +1026,30 @@
             document.getElementById('textInput').value = '';
             textoEscrito = '';
             document.getElementById('resultContainer').classList.remove('show');
+            // No paramos el audio para que pueda seguir escuchando mientras borra
         }
 
         function nuevoIntento() {
             borrarTodo();
+            // Pausar audio si está sonando
+            if (audio && !audio.paused) {
+                pauseAudio();
+            }
+            // Resetear selección de dictado
+            document.querySelectorAll('.dictat-card').forEach(c => {
+                c.classList.remove('active');
+                c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
+            });
+            document.getElementById('audioPlayer').classList.remove('show');
+            currentDictat = null;
+            if (audio) {
+                audio.pause();
+                audio = null;
+            }
             alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
+        // PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
