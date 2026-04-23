@@ -359,15 +359,218 @@
             margin-top: 8px;
         }
 
-        .lt-credit img {
-            height: 16px;
-            width: auto;
+        /* Rate Limit Monitor */
+        .rate-monitor {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .rate-monitor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .rate-monitor-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rate-monitor-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-ok {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .status-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-blocked {
+            background: #7f1d1d;
+            color: white;
+        }
+
+        .rate-bars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            height: 30px;
+            align-items: flex-end;
+        }
+
+        .rate-bar {
+            flex: 1;
+            background: #4b5563;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            min-width: 8px;
+            position: relative;
+        }
+
+        .rate-bar.used {
+            background: #10b981;
+        }
+
+        .rate-bar.used.warning {
+            background: #f59e0b;
+        }
+
+        .rate-bar.used.danger {
+            background: #ef4444;
+        }
+
+        .rate-bar:hover::after {
+            content: attr(data-time);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            pointer-events: none;
+        }
+
+        .rate-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #d1d5db;
+        }
+
+        .rate-info strong {
+            color: white;
+        }
+
+        .rate-countdown {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .rate-log {
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.8em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .rate-log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .rate-log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #9ca3af;
+        }
+
+        .log-success {
+            color: #10b981;
+        }
+
+        .log-fallback {
+            color: #f59e0b;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .rate-limit-warning {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #92400e;
+            display: none;
+        }
+
+        .rate-limit-warning.show {
+            display: block;
+        }
+
+        .rate-limit-warning strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📝 DICTCAT</h1>
+
+        <!-- Monitor de Rate Limit -->
+        <div class="rate-monitor" id="rateMonitor">
+            <div class="rate-monitor-header">
+                <div class="rate-monitor-title">
+                    📡 Monitor d'API
+                </div>
+                <div class="rate-monitor-status status-ok" id="rateStatus">
+                    <span>●</span> Disponible
+                </div>
+            </div>
+            <div class="rate-bars" id="rateBars"></div>
+            <div class="rate-info">
+                <span><strong id="rateUsed">0</strong> / <strong>20</strong> peticions (per minut)</span>
+                <span>Reset en: <span class="rate-countdown" id="rateCountdown">60s</span></span>
+            </div>
+            <div class="rate-log" id="rateLog">
+                <div style="color: #9ca3af; text-align: center;">Cap petició registrada encara</div>
+            </div>
+        </div>
+
+        <!-- Aviso de límite cercano -->
+        <div class="rate-limit-warning" id="rateWarning">
+            <strong>⚠️ Atenció!</strong>
+            Vas a superar el límit de 20 peticions/minut. Espera una mica o usa el corrector local.
+        </div>
         
         <div class="toolbar">
             <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar tot</button>
@@ -435,6 +638,180 @@
     <script>
         let textoEscrito = '';
 
+        // ─── Rate Limit Monitor ─────────────────────────────────────────────────
+
+        const RATE_LIMIT = 20;
+        const RATE_WINDOW_MS = 60000; // 1 minuto
+
+        class RateLimitMonitor {
+            constructor() {
+                this.requests = []; // Array de timestamps
+                this.logEntries = [];
+                this.init();
+            }
+
+            init() {
+                this.renderBars();
+                this.startCountdown();
+                this.updateDisplay();
+            }
+
+            // Registrar una petición
+            logRequest(status, source) {
+                const now = Date.now();
+                this.cleanOldRequests();
+                
+                this.requests.push({
+                    timestamp: now,
+                    status: status,
+                    source: source
+                });
+
+                // Añadir al log visual
+                this.addLogEntry(now, status, source);
+                this.updateDisplay();
+            }
+
+            // Limpiar peticiones antiguas (> 1 min)
+            cleanOldRequests() {
+                const cutoff = Date.now() - RATE_WINDOW_MS;
+                this.requests = this.requests.filter(r => r.timestamp > cutoff);
+            }
+
+            // Comprobar si se puede hacer petición
+            canMakeRequest() {
+                this.cleanOldRequests();
+                return this.requests.length < RATE_LIMIT;
+            }
+
+            // Peticiones usadas en la ventana actual
+            getUsedCount() {
+                this.cleanOldRequests();
+                return this.requests.length;
+            }
+
+            // Tiempo hasta el reset (cuando la petición más antigua expire)
+            getTimeToReset() {
+                if (this.requests.length === 0) return 0;
+                const oldest = Math.min(...this.requests.map(r => r.timestamp));
+                const remaining = Math.max(0, oldest + RATE_WINDOW_MS - Date.now());
+                return Math.ceil(remaining / 1000);
+            }
+
+            addLogEntry(timestamp, status, source) {
+                const time = new Date(timestamp).toLocaleTimeString('ca-ES', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+                
+                let statusClass = 'log-success';
+                let statusText = 'OK';
+                
+                if (status === 'fallback') {
+                    statusClass = 'log-fallback';
+                    statusText = 'Fallback';
+                } else if (status === 'error') {
+                    statusClass = 'log-error';
+                    statusText = 'Error';
+                } else if (status === 'blocked') {
+                    statusClass = 'log-error';
+                    statusText = 'Bloquejat';
+                }
+
+                this.logEntries.unshift({ time, statusClass, statusText, source });
+                if (this.logEntries.length > 10) this.logEntries.pop();
+                
+                this.renderLog();
+            }
+
+            renderLog() {
+                const container = document.getElementById('rateLog');
+                if (this.logEntries.length === 0) {
+                    container.innerHTML = '<div style="color: #9ca3af; text-align: center;">Cap petició registrada encara</div>';
+                    return;
+                }
+
+                container.innerHTML = this.logEntries.map(entry => `
+                    <div class="rate-log-entry">
+                        <span class="log-time">${entry.time}</span>
+                        <span class="${entry.statusClass}">${entry.statusText} · ${entry.source}</span>
+                    </div>
+                `).join('');
+            }
+
+            renderBars() {
+                const container = document.getElementById('rateBars');
+                container.innerHTML = '';
+                for (let i = 0; i < RATE_LIMIT; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'rate-bar';
+                    bar.id = `rateBar-${i}`;
+                    container.appendChild(bar);
+                }
+            }
+
+            updateDisplay() {
+                const used = this.getUsedCount();
+                const remaining = RATE_LIMIT - used;
+                const pct = used / RATE_LIMIT;
+
+                // Actualizar contador numérico
+                document.getElementById('rateUsed').textContent = used;
+
+                // Actualizar barras visuales
+                for (let i = 0; i < RATE_LIMIT; i++) {
+                    const bar = document.getElementById(`rateBar-${i}`);
+                    bar.className = 'rate-bar';
+                    
+                    if (i < used) {
+                        bar.classList.add('used');
+                        if (pct >= 0.9) bar.classList.add('danger');
+                        else if (pct >= 0.75) bar.classList.add('warning');
+                    }
+                }
+
+                // Actualizar estado
+                const statusEl = document.getElementById('rateStatus');
+                const warningEl = document.getElementById('rateWarning');
+                
+                if (used >= RATE_LIMIT) {
+                    statusEl.className = 'rate-monitor-status status-blocked';
+                    statusEl.innerHTML = '<span>●</span> Bloquejat';
+                    warningEl.querySelector('strong').textContent = '⛔ Límit exhaurit!';
+                    warningEl.querySelector('strong').nextSibling.textContent = ' Has arribat a 20 peticions/minut. Espera que passi el temps de reset.';
+                    warningEl.classList.add('show');
+                } else if (pct >= 0.75) {
+                    statusEl.className = 'rate-monitor-status status-danger';
+                    statusEl.innerHTML = '<span>●</span> Crític';
+                    warningEl.classList.add('show');
+                } else if (pct >= 0.5) {
+                    statusEl.className = 'rate-monitor-status status-warning';
+                    statusEl.innerHTML = '<span>●</span> Atenció';
+                    warningEl.classList.remove('show');
+                } else {
+                    statusEl.className = 'rate-monitor-status status-ok';
+                    statusEl.innerHTML = '<span>●</span> Disponible';
+                    warningEl.classList.remove('show');
+                }
+            }
+
+            startCountdown() {
+                setInterval(() => {
+                    const seconds = this.getTimeToReset();
+                    document.getElementById('rateCountdown').textContent = seconds > 0 ? `${seconds}s` : '60s';
+                    
+                    // Actualizar barras si ha pasado el tiempo
+                    this.cleanOldRequests();
+                    this.updateDisplay();
+                }, 1000);
+            }
+        }
+
+        const rateMonitor = new RateLimitMonitor();
+
+        // ─── Funciones principales ──────────────────────────────────────────────
+
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
             textoEscrito = textInput.value.trim();
@@ -442,6 +819,15 @@
             if (!textoEscrito) {
                 alert('❌ Si us plau, escriu el text abans de corregir.');
                 textInput.focus();
+                return;
+            }
+
+            // Comprobar rate limit antes de hacer la petición
+            if (!rateMonitor.canMakeRequest()) {
+                rateMonitor.logRequest('blocked', 'local');
+                alert('⛔ Has arribat al límit de 20 peticions per minut.\n\nEspera una mica o usa el corrector local (es farà servir automàticament).');
+                // Forzar corrector local
+                procesarCorreccionLocal();
                 return;
             }
 
@@ -455,6 +841,9 @@
             let source = 'local';
 
             try {
+                // Registrar intención de petición
+                rateMonitor.logRequest('pending', 'API');
+
                 // Cridar la funció serverless de Vercel — evita problemes de CORS
                 const response = await fetch('/api/corrector', {
                     method: 'POST',
@@ -471,14 +860,17 @@
                 if (result.fallback) {
                     // La serverless function va fallar, usem corrector local
                     console.warn('API fallback actiu:', result.error);
+                    rateMonitor.logRequest('fallback', 'local');
                     throw new Error(result.error || 'Fallback');
                 }
 
                 errores = result.matches || [];
                 source = result.source || 'api';
+                rateMonitor.logRequest('success', source);
 
             } catch (error) {
                 console.error('Error API:', error.message);
+                rateMonitor.logRequest('fallback', 'local');
                 // Últim recurs: corrector local
                 errores = validarTextoCatalanLocal(textoEscrito);
                 source = 'local';
@@ -490,6 +882,22 @@
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
+        }
+
+        function procesarCorreccionLocal() {
+            // Versión forzada del corrector local cuando se bloquea por rate limit
+            setLoading(true);
+            document.getElementById('resultContainer').classList.add('show');
+            document.getElementById('correccionText').innerHTML = '<div class="loading">Usant corrector local...</div>';
+            document.getElementById('escritoText').textContent = textoEscrito;
+
+            const errores = validarTextoCatalanLocal(textoEscrito);
+            
+            setTimeout(() => {
+                mostrarResultados(errores, 'local');
+                setLoading(false);
+                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
         }
 
         function validarTextoCatalanLocal(texto) {
