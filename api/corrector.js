@@ -1,5 +1,5 @@
-// API Route de Vercel - Proxy per a múltiples correctors
-// Versió corregida: timeout real amb AbortController, APIs en paral·lel
+// API Route de Vercel - Proxy per a LanguageTool
+// Versió corregida: sense enabledOnly, amb logs detallats, timeout ampliat
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,8 +16,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Assegurar que el body està parsed
-  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  // Parsejar el body
+  let body;
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  } catch (e) {
+    res.status(400).json({ error: 'Body JSON invàlid' });
+    return;
+  }
+
   const text = body?.text;
 
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
@@ -28,12 +35,7 @@ export default async function handler(req, res) {
   console.log('→ Rebuda petició de correcció, longitud text:', text.length);
 
   try {
-    // Llançar les dues APIs en paral·lel — guanya la primera que respongui
-    const result = await Promise.any([
-      trySoftcatala(text),
-      tryLanguageTool(text),
-    ]);
-
+    const result = await tryLanguageTool(text);
     console.log('✅ Correcció obtinguda de:', result.source);
 
     res.status(200).json({
@@ -42,58 +44,14 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    // Promise.any llança AggregateError si TOTES fallen
-    console.error('❌ Totes les APIs han fallat:');
-    if (error.errors) {
-      error.errors.forEach((e, i) => console.error(`  API ${i + 1}:`, e.message));
-    } else {
-      console.error(error.message);
-    }
+    console.error('❌ LanguageTool ha fallat:', error.message);
 
     // Retornem 200 amb fallback perquè el client pugui usar el corrector local
     res.status(200).json({
       matches: [],
-      error: 'No s\'ha pogut connectar amb cap corrector extern',
+      error: 'No s\'ha pogut connectar amb LanguageTool: ' + error.message,
       fallback: true,
     });
-  }
-}
-
-// ─── Softcatalà ───────────────────────────────────────────────────────────────
-
-async function trySoftcatala(text) {
-  console.log('→ Intentant Softcatalà...');
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
-
-  try {
-    const response = await fetch('https://api.softcatala.org/corrector/v1/check', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'User-Agent': 'DictCat/1.0',
-      },
-      body: new URLSearchParams({ text, language: 'ca' }).toString(),
-      signal: controller.signal,
-    });
-
-    clearTimeout(timer);
-
-    if (!response.ok) {
-      throw new Error(`Softcatalà HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Softcatalà OK, errors trobats:', data?.matches?.length ?? 0);
-
-    return { matches: normalitzarSoftcatala(data), source: 'softcatala' };
-
-  } catch (e) {
-    clearTimeout(timer);
-    console.log('✗ Softcatalà falló:', e.message);
-    throw e; // Relançar perquè Promise.any ho gestioni
   }
 }
 
@@ -103,28 +61,36 @@ async function tryLanguageTool(text) {
   console.log('→ Intentant LanguageTool...');
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
+  const timer = setTimeout(() => controller.abort(), 15000); // 15 segons
 
   try {
-    const response = await fetch('https://api.languagetool.org/api/v2/check', {
+    const body = new URLSearchParams({
+      text: text,
+      language: 'ca-ES'
+      // SIN enabledOnly - aquest paràmetre no existeix a l'API pública
+    }).toString();
+
+    console.log('→ Body enviat:', body);
+
+    const response = await fetch('https://api.languagetool.org/v2/check', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'User-Agent': 'DictCat/1.0',
+        'Accept': 'application/json'
       },
-      body: new URLSearchParams({
-        text,
-        language: 'ca-ES',
-        enabledOnly: 'false',
-      }).toString(),
+      body: body,
       signal: controller.signal,
     });
 
     clearTimeout(timer);
 
+    console.log('→ Status:', response.status);
+    console.log('→ StatusText:', response.statusText);
+
     if (!response.ok) {
-      throw new Error(`LanguageTool HTTP ${response.status}`);
+      const errorText = await response.text();
+      console.log('→ Error body:', errorText.substring(0, 500));
+      throw new Error(`LanguageTool HTTP ${response.status}: ${errorText.substring(0, 200)}`);
     }
 
     const data = await response.json();
@@ -135,22 +101,6 @@ async function tryLanguageTool(text) {
   } catch (e) {
     clearTimeout(timer);
     console.log('✗ LanguageTool falló:', e.message);
-    throw e; // Relançar perquè Promise.any ho gestioni
+    throw e;
   }
-}
-
-// ─── Normalitzar format Softcatalà → format LanguageTool ─────────────────────
-// Softcatalà retorna un format diferent; l'homogeneïtzem perquè el client
-// no hagi de gestionar dos formats diferents.
-
-function normalitzarSoftcatala(data) {
-  if (!data || !Array.isArray(data.errors)) return [];
-
-  return data.errors.map(err => ({
-    message: err.context || err.description || 'Error ortogràfic',
-    offset: err.start ?? 0,
-    length: (err.end ?? 0) - (err.start ?? 0),
-    replacements: (err.suggestions || []).map(s => ({ value: s })),
-    rule: { id: 'SOFTCATALA', description: 'Softcatalà' },
-  }));
 }
