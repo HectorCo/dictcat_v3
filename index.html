@@ -84,42 +84,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 16px;
+            margin-bottom: 20px;
             position: relative;
             z-index: 1;
         }
 
         .header-logo-img {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
+            width: 84px;
+            height: 84px;
+            border-radius: 20px;
             object-fit: cover;
-            box-shadow: 0 3px 10px rgba(139, 69, 19, 0.2);
-            border: 2px solid rgba(139, 69, 19, 0.1);
+            box-shadow: 0 4px 14px rgba(139, 69, 19, 0.25);
+            border: 3px solid rgba(139, 69, 19, 0.15);
         }
 
         h1 {
             color: var(--primary);
             text-align: center;
-            font-size: clamp(1.6em, 5vw, 2.2em);
+            font-size: clamp(1.8em, 5vw, 2.4em);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             line-height: 1.2;
             position: relative;
             z-index: 1;
-        }
-
-        /* Logo watermark en esquina */
-        .logo-watermark {
-            position: fixed;
-            bottom: 12px;
-            left: 12px;
-            width: 40px;
-            height: 40px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 100;
-            border-radius: 8px;
         }
 
         .dictats-section {
@@ -696,8 +683,8 @@
             .dictats-grid { grid-template-columns: repeat(2, 1fr); }
             .audio-controls { gap: 8px; }
             .audio-btn { width: 48px; height: 48px; font-size: 1.4em; }
-            .header-logo-img { width: 48px; height: 48px; }
-            .logo-watermark { width: 32px; height: 32px; }
+            .header-logo-img { width: 72px; height: 72px; border-radius: 16px; }
+            .header-logo { gap: 12px; }
             .logo-bg { width: 80%; opacity: 0.03; }
         }
 
@@ -705,6 +692,7 @@
             .toolbar button { font-size: 13px; padding: 8px 12px; }
             .lined-textarea { font-size: 16px; }
             .dictat-name { font-size: 0.85em; }
+            .header-logo-img { width: 64px; height: 64px; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
@@ -718,13 +706,14 @@
             .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
             .dictat-card { padding: 8px 4px; }
             .dictat-icon { font-size: 1.4em; }
-            .header-logo-img { width: 40px; height: 40px; }
+            .header-logo-img { width: 56px; height: 56px; border-radius: 14px; }
         }
 
         @media (min-width: 1024px) {
             .container { padding: 40px; }
             .textarea-wrapper { min-height: 500px; }
             .lined-textarea { min-height: 500px; }
+            .header-logo-img { width: 96px; height: 96px; border-radius: 22px; }
         }
 
         @media (prefers-color-scheme: dark) {
@@ -747,9 +736,6 @@
     </style>
 </head>
 <body>
-    <!-- Watermark fijo en esquina inferior izquierda -->
-    <img src="image.png" alt="" class="logo-watermark" aria-hidden="true">
-
     <div class="container">
         <!-- Logo de fondo transparente centrado -->
         <div class="logo-bg" aria-hidden="true">
