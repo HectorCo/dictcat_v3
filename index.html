@@ -2,7 +2,7 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#8B4513">
     <title>DICTCAT - Dictats en Català</title>
     <link rel="manifest" href="manifest.json">
@@ -11,51 +11,78 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --primary-light: #A0522D;
+            --bg-gradient-start: #ffc0cb;
+            --bg-gradient-mid: #ffb6c1;
+            --bg-gradient-end: #ffa07a;
+            --shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
+            --radius: 16px;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #ffa07a 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
             overflow-y: auto;
             touch-action: pan-y;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            min-height: calc(100vh - 24px);
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
-            color: #8B4513;
+            color: var(--primary);
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-size: clamp(1.8em, 5vw, 2.5em);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.2;
         }
 
         .toolbar {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         button {
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 12px 20px;
+            font-size: 15px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+            white-space: nowrap;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         button:hover {
@@ -64,11 +91,11 @@
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
 
         button:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
@@ -101,11 +128,12 @@
         }
 
         .result-container {
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 16px;
             background: #f3f4f6;
-            border-radius: 15px;
+            border-radius: var(--radius);
             display: none;
+            flex-shrink: 0;
         }
 
         .result-container.show {
@@ -113,92 +141,104 @@
         }
 
         .result-title {
-            font-size: 1.5em;
+            font-size: clamp(1.2em, 4vw, 1.5em);
             color: #1f2937;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: 700;
         }
 
         .comparison {
             display: grid;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 16px;
+            margin-top: 16px;
         }
 
         .text-block {
-            padding: 15px;
+            padding: 14px;
             background: white;
-            border-radius: 10px;
-            border-left: 4px solid #8B4513;
-            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+            word-break: break-word;
         }
 
         .text-block h3 {
-            color: #8B4513;
-            margin-bottom: 10px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.1em;
         }
 
         .text-content {
-            font-size: 18px;
-            line-height: 1.8;
+            font-size: clamp(16px, 3.5vw, 18px);
+            line-height: 1.7;
         }
 
         .stats {
             display: flex;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 16px;
             flex-wrap: wrap;
         }
 
         .stat-card {
             flex: 1;
-            min-width: 150px;
-            padding: 15px;
+            min-width: 120px;
+            padding: 12px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             text-align: center;
+            box-shadow: var(--shadow);
         }
 
         .stat-number {
-            font-size: 2em;
+            font-size: clamp(1.6em, 5vw, 2em);
             font-weight: bold;
-            color: #8B4513;
+            color: var(--primary);
         }
 
         .stat-label {
             color: #6b7280;
-            margin-top: 5px;
+            margin-top: 4px;
+            font-size: 0.9em;
         }
 
         .writing-area {
-            margin: 30px 0;
+            margin: 20px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
         .writing-label {
             display: block;
-            font-size: 1.3em;
-            color: #8B4513;
-            margin-bottom: 15px;
+            font-size: clamp(1.1em, 3.5vw, 1.3em);
+            color: var(--primary);
+            margin-bottom: 12px;
             font-weight: 700;
             text-align: center;
+            line-height: 1.3;
         }
 
         .textarea-wrapper {
             position: relative;
-            border: 4px solid #8B4513;
-            border-radius: 15px;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
             overflow: hidden;
             background: white;
-            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-height: 250px;
         }
 
         .lined-textarea {
             width: 100%;
-            min-height: 400px;
-            padding: 20px 20px 20px 60px;
-            font-size: 22px;
+            height: 100%;
+            min-height: 250px;
+            padding: 16px 16px 16px 56px;
+            font-size: clamp(18px, 4vw, 22px);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 2.5;
+            line-height: 2.2;
             border: none;
             outline: none;
             resize: vertical;
@@ -217,21 +257,21 @@
             pointer-events: none;
             z-index: 1;
             background-image: 
-                linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 40px, transparent 40px),
+                linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 36px, transparent 36px),
                 repeating-linear-gradient(
                     transparent,
-                    transparent 59px,
-                    #e8d5c4 59px,
-                    #e8d5c4 60px,
-                    transparent 60px,
-                    transparent 62px
+                    transparent 53px,
+                    #e8d5c4 53px,
+                    #e8d5c4 54px,
+                    transparent 54px,
+                    transparent 56px
                 );
-            background-size: 100% 100%, 100% 62px;
+            background-size: 100% 100%, 100% 56px;
         }
 
         .margin-line {
             position: absolute;
-            left: 40px;
+            left: 36px;
             top: 0;
             bottom: 0;
             width: 1px;
@@ -243,14 +283,15 @@
         .writing-tip {
             text-align: center;
             color: #6b7280;
-            margin-top: 10px;
-            font-size: 0.9em;
+            margin-top: 8px;
+            font-size: 0.85em;
+            line-height: 1.4;
         }
 
         .loading {
             text-align: center;
             padding: 20px;
-            color: #8B4513;
+            color: var(--primary);
         }
 
         .loading::after {
@@ -258,7 +299,7 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #8B4513;
+            border: 3px solid var(--primary);
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 1s linear infinite;
@@ -272,22 +313,25 @@
 
         .error-card {
             background: white;
-            padding: 15px;
+            padding: 14px;
             border-radius: 10px;
             border-left: 4px solid #ef4444;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            word-break: break-word;
         }
 
         .error-word {
             font-weight: bold;
             color: #ef4444;
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
 
         .error-message {
             color: #374151;
-            margin: 8px 0;
+            margin: 6px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
         }
 
         .error-suggestion {
@@ -297,24 +341,25 @@
 
         .softcatala-link {
             display: inline-block;
-            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-weight: 600;
-            margin-top: 5px;
+            margin-top: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 0.9em;
         }
 
-        .fallback-notice {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
+        .error-notice {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
             border-radius: 8px;
-            padding: 10px;
-            color: #92400e;
+            padding: 12px;
+            color: #991b1b;
             font-size: 0.9em;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -325,22 +370,23 @@
             padding: 10px;
             color: #065f46;
             font-size: 0.9em;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
         /* Footer / Credits */
         .app-footer {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: auto;
+            padding-top: 16px;
             border-top: 1px solid #e5e7eb;
             text-align: center;
             color: #6b7280;
-            font-size: 0.85em;
+            font-size: 0.8em;
+            line-height: 1.6;
         }
 
         .app-footer a {
-            color: #8B4513;
+            color: var(--primary);
             text-decoration: none;
             font-weight: 600;
         }
@@ -354,107 +400,186 @@
             align-items: center;
             gap: 6px;
             background: #f3f4f6;
-            padding: 6px 14px;
-            border-radius: 20px;
-            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 16px;
+            margin-top: 4px;
         }
 
-        .lt-credit img {
-            height: 16px;
-            width: auto;
+        /* Tablet Portrait & Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 16px;
+                border-radius: 12px;
+                min-height: calc(100vh - 16px);
+            }
+
+            h1 {
+                margin-bottom: 16px;
+            }
+
+            .toolbar {
+                gap: 6px;
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 14px;
+                flex: 1;
+                min-width: 100px;
+            }
+
+            .textarea-wrapper {
+                min-height: 200px;
+            }
+
+            .lined-textarea {
+                min-height: 200px;
+                padding: 12px 12px 12px 48px;
+                font-size: 18px;
+                line-height: 2;
+            }
+
+            .lines-background {
+                background-image: 
+                    linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 32px, transparent 32px),
+                    repeating-linear-gradient(
+                        transparent,
+                        transparent 47px,
+                        #e8d5c4 47px,
+                        #e8d5c4 48px,
+                        transparent 48px,
+                        transparent 50px
+                    );
+                background-size: 100% 100%, 100% 50px;
+            }
+
+            .margin-line {
+                left: 32px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat-card {
+                min-width: 100px;
+                padding: 10px;
+            }
         }
 
-        /* Rate limit monitor */
-        .rate-limit-monitor {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            border: 2px solid #8B4513;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000;
-            max-width: 320px;
-            font-size: 0.85em;
+        /* Small phones */
+        @media (max-width: 380px) {
+            .toolbar button {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            .lined-textarea {
+                font-size: 16px;
+            }
         }
 
-        .rate-limit-monitor.hidden {
-            display: none;
+        /* Landscape mode on phones - maximize writing area */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+                margin-bottom: 8px;
+            }
+
+            .toolbar {
+                margin-bottom: 8px;
+            }
+
+            button {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .writing-area {
+                margin: 8px 0;
+            }
+
+            .textarea-wrapper {
+                min-height: 150px;
+            }
+
+            .lined-textarea {
+                min-height: 150px;
+                line-height: 1.8;
+            }
         }
 
-        .rate-limit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e5e7eb;
+        /* Large tablets landscape */
+        @media (min-width: 1024px) {
+            .container {
+                padding: 40px;
+            }
+
+            .textarea-wrapper {
+                min-height: 500px;
+            }
+
+            .lined-textarea {
+                min-height: 500px;
+            }
         }
 
-        .rate-limit-header h4 {
-            color: #8B4513;
-            margin: 0;
-            font-size: 1em;
-        }
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2d1b1e 0%, #3d1e24 50%, #4a2520 100%);
+            }
 
-        .rate-limit-close {
-            background: none;
-            border: none;
-            font-size: 1.2em;
-            cursor: pointer;
-            color: #6b7280;
-        }
+            .container {
+                background: #1f1f1f;
+                color: #e5e5e5;
+            }
 
-        .rate-limit-close:hover {
-            color: #ef4444;
-        }
+            h1 {
+                color: #d4a574;
+            }
 
-        .rate-limit-body {
-            max-height: 200px;
-            overflow-y: auto;
-        }
+            .writing-label {
+                color: #d4a574;
+            }
 
-        .rate-limit-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-            font-size: 0.8em;
-        }
+            .lined-textarea {
+                color: #e5e5e5;
+            }
 
-        .rate-limit-status .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
+            .text-block {
+                background: #2a2a2a;
+                border-left-color: #d4a574;
+            }
 
-        .status-dot.ok {
-            background: #10b981;
-        }
+            .text-block h3 {
+                color: #d4a574;
+            }
 
-        .status-dot.warning {
-            background: #f59e0b;
-        }
+            .stat-card {
+                background: #2a2a2a;
+            }
 
-        .status-dot.danger {
-            background: #ef4444;
-        }
+            .result-container {
+                background: #2a2a2a;
+            }
 
-        .rate-limit-count {
-            font-weight: bold;
-            color: #8B4513;
-        }
+            .result-title {
+                color: #e5e5e5;
+            }
 
-        .rate-limit-reset {
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .rate-limit-reset button {
-            font-size: 0.8em;
-            padding: 4px 10px;
+            .app-footer {
+                border-top-color: #3a3a3a;
+                color: #999;
+            }
         }
     </style>
 </head>
@@ -463,14 +588,14 @@
         <h1>📝 DICTCAT</h1>
         
         <div class="toolbar">
-            <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar tot</button>
+            <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
             <button class="btn-success" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
-            <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou intent</button>
+            <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
         </div>
 
         <div class="writing-area">
             <label for="textInput" class="writing-label">
-                ✍️ Escriu aquí el text amb el S-Pen (amb reconeixement automàtic):
+                ✍️ Escriu aquí el text amb el S-Pen:
             </label>
             <div class="textarea-wrapper">
                 <div class="lines-background"></div>
@@ -478,11 +603,15 @@
                 <textarea 
                     id="textInput" 
                     class="lined-textarea"
-                    placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita i la convertirà a text digital... ✨"
+                    placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita..."
+                    inputmode="text"
+                    autocomplete="off"
+                    autocorrect="off"
+                    spellcheck="false"
                 ></textarea>
             </div>
             <p class="writing-tip">
-                💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació del text.
+                💡 Escriu directament aquí. Les línies t'ajudaran a mantenir l'alineació.
             </p>
         </div>
 
@@ -512,23 +641,6 @@
             </div>
         </div>
 
-        <!-- Rate Limit Monitor -->
-        <div id="rateLimitMonitor" class="rate-limit-monitor hidden">
-            <div class="rate-limit-header">
-                <h4>📡 Monitor de peticions</h4>
-                <button class="rate-limit-close" onclick="toggleRateLimitMonitor()">✕</button>
-            </div>
-            <div id="rateLimitBody" class="rate-limit-body">
-                <div class="rate-limit-status">
-                    <span class="status-dot ok"></span>
-                    <span>En línia — 0 peticions/min</span>
-                </div>
-            </div>
-            <div class="rate-limit-reset">
-                <button onclick="resetRateLimitCounter()">🔄 Reiniciar</button>
-            </div>
-        </div>
-
         <!-- Footer con créditos -->
         <div class="app-footer">
             <div>
@@ -544,11 +656,6 @@
 
     <script>
         let textoEscrito = '';
-        
-        // Rate Limit Monitor State
-        let requestLog = [];
-        const MAX_REQUESTS_PER_MINUTE = 20;
-        const MONITOR_WINDOW_MS = 60000; // 60 segundos
 
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
@@ -566,11 +673,7 @@
             document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
             document.getElementById('escritoText').textContent = textoEscrito;
 
-            let errores = [];
-            let source = 'local';
-
             try {
-                // Cridar la funció serverless de Vercel — evita problemes de CORS
                 const response = await fetch('/api/corrector', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -584,303 +687,21 @@
                 const result = await response.json();
 
                 if (result.fallback) {
-                    // La serverless function va fallar, usem corrector local
-                    console.warn('API fallback actiu:', result.error);
-                    throw new Error(result.error || 'Fallback');
+                    throw new Error(result.error || 'El servei de correcció no està disponible');
                 }
 
-                errores = result.matches || [];
-                source = result.source || 'api';
+                mostrarResultados(result.matches || [], result.source || 'languagetool');
 
             } catch (error) {
                 console.error('Error API:', error.message);
-                // Últim recurs: corrector local
-                errores = validarTextoCatalanLocal(textoEscrito);
-                source = 'local';
+                mostrarError(error.message);
             }
 
-            mostrarResultados(errores, source);
             setLoading(false);
-            updateRateLimitMonitor();
 
             setTimeout(() => {
                 document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
-        }
-
-        function validarTextoCatalanLocal(texto) {
-            const errores = [];
-            const palabras = texto.toLowerCase().split(/[\s.,;:!?¿¡()]+/).filter(p => p.length > 0);
-            
-            const erroresComunes = {
-                // Castellanismos básicos
-                'yo': { correcta: 'jo', mensaje: 'Castellanisme: "yo" → "jo"' },
-                'me': { correcta: 'em', mensaje: 'Castellanisme: "me" → "em"' },
-                'mi': { correcta: 'el meu', mensaje: 'Castellanisme: "mi" → "el meu"' },
-                'su': { correcta: 'el seu', mensaje: 'Castellanisme: "su" → "el seu"' },
-                'tú': { correcta: 'tu', mensaje: 'Castellanisme: "tú" → "tu"' },
-                'él': { correcta: 'ell', mensaje: 'Castellanisme: "él" → "ell"' },
-                
-                // Sustantivos comunes
-                'cielo': { correcta: 'cel', mensaje: 'Castellanisme: "cielo" → "cel"' },
-                'azul': { correcta: 'blau', mensaje: 'Castellanisme: "azul" → "blau"' },
-                'perro': { correcta: 'gos', mensaje: 'Castellanisme: "perro" → "gos"' },
-                'perra': { correcta: 'gossa', mensaje: 'Castellanisme: "perra" → "gossa"' },
-                'gato': { correcta: 'gat', mensaje: 'Castellanisme: "gato" → "gat"' },
-                'libro': { correcta: 'llibre', mensaje: 'Castellanisme: "libro" → "llibre"' },
-                'libros': { correcta: 'llibres', mensaje: 'Castellanisme: "libros" → "llibres"' },
-                'mesa': { correcta: 'taula', mensaje: 'Castellanisme: "mesa" → "taula"' },
-                'silla': { correcta: 'cadira', mensaje: 'Castellanisme: "silla" → "cadira"' },
-                'puerta': { correcta: 'porta', mensaje: 'Castellanisme: "puerta" → "porta"' },
-                'ventana': { correcta: 'finestra', mensaje: 'Castellanisme: "ventana" → "finestra"' },
-                'coche': { correcta: 'cotxe', mensaje: 'Castellanisme: "coche" → "cotxe"' },
-                'coches': { correcta: 'cotxes', mensaje: 'Castellanisme: "coches" → "cotxes"' },
-                'cama': { correcta: 'llit', mensaje: 'Castellanisme: "cama" → "llit"' },
-                'agua': { correcta: 'aigua', mensaje: 'Castellanisme: "agua" → "aigua"' },
-                'fuego': { correcta: 'foc', mensaje: 'Castellanisme: "fuego" → "foc"' },
-                'tierra': { correcta: 'terra', mensaje: 'Castellanisme: "tierra" → "terra"' },
-                'luna': { correcta: 'lluna', mensaje: 'Castellanisme: "luna" → "lluna"' },
-                'árbol': { correcta: 'arbre', mensaje: 'Castellanisme: "árbol" → "arbre"' },
-                'flores': { correcta: 'flors', mensaje: 'Castellanisme: "flores" → "flors"' },
-                'árboles': { correcta: 'arbres', mensaje: 'Castellanisme: "árboles" → "arbres"' },
-                'ciudad': { correcta: 'ciutat', mensaje: 'Castellanisme: "ciudad" → "ciutat"' },
-                'pueblo': { correcta: 'poble', mensaje: 'Castellanisme: "pueblo" → "poble"' },
-                'calle': { correcta: 'carrer', mensaje: 'Castellanisme: "calle" → "carrer"' },
-                'plaza': { correcta: 'plaça', mensaje: 'Castellanisme: "plaza" → "plaça"' },
-                'escuela': { correcta: 'escola', mensaje: 'Castellanisme: "escuela" → "escola"' },
-                'clase': { correcta: 'classe', mensaje: 'Castellanisme: "clase" → "classe"' },
-                'maestro': { correcta: 'mestre', mensaje: 'Castellanisme: "maestro" → "mestre"' },
-                'maestra': { correcta: 'mestra', mensaje: 'Castellanisme: "maestra" → "mestra"' },
-                'alumno': { correcta: 'alumne', mensaje: 'Castellanisme: "alumno" → "alumne"' },
-                'hijo': { correcta: 'fill', mensaje: 'Castellanisme: "hijo" → "fill"' },
-                'hija': { correcta: 'filla', mensaje: 'Castellanisme: "hija" → "filla"' },
-                'padre': { correcta: 'pare', mensaje: 'Castellanisme: "padre" → "pare"' },
-                'madre': { correcta: 'mare', mensaje: 'Castellanisme: "madre" → "mare"' },
-                'hermano': { correcta: 'germà', mensaje: 'Castellanisme: "hermano" → "germà"' },
-                'hermana': { correcta: 'germana', mensaje: 'Castellanisme: "hermana" → "germana"' },
-                'amigo': { correcta: 'amic', mensaje: 'Castellanisme: "amigo" → "amic"' },
-                'amiga': { correcta: 'amiga', mensaje: 'Castellanisme: "amiga" → "amiga"' },
-                'amigos': { correcta: 'amics', mensaje: 'Castellanisme: "amigos" → "amics"' },
-                'amigas': { correcta: 'amigues', mensaje: 'Castellanisme: "amigas" → "amigues"' },
-                
-                // Verbos comunes
-                'porque': { correcta: 'perquè', mensaje: 'Castellanisme' },
-                'tambien': { correcta: 'també', mensaje: 'Castellanisme' },
-                'también': { correcta: 'també', mensaje: 'Castellanisme' },
-                'pero': { correcta: 'però', mensaje: 'Castellanisme' },
-                'muy': { correcta: 'molt', mensaje: 'Castellanisme' },
-                'bueno': { correcta: 'bo', mensaje: 'Castellanisme' },
-                'buena': { correcta: 'bona', mensaje: 'Castellanisme' },
-                'buenos': { correcta: 'bons', mensaje: 'Castellanisme' },
-                'buenas': { correcta: 'bones', mensaje: 'Castellanisme' },
-                'cuando': { correcta: 'quan', mensaje: 'Castellanisme' },
-                'siempre': { correcta: 'sempre', mensaje: 'Castellanisme' },
-                'nunca': { correcta: 'mai', mensaje: 'Castellanisme' },
-                'hacer': { correcta: 'fer', mensaje: 'Castellanisme' },
-                'hago': { correcta: 'faig', mensaje: 'Castellanisme: "hago" → "faig"' },
-                'haces': { correcta: 'fas', mensaje: 'Castellanisme: "haces" → "fas"' },
-                'hace': { correcta: 'fa', mensaje: 'Castellanisme: "hace" → "fa"' },
-                'hacemos': { correcta: 'fem', mensaje: 'Castellanisme: "hacemos" → "fem"' },
-                'hacéis': { correcta: 'feu', mensaje: 'Castellanisme: "hacéis" → "feu"' },
-                'hacen': { correcta: 'fan', mensaje: 'Castellanisme: "hacen" → "fan"' },
-                'tener': { correcta: 'tenir', mensaje: 'Castellanisme' },
-                'tengo': { correcta: 'tinc', mensaje: 'Castellanisme: "tengo" → "tinc"' },
-                'tienes': { correcta: 'tens', mensaje: 'Castellanisme: "tienes" → "tens"' },
-                'tiene': { correcta: 'té', mensaje: 'Castellanisme: "tiene" → "té"' },
-                'tenemos': { correcta: 'tenim', mensaje: 'Castellanisme: "tenemos" → "tenim"' },
-                'tenéis': { correcta: 'teniu', mensaje: 'Castellanisme: "tenéis" → "teniu"' },
-                'tienen': { correcta: 'tenen', mensaje: 'Castellanisme: "tienen" → "tenen"' },
-                'decir': { correcta: 'dir', mensaje: 'Castellanisme' },
-                'digo': { correcta: 'dic', mensaje: 'Castellanisme: "digo" → "dic"' },
-                'dices': { correcta: 'dius', mensaje: 'Castellanisme: "dices" → "dius"' },
-                'dice': { correcta: 'diu', mensaje: 'Castellanisme: "dice" → "diu"' },
-                'decimos': { correcta: 'diem', mensaje: 'Castellanisme: "decimos" → "diem"' },
-                'decís': { correcta: 'dieu', mensaje: 'Castellanisme: "decís" → "dieu"' },
-                'dicen': { correcta: 'diuen', mensaje: 'Castellanisme: "dicen" → "diuen"' },
-                'venir': { correcta: 'venir', mensaje: 'Castellanisme: "venir" → "venir"' },
-                'vengo': { correcta: 'vinc', mensaje: 'Castellanisme: "vengo" → "vinc"' },
-                'vienes': { correcta: 'vens', mensaje: 'Castellanisme: "vienes" → "vens"' },
-                'viene': { correcta: 've', mensaje: 'Castellanisme: "viene" → "ve"' },
-                'venimos': { correcta: 'venim', mensaje: 'Castellanisme: "venimos" → "venim"' },
-                'venís': { correcta: 'veniu', mensaje: 'Castellanisme: "venís" → "veniu"' },
-                'vienen': { correcta: 'venen', mensaje: 'Castellanisme: "vienen" → "venen"' },
-                'poder': { correcta: 'poder', mensaje: 'Castellanisme: "poder" → "poder"' },
-                'puedo': { correcta: 'puc', mensaje: 'Castellanisme: "puedo" → "puc"' },
-                'puedes': { correcta: 'pots', mensaje: 'Castellanisme: "puedes" → "pots"' },
-                'puede': { correcta: 'pot', mensaje: 'Castellanisme: "puede" → "pot"' },
-                'podemos': { correcta: 'podem', mensaje: 'Castellanisme: "podemos" → "podem"' },
-                'podéis': { correcta: 'podeu', mensaje: 'Castellanisme: "podéis" → "podeu"' },
-                'pueden': { correcta: 'poden', mensaje: 'Castellanisme: "pueden" → "poden"' },
-                'querer': { correcta: 'voler', mensaje: 'Castellanisme: "querer" → "voler"' },
-                'quiero': { correcta: 'vull', mensaje: 'Castellanisme: "quiero" → "vull"' },
-                'quieres': { correcta: 'vols', mensaje: 'Castellanisme: "quieres" → "vols"' },
-                'quiere': { correcta: 'vol', mensaje: 'Castellanisme: "quiere" → "vol"' },
-                'queremos': { correcta: 'volem', mensaje: 'Castellanisme: "queremos" → "volem"' },
-                'queréis': { correcta: 'voleu', mensaje: 'Castellanisme: "queréis" → "voleu"' },
-                'quieren': { correcta: 'volen', mensaje: 'Castellanisme: "quieren" → "volen"' },
-                'saber': { correcta: 'saber', mensaje: 'Castellanisme: "saber" → "saber"' },
-                'sabes': { correcta: 'saps', mensaje: 'Castellanisme: "sabes" → "saps"' },
-                'sabe': { correcta: 'sap', mensaje: 'Castellanisme: "sabe" → "sap"' },
-                'sabemos': { correcta: 'sabem', mensaje: 'Castellanisme: "sabemos" → "sabem"' },
-                'sabéis': { correcta: 'sabeu', mensaje: 'Castellanisme: "sabéis" → "sabeu"' },
-                'saben': { correcta: 'saben', mensaje: 'Castellanisme: "saben" → "saben"' },
-                'dar': { correcta: 'donar', mensaje: 'Castellanisme: "dar" → "donar"' },
-                'doy': { correcta: 'dono', mensaje: 'Castellanisme: "doy" → "dono"' },
-                'das': { correcta: 'dones', mensaje: 'Castellanisme: "das" → "dones"' },
-                'da': { correcta: 'dona', mensaje: 'Castellanisme: "da" → "dona"' },
-                'damos': { correcta: 'donem', mensaje: 'Castellanisme: "damos" → "donem"' },
-                'dais': { correcta: 'doneu', mensaje: 'Castellanisme: "dais" → "doneu"' },
-                'dan': { correcta: 'donen', mensaje: 'Castellanisme: "dan" → "donen"' },
-                
-                // Adjetivos y calificativos
-                'bonito': { correcta: 'bonic', mensaje: 'Castellanisme: "bonito" → "bonic"' },
-                'bonita': { correcta: 'bonica', mensaje: 'Castellanisme: "bonita" → "bonica"' },
-                'feo': { correcta: 'lleig', mensaje: 'Castellanisme: "feo" → "lleig"' },
-                'fea': { correcta: 'lletja', mensaje: 'Castellanisme: "fea" → "lletja"' },
-                'alto': { correcta: 'alt', mensaje: 'Castellanisme: "alto" → "alt"' },
-                'alta': { correcta: 'alta', mensaje: 'Castellanisme: "alta" → "alta"' },
-                'bajo': { correcta: 'baix', mensaje: 'Castellanisme: "bajo" → "baix"' },
-                'baja': { correcta: 'baixa', mensaje: 'Castellanisme: "baja" → "baixa"' },
-                'largo': { correcta: 'llarg', mensaje: 'Castellanisme: "largo" → "llarg"' },
-                'larga': { correcta: 'llarga', mensaje: 'Castellanisme: "larga" → "llarga"' },
-                'corto': { correcta: 'curt', mensaje: 'Castellanisme: "corto" → "curt"' },
-                'corta': { correcta: 'curta', mensaje: 'Castellanisme: "corta" → "curta"' },
-                'rápido': { correcta: 'ràpid', mensaje: 'Castellanisme: "rápido" → "ràpid"' },
-                'rápida': { correcta: 'ràpida', mensaje: 'Castellanisme: "rápida" → "ràpida"' },
-                'lento': { correcta: 'lent', mensaje: 'Castellanisme: "lento" → "lent"' },
-                'lenta': { correcta: 'lenta', mensaje: 'Castellanisme: "lenta" → "lenta"' },
-                'fácil': { correcta: 'fàcil', mensaje: 'Castellanisme: "fácil" → "fàcil"' },
-                'importante': { correcta: 'important', mensaje: 'Castellanisme: "importante" → "important"' },
-                'necesario': { correcta: 'necessari', mensaje: 'Castellanisme: "necesario" → "necessari"' },
-                'necesaria': { correcta: 'necessària', mensaje: 'Castellanisme: "necesaria" → "necessària"' },
-                'posible': { correcta: 'possible', mensaje: 'Castellanisme: "posible" → "possible"' },
-                'imposible': { correcta: 'impossible', mensaje: 'Castellanisme: "imposible" → "impossible"' },
-                'seguro': { correcta: 'segur', mensaje: 'Castellanisme: "seguro" → "segur"' },
-                'segura': { correcta: 'segura', mensaje: 'Castellanisme: "segura" → "segura"' },
-                'cierto': { correcta: 'cert', mensaje: 'Castellanisme: "cierto" → "cert"' },
-                'cierta': { correcta: 'certa', mensaje: 'Castellanisme: "cierta" → "certa"' },
-                'verdadero': { correcta: 'veritable', mensaje: 'Castellanisme: "verdadero" → "veritable"' },
-                'verdadera': { correcta: 'veritable', mensaje: 'Castellanisme: "verdadera" → "veritable"' },
-                'falso': { correcta: 'fals', mensaje: 'Castellanisme: "falso" → "fals"' },
-                'falsa': { correcta: 'falsa', mensaje: 'Castellanisme: "falsa" → "falsa"' },
-                
-                // Preposiciones y conjunciones
-                'con': { correcta: 'amb', mensaje: 'Castellanisme: "con" → "amb"' },
-                'por': { correcta: 'per', mensaje: 'Castellanisme: "por" → "per"' },
-                'para': { correcta: 'per a', mensaje: 'Castellanisme: "para" → "per a"' },
-                'sin': { correcta: 'sense', mensaje: 'Castellanisme: "sin" → "sense"' },
-                'desde': { correcta: 'des de', mensaje: 'Castellanisme: "desde" → "des de"' },
-                'hasta': { correcta: 'fins', mensaje: 'Castellanisme: "hasta" → "fins"' },
-                'hacia': { correcta: 'cap a', mensaje: 'Castellanisme: "hacia" → "cap a"' },
-                'durante': { correcta: 'durant', mensaje: 'Castellanisme: "durante" → "durant"' },
-                'segun': { correcta: 'segons', mensaje: 'Castellanisme: "según" → "segons"' },
-                'según': { correcta: 'segons', mensaje: 'Castellanisme: "según" → "segons"' },
-                'mediante': { correcta: 'mitjançant', mensaje: 'Castellanisme: "mediante" → "mitjançant"' },
-                'excepto': { correcta: 'excepte', mensaje: 'Castellanisme: "excepto" → "excepte"' },
-                'salvo': { correcta: 'llevat', mensaje: 'Castellanisme: "salvo" → "llevat"' },
-                'mientras': { correcta: 'mentre', mensaje: 'Castellanisme: "mientras" → "mentre"' },
-                'aunque': { correcta: 'encara que', mensaje: 'Castellanisme: "aunque" → "encara que"' },
-                'como': { correcta: 'com', mensaje: 'Castellanisme: "como" → "com"' },
-                'cuando': { correcta: 'quan', mensaje: 'Castellanisme: "cuando" → "quan"' },
-                'donde': { correcta: 'on', mensaje: 'Castellanisme: "donde" → "on"' },
-                'quien': { correcta: 'qui', mensaje: 'Castellanisme: "quien" → "qui"' },
-                'cual': { correcta: 'quin', mensaje: 'Castellanisme: "cual" → "quin"' },
-                'cuales': { correcta: 'quins', mensaje: 'Castellanisme: "cuales" → "quins"' },
-                'cuál': { correcta: 'quin', mensaje: 'Castellanisme: "cuál" → "quin"' },
-                'cuáles': { correcta: 'quins', mensaje: 'Castellanisme: "cuáles" → "quins"' },
-                'quién': { correcta: 'qui', mensaje: 'Castellanisme: "quién" → "qui"' },
-                'quiénes': { correcta: 'qui', mensaje: 'Castellanisme: "quiénes" → "qui"' },
-                'cuyo': { correcta: 'el qual', mensaje: 'Castellanisme: "cuyo" → "el qual"' },
-                'cuya': { correcta: 'la qual', mensaje: 'Castellanisme: "cuya" → "la qual"' },
-                'cuyos': { correcta: 'els quals', mensaje: 'Castellanisme: "cuyos" → "els quals"' },
-                'cuyas': { correcta: 'les quals', mensaje: 'Castellanisme: "cuyas" → "les quals"' },
-                
-                // Adverbios y expresiones
-                'luego': { correcta: 'després', mensaje: 'Castellanisme: "luego" → "després"' },
-                'entonces': { correcta: 'llavors', mensaje: 'Castellanisme: "entonces" → "llavors"' },
-                'ahora': { correcta: 'ara', mensaje: 'Castellanisme: "ahora" → "ara"' },
-                'antes': { correcta: 'abans', mensaje: 'Castellanisme: "antes" → "abans"' },
-                'después': { correcta: 'després', mensaje: 'Castellanisme: "después" → "després"' },
-                'mucho': { correcta: 'molt', mensaje: 'Castellanisme: "mucho" → "molt"' },
-                'mucha': { correcta: 'molta', mensaje: 'Castellanisme: "mucha" → "molta"' },
-                'muchos': { correcta: 'molts', mensaje: 'Castellanisme: "muchos" → "molts"' },
-                'muchas': { correcta: 'moltes', mensaje: 'Castellanisme: "muchas" → "moltes"' },
-                'poco': { correcta: 'poc', mensaje: 'Castellanisme: "poco" → "poc"' },
-                'poca': { correcta: 'poca', mensaje: 'Castellanisme: "poca" → "poca"' },
-                'pocos': { correcta: 'pocs', mensaje: 'Castellanisme: "pocos" → "pocs"' },
-                'pocas': { correcta: 'poques', mensaje: 'Castellanisme: "pocas" → "poques"' },
-                'más': { correcta: 'més', mensaje: 'Castellanisme: "más" → "més"' },
-                'menos': { correcta: 'menys', mensaje: 'Castellanisme: "menos" → "menys"' },
-                'tanto': { correcta: 'tant', mensaje: 'Castellanisme: "tanto" → "tant"' },
-                'tanta': { correcta: 'tanta', mensaje: 'Castellanisme: "tanta" → "tanta"' },
-                'tantos': { correcta: 'tants', mensaje: 'Castellanisme: "tantos" → "tants"' },
-                'tantas': { correcta: 'tantes', mensaje: 'Castellanisme: "tantas" → "tantes"' },
-                'así': { correcta: 'així', mensaje: 'Castellanisme: "así" → "així"' },
-                'asi': { correcta: 'així', mensaje: 'Castellanisme: "así" → "així"' },
-                'mejor': { correcta: 'millor', mensaje: 'Castellanisme: "mejor" → "millor"' },
-                'peor': { correcta: 'pitjor', mensaje: 'Castellanisme: "peor" → "pitjor"' },
-                'bien': { correcta: 'bé', mensaje: 'Castellanisme: "bien" → "bé"' },
-                'mal': { correcta: 'malament', mensaje: 'Castellanisme: "mal" → "malament"' },
-                'ahí': { correcta: 'allà', mensaje: 'Castellanisme: "ahí" → "allà"' },
-                'allá': { correcta: 'allà', mensaje: 'Castellanisme: "allá" → "allà"' },
-                'cerca': { correcta: 'a prop', mensaje: 'Castellanisme: "cerca" → "a prop"' },
-                'lejos': { correcta: 'lluny', mensaje: 'Castellanisme: "lejos" → "lluny"' },
-                'dentro': { correcta: 'dins', mensaje: 'Castellanisme: "dentro" → "dins"' },
-                'fuera': { correcta: 'fora', mensaje: 'Castellanisme: "fuera" → "fora"' },
-                'encima': { correcta: 'a sobre', mensaje: 'Castellanisme: "encima" → "a sobre"' },
-                'debajo': { correcta: 'a sota', mensaje: 'Castellanisme: "debajo" → "a sota"' },
-                'delante': { correcta: 'al davant', mensaje: 'Castellanisme: "delante" → "al davant"' },
-                'detrás': { correcta: 'al darrere', mensaje: 'Castellanisme: "detrás" → "al darrere"' },
-                'alrededor': { correcta: 'al voltant', mensaje: 'Castellanisme: "alrededor" → "al voltant"' },
-                'junto': { correcta: 'junt', mensaje: 'Castellanisme: "junto" → "junt"' },
-                'junta': { correcta: 'junta', mensaje: 'Castellanisme: "junta" → "junta"' },
-                'separado': { correcta: 'separat', mensaje: 'Castellanisme: "separado" → "separat"' },
-                'separada': { correcta: 'separada', mensaje: 'Castellanisme: "separada" → "separada"' },
-                
-                // Errores de acentuación comunes
-                'es': { correcta: 'és', mensaje: 'Falta accent: "és" (verb ser)' },
-                'esta': { correcta: 'està', mensaje: 'Falta accent: "està" (verb estar)' },
-                'be': { correcta: 'bé', mensaje: 'Falta accent' },
-                'aqui': { correcta: 'aquí', mensaje: 'Falta accent' },
-                'alli': { correcta: 'allí', mensaje: 'Falta accent' },
-                'alla': { correcta: 'allà', mensaje: 'Falta accent' },
-                'si': { correcta: 'sí', mensaje: 'Falta accent si és afirmatiu' },
-                'te': { correcta: 'té', mensaje: 'Falta accent si és verb "tenir"' },
-                'se': { correcta: 'és', mensaje: 'Podria ser "és" (verb ser)?' },
-                'de': { correcta: 'de', mensaje: 'Correcte en català' },
-                'el': { correcta: 'el', mensaje: 'Correcte en català' },
-                'la': { correcta: 'la', mensaje: 'Correcte en català' },
-                'un': { correcta: 'un', mensaje: 'Correcte en català' },
-                'una': { correcta: 'una', mensaje: 'Correcte en català' },
-                'al': { correcta: 'al', mensaje: 'Correcte en català' },
-                'del': { correcta: 'del', mensaje: 'Correcte en català' },
-                'a': { correcta: 'ha', mensaje: 'Podria ser "ha" (verb haver)?' },
-                'an': { correcta: 'han', mensaje: 'Podria ser "han" (verb haver)?' },
-                'en': { correcta: 'en', mensaje: 'Correcte en català' },
-                'y': { correcta: 'i', mensaje: 'Castellanisme: "y" → "i"' },
-                'o': { correcta: 'o', mensaje: 'Correcte en català' },
-                'u': { correcta: 'u', mensaje: 'Correcte en català (abans de paraules amb o/ó)' },
-                'e': { correcta: 'e', mensaje: 'Correcte en català (abans de paraules amb i/í)' },
-            };
-            
-            palabras.forEach(palabra => {
-                if (!palabra) return;
-                
-                if (erroresComunes[palabra]) {
-                    const yaExiste = errores.some(e => e.palabra === palabra);
-                    if (!yaExiste) {
-                        errores.push({
-                            palabra: palabra,
-                            sugerencia: erroresComunes[palabra].correcta,
-                            mensaje: erroresComunes[palabra].mensaje,
-                            offset: texto.toLowerCase().indexOf(palabra),
-                            length: palabra.length
-                        });
-                    }
-                }
-            });
-            
-            return errores;
         }
 
         function mostrarResultados(matches, source) {
@@ -893,12 +714,8 @@
             
             let htmlResultado = '';
             
-            if (source === 'local') {
-                htmlResultado += '<div class="fallback-notice">⚠️ Usant corrector local (API no disponible). La correcció pot ser limitada.</div>';
-            } else if (source === 'languagetool') {
+            if (source === 'languagetool') {
                 htmlResultado += '<div class="success-notice">✅ Correcció amb LanguageTool</div>';
-            } else if (source === 'softcatala') {
-                htmlResultado += '<div class="success-notice">✅ Correcció amb Softcatalà</div>';
             }
             
             if (numErrores === 0) {
@@ -907,8 +724,8 @@
                 htmlResultado += '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
                 
                 matches.forEach((match, i) => {
-                    const palabraErronea = match.palabra || textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = match.sugerencia ? [match.sugerencia] : (match.replacements || []).map(r => r.value).slice(0, 3);
+                    const palabraErronea = textoEscrito.substring(match.offset, match.offset + match.length);
+                    const sugerencias = (match.replacements || []).map(r => r.value).slice(0, 3);
                     const sugerenciaPrincipal = sugerencias[0] || '';
                     
                     const urlSoftcatala = `https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabraErronea)}`;
@@ -919,7 +736,7 @@
                                 <span class="error-word">${i + 1}. "${palabraErronea}"</span>
                             </div>
                             <div class="error-message">
-                                💡 ${match.mensaje || match.message}
+                                💡 ${match.message}
                             </div>
                             ${sugerenciaPrincipal ? `
                             <div style="margin-bottom: 10px;">
@@ -942,6 +759,18 @@
             document.getElementById('correccionText').innerHTML = htmlResultado;
         }
 
+        function mostrarError(mensaje) {
+            document.getElementById('errorCount').textContent = '—';
+            document.getElementById('accuracy').textContent = '—';
+            document.getElementById('correccionText').innerHTML = `
+                <div class="error-notice">
+                    <strong>❌ Error de connexió</strong><br>
+                    ${mensaje}<br><br>
+                    <small>Torna-ho a provar d'aquí uns moments.</small>
+                </div>
+            `;
+        }
+
         function setLoading(loading) {
             const buttons = document.querySelectorAll('.toolbar button');
             buttons.forEach(btn => btn.disabled = loading);
@@ -958,59 +787,17 @@
             alert('Text esborrat. Pots començar un nou intent! ✍️');
         }
 
-        // Registrar Service Worker para PWA (desactivado temporalmente)
+        // Registrar Service Worker para PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => {
-                        console.log('Service Worker registrat (passthrough mode)');
+                        console.log('Service Worker registrat');
                         reg.update();
                     })
                     .catch(err => console.log('Error en Service Worker:', err));
             });
         }
-
-        // Rate Limit Monitor Functions
-        function updateRateLimitMonitor() {
-            const ahora = Date.now();
-            // Limpiar peticiones antiguas (> 60 segundos)
-            requestLog = requestLog.filter(req => ahora - req.timestamp < MONITOR_WINDOW_MS);
-            
-            const count = requestLog.length;
-            const monitor = document.getElementById('rateLimitMonitor');
-            const statusDot = document.getElementById('rateLimitStatusDot');
-            const statusText = document.getElementById('rateLimitStatusText');
-            const countText = document.getElementById('rateLimitCount');
-            
-            if (!monitor) return;
-            
-            // Actualizar visualización
-            monitor.classList.remove('hidden');
-            
-            let statusClass = 'ok';
-            let statusMsg = 'En línia';
-            
-            if (count >= MAX_REQUESTS_PER_MINUTE * 0.8) {
-                statusClass = 'danger';
-                statusMsg = 'Límit apropant-se!';
-            } else if (count >= MAX_REQUESTS_PER_MINUTE * 0.5) {
-                statusClass = 'warning';
-                statusMsg = 'Tràfic elevat';
-            }
-            
-            statusDot.className = `status-dot ${statusClass}`;
-            statusText.textContent = statusMsg;
-            countText.textContent = `${count} req/min`;
-        }
-
-        function resetRateLimitCounter() {
-            requestLog = [];
-            updateRateLimitMonitor();
-        }
-
-        // Exponer función para testing/manual
-        window.resetRateLimitCounter = resetRateLimitCounter;
-        window.toggleRateLimitMonitor = toggleRateLimitMonitor;
     </script>
 </body>
 </html>
