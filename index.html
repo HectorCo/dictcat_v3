@@ -56,19 +56,76 @@
             min-height: calc(100vh - 24px);
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Logo de fondo con transparencia */
+        .logo-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            max-width: 500px;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
+            filter: grayscale(100%);
+        }
+
+        .logo-bg img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Logo en header */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-logo-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: 0 3px 10px rgba(139, 69, 19, 0.2);
+            border: 2px solid rgba(139, 69, 19, 0.1);
         }
 
         h1 {
             color: var(--primary);
             text-align: center;
-            margin-bottom: 20px;
-            font-size: clamp(1.8em, 5vw, 2.5em);
+            font-size: clamp(1.6em, 5vw, 2.2em);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo watermark en esquina */
+        .logo-watermark {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            width: 40px;
+            height: 40px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 8px;
         }
 
         .dictats-section {
             margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .dictats-section h2 {
@@ -137,6 +194,8 @@
             padding: 16px;
             margin-bottom: 20px;
             display: none;
+            position: relative;
+            z-index: 1;
         }
 
         .audio-player.show {
@@ -271,6 +330,8 @@
             margin-bottom: 16px;
             flex-wrap: wrap;
             justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
         button {
@@ -339,6 +400,8 @@
             border-radius: var(--radius);
             display: none;
             flex-shrink: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .result-container.show {
@@ -413,6 +476,8 @@
             display: flex;
             flex-direction: column;
             min-height: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .writing-label {
@@ -587,6 +652,8 @@
             color: #6b7280;
             font-size: 0.8em;
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         .app-footer a {
@@ -629,6 +696,9 @@
             .dictats-grid { grid-template-columns: repeat(2, 1fr); }
             .audio-controls { gap: 8px; }
             .audio-btn { width: 48px; height: 48px; font-size: 1.4em; }
+            .header-logo-img { width: 48px; height: 48px; }
+            .logo-watermark { width: 32px; height: 32px; }
+            .logo-bg { width: 80%; opacity: 0.03; }
         }
 
         @media (max-width: 380px) {
@@ -648,6 +718,7 @@
             .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
             .dictat-card { padding: 8px 4px; }
             .dictat-icon { font-size: 1.4em; }
+            .header-logo-img { width: 40px; height: 40px; }
         }
 
         @media (min-width: 1024px) {
@@ -676,8 +747,20 @@
     </style>
 </head>
 <body>
+    <!-- Watermark fijo en esquina inferior izquierda -->
+    <img src="image.png" alt="" class="logo-watermark" aria-hidden="true">
+
     <div class="container">
-        <h1>📝 DICTCAT</h1>
+        <!-- Logo de fondo transparente centrado -->
+        <div class="logo-bg" aria-hidden="true">
+            <img src="image.png" alt="">
+        </div>
+
+        <!-- Header con logo + título -->
+        <div class="header-logo">
+            <img src="image.png" alt="DictCat" class="header-logo-img">
+            <h1>DICTCAT</h1>
+        </div>
 
         <div class="dictats-section">
             <h2>🎧 Tria un dictat</h2>
