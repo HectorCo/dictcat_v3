@@ -1,6 +1,5 @@
 // API Route de Vercel - Proxy per a LanguageTool
 // Versió corregida: sense enabledOnly, amb logs detallats, timeout ampliat
-// + Headers informatius de rate limit
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,12 +38,6 @@ export default async function handler(req, res) {
     const result = await tryLanguageTool(text);
     console.log('✅ Correcció obtinguda de:', result.source);
 
-    // Añadir headers informativos sobre rate limit (simulado, ya que Vercel no expone esto directamente)
-    // Estos headers ayudan al frontend a saber el estado
-    res.setHeader('X-RateLimit-Limit', '20');
-    res.setHeader('X-RateLimit-Remaining', '19'); // Placeholder - Vercel maneja esto internamente
-    res.setHeader('X-RateLimit-Window', '60');
-
     res.status(200).json({
       matches: result.matches || [],
       source: result.source,
@@ -52,15 +45,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('❌ LanguageTool ha fallat:', error.message);
-
-    // Si es error 429 (Too Many Requests), informar claramente
-    if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
-      res.status(429).json({
-        error: 'Límit de peticions exhaurit. Màxim 20 req/min per IP.',
-        retryAfter: 60,
-      });
-      return;
-    }
 
     // Retornem 200 amb fallback perquè el client pugui usar el corrector local
     res.status(200).json({
