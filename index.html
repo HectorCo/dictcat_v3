@@ -9,9 +9,10 @@
     <meta name="x5-fullscreen" content="true">
     <meta name="browsermode" content="application">
     <meta name="x5-page-mode" content="app">
-    <meta name="theme-color" content="#8B4513">
+    <meta name="theme-color" content="#FF6B9D">
     <title>DICTCAT - Dictats en Català</title>
-    <link rel="manifest" href="manifest.json?v=2">
+    <link rel="manifest" href="manifest.json?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -21,14 +22,26 @@
         }
 
         :root {
-            --primary: #8B4513;
-            --primary-light: #A0522D;
-            --bg-gradient-start: #ffc0cb;
-            --bg-gradient-mid: #ffb6c1;
-            --bg-gradient-end: #ffa07a;
-            --shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
-            --radius: 16px;
-            --audio-bg: #fff5f5;
+            --primary: #FF6B9D;
+            --primary-light: #FF8FB3;
+            --primary-dark: #E85A8A;
+            --secondary: #4ECDC4;
+            --secondary-light: #7EDDD7;
+            --accent: #FFE66D;
+            --accent-orange: #FF9F43;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text: #2D3436;
+            --text-light: #636E72;
+            --bg-cream: #FFF9F0;
+            --bg-pink: #FFE4EC;
+            --bg-blue: #E0F7FA;
+            --bg-yellow: #FFF8E1;
+            --shadow-soft: 0 8px 32px rgba(255, 107, 157, 0.15);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 24px;
+            --radius-sm: 16px;
         }
 
         html, body {
@@ -37,13 +50,13 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-pink) 50%, var(--bg-blue) 100%);
             min-height: 100vh;
             padding: 12px;
             overflow-y: auto;
             touch-action: pan-y;
-            -webkit-font-smoothing: antialiased;
+            color: var(--text);
         }
 
         .container {
@@ -51,8 +64,8 @@
             margin: 0 auto;
             background: white;
             border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            padding: 24px;
+            box-shadow: var(--shadow-soft);
             min-height: calc(100vh - 24px);
             display: flex;
             flex-direction: column;
@@ -60,18 +73,17 @@
             overflow: hidden;
         }
 
-        /* Logo de fondo con transparencia */
+        /* Logo de fondo */
         .logo-bg {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70%;
-            max-width: 500px;
-            opacity: 0.04;
+            width: 75%;
+            max-width: 450px;
+            opacity: 0.035;
             pointer-events: none;
             z-index: 0;
-            filter: grayscale(100%);
         }
 
         .logo-bg img {
@@ -79,7 +91,7 @@
             height: auto;
         }
 
-        /* Logo en header */
+        /* Header */
         .header-logo {
             display: flex;
             align-items: center;
@@ -91,156 +103,208 @@
         }
 
         .header-logo-img {
-            width: 84px;
-            height: 84px;
-            border-radius: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 22px;
             object-fit: cover;
-            box-shadow: 0 4px 14px rgba(139, 69, 19, 0.25);
-            border: 3px solid rgba(139, 69, 19, 0.15);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
+            border: 3px solid white;
+            background: var(--bg-pink);
+            padding: 4px;
         }
 
-        h1 {
+        .header-text {
+            text-align: left;
+        }
+
+        .header-text h1 {
             color: var(--primary);
-            text-align: center;
-            font-size: clamp(1.8em, 5vw, 2.4em);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            line-height: 1.2;
+            font-size: clamp(2em, 6vw, 2.8em);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1;
+            text-shadow: 2px 2px 0px var(--accent);
+        }
+
+        .header-text .subtitle {
+            color: var(--text-light);
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Sección dictados */
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
             position: relative;
             z-index: 1;
         }
 
-        .dictats-section {
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
+        .section-title h2 {
+            color: var(--primary-dark);
+            font-size: 1.3em;
+            font-weight: 800;
         }
 
-        .dictats-section h2 {
-            color: var(--primary);
-            font-size: 1.2em;
-            margin-bottom: 12px;
-            text-align: center;
+        .section-title .icon-bounce {
+            font-size: 1.4em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
         }
 
         .dictats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .dictat-card {
-            background: linear-gradient(135deg, #fff0f3 0%, #ffe4e9 100%);
-            border: 2px solid #ffb6c1;
-            border-radius: 14px;
-            padding: 14px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dictat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.25);
-            border-color: #ff69b4;
-        }
-
-        .dictat-card:active {
-            transform: scale(0.97);
-        }
-
-        .dictat-card.active {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            border-color: #10b981;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-        }
-
-        .dictat-icon {
-            font-size: 2em;
-            margin-bottom: 6px;
-        }
-
-        .dictat-name {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.95em;
-        }
-
-        .dictat-status {
-            font-size: 0.75em;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        .audio-player {
-            background: var(--audio-bg);
-            border: 2px solid #fecaca;
-            border-radius: var(--radius);
-            padding: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
             margin-bottom: 20px;
-            display: none;
             position: relative;
             z-index: 1;
         }
 
-        .audio-player.show {
-            display: block;
-            animation: slideDown 0.3s ease;
+        .dictat-card {
+            background: linear-gradient(145deg, #ffffff 0%, var(--bg-pink) 100%);
+            border: 3px solid transparent;
+            border-radius: var(--radius-sm);
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            box-shadow: var(--shadow-card);
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dictat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.2);
+            border-color: var(--primary-light);
+        }
+
+        .dictat-card:active {
+            transform: scale(0.96);
+        }
+
+        .dictat-card.active {
+            background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%);
+            border-color: var(--success);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.25);
+        }
+
+        .dictat-card.active .dictat-icon {
+            animation: wiggle 0.5s ease;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .dictat-icon {
+            font-size: 2.4em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .dictat-name {
+            font-weight: 800;
+            color: var(--text);
+            font-size: 1em;
+        }
+
+        .dictat-status {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-top: 6px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Reproductor */
+        .audio-player {
+            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%);
+            border: 3px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow-card);
+        }
+
+        .audio-player.show {
+            display: block;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .audio-info {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .audio-info .audio-icon {
             font-size: 2em;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .audio-info .audio-title {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.1em;
+            font-weight: 800;
+            color: var(--accent-orange);
+            font-size: 1.15em;
         }
 
         .audio-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             margin-bottom: 12px;
         }
 
         .audio-btn {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            font-size: 1.6em;
+            font-size: 1.8em;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
         .audio-btn.play {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
             color: white;
         }
 
         .audio-btn.pause {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%);
             color: white;
         }
 
@@ -250,215 +314,129 @@
         }
 
         .audio-btn:hover:not(:disabled) {
-            transform: scale(1.08);
+            transform: scale(1.12) rotate(5deg);
         }
 
         .audio-btn:active:not(:disabled) {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
 
         .progress-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .progress-bar-wrapper {
             position: relative;
-            height: 10px;
-            background: #e5e7eb;
-            border-radius: 5px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
+            border: 2px solid var(--accent);
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 5px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent-orange) 100%);
+            border-radius: 10px;
             width: 0%;
             transition: width 0.1s linear;
             position: relative;
         }
 
         .progress-bar::after {
-            content: '';
+            content: '🐱';
             position: absolute;
-            right: -6px;
+            right: -14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
-            background: white;
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            font-size: 18px;
         }
 
         .time-display {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8em;
-            color: #6b7280;
+            font-size: 0.85em;
+            color: var(--text-light);
+            font-weight: 700;
             font-variant-numeric: tabular-nums;
         }
 
         .audio-hint {
             text-align: center;
-            color: #6b7280;
-            font-size: 0.85em;
-            font-style: italic;
+            color: var(--accent-orange);
+            font-size: 0.9em;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px;
+            border-radius: 12px;
         }
 
+        /* Toolbar */
         .toolbar {
             display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
             position: relative;
             z-index: 1;
         }
 
-        button {
-            padding: 12px 20px;
-            font-size: 15px;
+        .btn {
+            padding: 14px 24px;
+            font-size: 1em;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             white-space: nowrap;
-            min-height: 44px;
+            min-height: 52px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            letter-spacing: 0.3px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
-        button:active {
-            transform: scale(0.96);
+        .btn:active {
+            transform: scale(0.95);
         }
 
-        button:disabled {
+        .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #90EE90 0%, #98D98E 100%);
-            color: #2d5016;
-        }
-
-        .btn-success:hover:not(:disabled) {
-            background: linear-gradient(135deg, #98D98E 0%, #90EE90 100%);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+        .btn-corregir {
+            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
             color: white;
         }
 
-        .btn-danger:hover:not(:disabled) {
-            background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
+        .btn-borrar {
+            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
+            color: white;
         }
 
-        .btn-warning {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: #5c4200;
+        .btn-nuevo {
+            background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%);
+            color: white;
         }
 
-        .btn-warning:hover:not(:disabled) {
-            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
-        }
-
-        .result-container {
-            margin-top: 20px;
-            padding: 16px;
-            background: #f3f4f6;
-            border-radius: var(--radius);
-            display: none;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .result-container.show {
-            display: block;
-        }
-
-        .result-title {
-            font-size: clamp(1.2em, 4vw, 1.5em);
-            color: #1f2937;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .comparison {
-            display: grid;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .text-block {
-            padding: 14px;
-            background: white;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            box-shadow: var(--shadow);
-            word-break: break-word;
-        }
-
-        .text-block h3 {
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }
-
-        .text-content {
-            font-size: clamp(16px, 3.5vw, 18px);
-            line-height: 1.7;
-        }
-
-        .stats {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            flex: 1;
-            min-width: 120px;
-            padding: 12px;
-            background: white;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-number {
-            font-size: clamp(1.6em, 5vw, 2em);
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            color: #6b7280;
-            margin-top: 4px;
-            font-size: 0.9em;
-        }
-
+        /* Área de escritura */
         .writing-area {
-            margin: 20px 0;
+            margin: 16px 0;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -468,41 +446,59 @@
         }
 
         .writing-label {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             font-size: clamp(1.1em, 3.5vw, 1.3em);
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 14px;
+            font-weight: 800;
             text-align: center;
-            line-height: 1.3;
+        }
+
+        .writing-label .pen-icon {
+            font-size: 1.3em;
         }
 
         .textarea-wrapper {
             position: relative;
-            border: 3px solid var(--primary);
-            border-radius: 12px;
+            border: 3px solid var(--primary-light);
+            border-radius: var(--radius-sm);
             overflow: hidden;
             background: white;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-card);
             flex: 1;
             min-height: 250px;
+            transition: border-color 0.3s;
+        }
+
+        .textarea-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15);
         }
 
         .lined-textarea {
             width: 100%;
             height: 100%;
             min-height: 250px;
-            padding: 16px 16px 16px 56px;
+            padding: 20px 20px 20px 60px;
             font-size: clamp(18px, 4vw, 22px);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 2.2;
+            font-family: 'Nunito', sans-serif;
+            line-height: 2.4;
             border: none;
             outline: none;
             resize: vertical;
-            color: #1f2937;
+            color: var(--text);
             background: transparent;
             position: relative;
             z-index: 2;
+            font-weight: 600;
+        }
+
+        .lined-textarea::placeholder {
+            color: #B2BEC3;
+            font-weight: 400;
         }
 
         .lines-background {
@@ -514,53 +510,350 @@
             pointer-events: none;
             z-index: 1;
             background-image: 
-                linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 36px, transparent 36px),
+                linear-gradient(90deg, var(--bg-pink) 0px, var(--bg-pink) 40px, transparent 40px),
                 repeating-linear-gradient(
                     transparent,
-                    transparent 53px,
-                    #e8d5c4 53px,
-                    #e8d5c4 54px,
-                    transparent 54px,
-                    transparent 56px
+                    transparent 55px,
+                    #FFE4EC 55px,
+                    #FFE4EC 57px,
+                    transparent 57px,
+                    transparent 60px
                 );
-            background-size: 100% 100%, 100% 56px;
+            background-size: 100% 100%, 100% 60px;
         }
 
         .margin-line {
             position: absolute;
-            left: 36px;
+            left: 40px;
             top: 0;
             bottom: 0;
-            width: 1px;
-            background: #d4a574;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary-light), transparent);
             pointer-events: none;
             z-index: 1;
+            opacity: 0.5;
         }
 
         .writing-tip {
             text-align: center;
-            color: #6b7280;
-            margin-top: 8px;
-            font-size: 0.85em;
-            line-height: 1.4;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
         }
 
-        .loading {
+        /* Resultados - ESTILO INFANTIL */
+        .result-container {
+            margin-top: 20px;
+            padding: 24px;
+            background: linear-gradient(145deg, var(--bg-cream) 0%, white 100%);
+            border-radius: var(--radius);
+            display: none;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            border: 3px solid var(--accent);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .result-container.show {
+            display: block;
+            animation: celebrateIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes celebrateIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-header .trophy {
+            font-size: 3.5em;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: trophyBounce 1s ease infinite;
+        }
+
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .result-header h2 {
+            color: var(--primary-dark);
+            font-size: 1.6em;
+            font-weight: 900;
+        }
+
+        /* Stats cards infantiles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-bubble {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-card);
+            border: 3px solid transparent;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-bubble:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-bubble.errors {
+            border-color: var(--danger);
+            background: linear-gradient(145deg, #ffffff 0%, #FADBD8 100%);
+        }
+
+        .stat-bubble.accuracy {
+            border-color: var(--success);
+            background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%);
+        }
+
+        .stat-bubble .stat-emoji {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-bubble .stat-number {
+            font-size: 2.8em;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .stat-bubble.errors .stat-number {
+            color: var(--danger);
+        }
+
+        .stat-bubble.accuracy .stat-number {
+            color: var(--success);
+        }
+
+        .stat-bubble .stat-label {
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-top: 6px;
+        }
+
+        /* Mensaje motivador */
+        .motivation-message {
             text-align: center;
             padding: 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: 800;
+            animation: fadeInUp 0.5s ease 0.3s both;
+        }
+
+        .motivation-message.perfect {
+            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
+            color: #1E8449;
+            border: 3px solid var(--success);
+        }
+
+        .motivation-message.great {
+            background: linear-gradient(145deg, #FCF3CF 0%, #F9E79F 100%);
+            color: #9A7D0A;
+            border: 3px solid var(--accent);
+        }
+
+        .motivation-message.good {
+            background: linear-gradient(145deg, #D6EAF8 0%, #AED6F1 100%);
+            color: #1A5276;
+            border: 3px solid var(--secondary);
+        }
+
+        .motivation-message.try {
+            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
+            color: #922B21;
+            border: 3px solid var(--danger);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Confeti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Comparación de textos */
+        .comparison {
+            display: grid;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .text-block {
+            padding: 18px;
+            background: white;
+            border-radius: var(--radius-sm);
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow-card);
+            word-break: break-word;
+        }
+
+        .text-block h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .text-content {
+            font-size: clamp(16px, 3.5vw, 18px);
+            line-height: 1.8;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Errores estilo infantil */
+        .errors-section {
+            margin-top: 20px;
+        }
+
+        .errors-section h4 {
+            color: var(--primary-dark);
+            font-size: 1.2em;
+            font-weight: 800;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-card {
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            border: 3px solid var(--danger);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 14px;
+            word-break: break-word;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-card::before {
+            content: '❌';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 2em;
+            opacity: 0.1;
+        }
+
+        .error-word {
+            font-weight: 900;
+            color: var(--danger);
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: var(--text);
+            margin: 10px 0;
+            font-size: 1em;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .error-suggestion {
+            color: var(--success);
+            font-weight: 800;
+            font-size: 1.1em;
+        }
+
+        .correction-box {
+            background: #EAFAF1;
+            border: 2px dashed var(--success);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .softcatala-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+            font-size: 0.9em;
+            transition: transform 0.2s;
+        }
+
+        .softcatala-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 30px;
             color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1em;
         }
 
         .loading::after {
             content: '';
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--primary);
+            width: 24px;
+            height: 24px;
+            border: 4px solid var(--primary);
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 1s linear infinite;
-            margin-left: 10px;
+            margin-left: 12px;
             vertical-align: middle;
         }
 
@@ -568,85 +861,49 @@
             to { transform: rotate(360deg); }
         }
 
-        .error-card {
-            background: white;
-            padding: 14px;
-            border-radius: 10px;
-            border-left: 4px solid #ef4444;
-            box-shadow: var(--shadow);
-            margin-bottom: 12px;
-            word-break: break-word;
-        }
-
-        .error-word {
-            font-weight: bold;
-            color: #ef4444;
-            font-size: 1.1em;
-        }
-
-        .error-message {
-            color: #374151;
-            margin: 6px 0;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        .error-suggestion {
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        .softcatala-link {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            font-size: 0.9em;
-        }
-
+        /* Error de conexión */
         .error-notice {
-            background: #fee2e2;
-            border: 1px solid #ef4444;
-            border-radius: 8px;
-            padding: 12px;
-            color: #991b1b;
-            font-size: 0.9em;
-            margin-bottom: 12px;
+            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
+            border: 3px solid var(--danger);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            color: #922B21;
+            font-size: 1em;
+            margin-bottom: 16px;
             text-align: center;
+            font-weight: 700;
         }
 
         .success-notice {
-            background: #d1fae5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 10px;
-            color: #065f46;
-            font-size: 0.9em;
-            margin-bottom: 12px;
+            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
+            border: 3px solid var(--success);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            color: #1E8449;
+            font-size: 0.95em;
+            margin-bottom: 16px;
             text-align: center;
+            font-weight: 800;
         }
 
+        /* Footer */
         .app-footer {
             margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+            border-top: 2px dashed var(--primary-light);
             text-align: center;
-            color: #6b7280;
-            font-size: 0.8em;
+            color: var(--text-light);
+            font-size: 0.85em;
             line-height: 1.6;
             position: relative;
             z-index: 1;
+            font-weight: 600;
         }
 
         .app-footer a {
-            color: var(--primary);
+            color: var(--primary-dark);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 800;
         }
 
         .app-footer a:hover {
@@ -657,120 +914,105 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: #f3f4f6;
-            padding: 4px 12px;
-            border-radius: 16px;
-            margin-top: 4px;
+            background: var(--bg-pink);
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-top: 6px;
+            font-weight: 700;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             body { padding: 8px; }
-            .container { padding: 16px; border-radius: 12px; min-height: calc(100vh - 16px); }
-            h1 { margin-bottom: 16px; }
-            .toolbar { gap: 6px; }
-            button { padding: 10px 16px; font-size: 14px; flex: 1; min-width: 100px; }
+            .container { padding: 18px; border-radius: 20px; min-height: calc(100vh - 16px); }
+            .header-logo-img { width: 68px; height: 68px; border-radius: 18px; }
+            .header-text h1 { font-size: 1.8em; }
+            .dictats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .dictat-card { padding: 14px 10px; }
+            .audio-btn { width: 56px; height: 56px; font-size: 1.6em; }
             .textarea-wrapper { min-height: 200px; }
-            .lined-textarea { min-height: 200px; padding: 12px 12px 12px 48px; font-size: 18px; line-height: 2; }
+            .lined-textarea { min-height: 200px; padding: 16px 16px 16px 52px; font-size: 18px; line-height: 2.2; }
             .lines-background {
                 background-image: 
-                    linear-gradient(90deg, #ffc0cb 0px, #ffc0cb 32px, transparent 32px),
-                    repeating-linear-gradient(transparent, transparent 47px, #e8d5c4 47px, #e8d5c4 48px, transparent 48px, transparent 50px);
-                background-size: 100% 100%, 100% 50px;
+                    linear-gradient(90deg, var(--bg-pink) 0px, var(--bg-pink) 34px, transparent 34px),
+                    repeating-linear-gradient(transparent, transparent 43px, #FFE4EC 43px, #FFE4EC 45px, transparent 45px, transparent 48px);
+                background-size: 100% 100%, 100% 48px;
             }
-            .margin-line { left: 32px; }
-            .stats { gap: 8px; }
-            .stat-card { min-width: 100px; padding: 10px; }
-            .dictats-grid { grid-template-columns: repeat(2, 1fr); }
-            .audio-controls { gap: 8px; }
-            .audio-btn { width: 48px; height: 48px; font-size: 1.4em; }
-            .header-logo-img { width: 72px; height: 72px; border-radius: 16px; }
-            .header-logo { gap: 12px; }
-            .logo-bg { width: 80%; opacity: 0.03; }
+            .margin-line { left: 34px; }
+            .stats-grid { gap: 10px; }
+            .stat-bubble { padding: 16px; }
+            .stat-bubble .stat-number { font-size: 2.2em; }
+            .stat-bubble .stat-emoji { font-size: 2em; }
+            .btn { padding: 12px 18px; font-size: 0.95em; min-height: 48px; }
         }
 
         @media (max-width: 380px) {
-            .toolbar button { font-size: 13px; padding: 8px 12px; }
+            .header-logo-img { width: 56px; height: 56px; }
+            .header-text h1 { font-size: 1.6em; }
+            .btn { font-size: 0.85em; padding: 10px 14px; }
             .lined-textarea { font-size: 16px; }
-            .dictat-name { font-size: 0.85em; }
-            .header-logo-img { width: 64px; height: 64px; }
+            .dictat-name { font-size: 0.9em; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
             .container { padding: 12px; }
-            h1 { font-size: 1.4em; margin-bottom: 8px; }
-            .toolbar { margin-bottom: 8px; }
-            button { padding: 8px 14px; font-size: 13px; }
+            .header-logo { margin-bottom: 12px; }
+            .header-logo-img { width: 52px; height: 52px; }
+            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .dictat-card { padding: 10px 6px; }
+            .dictat-icon { font-size: 1.8em; }
             .writing-area { margin: 8px 0; }
-            .textarea-wrapper { min-height: 150px; }
-            .lined-textarea { min-height: 150px; line-height: 1.8; }
-            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-            .dictat-card { padding: 8px 4px; }
-            .dictat-icon { font-size: 1.4em; }
-            .header-logo-img { width: 56px; height: 56px; border-radius: 14px; }
+            .textarea-wrapper { min-height: 140px; }
+            .lined-textarea { min-height: 140px; line-height: 1.8; }
         }
 
         @media (min-width: 1024px) {
             .container { padding: 40px; }
             .textarea-wrapper { min-height: 500px; }
             .lined-textarea { min-height: 500px; }
-            .header-logo-img { width: 96px; height: 96px; border-radius: 22px; }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body { background: linear-gradient(135deg, #2d1b1e 0%, #3d1e24 50%, #4a2520 100%); }
-            .container { background: #1f1f1f; color: #e5e5e5; }
-            h1 { color: #d4a574; }
-            .writing-label { color: #d4a574; }
-            .lined-textarea { color: #e5e5e5; }
-            .text-block { background: #2a2a2a; border-left-color: #d4a574; }
-            .text-block h3 { color: #d4a574; }
-            .stat-card { background: #2a2a2a; }
-            .result-container { background: #2a2a2a; }
-            .result-title { color: #e5e5e5; }
-            .app-footer { border-top-color: #3a3a3a; color: #999; }
-            .dictat-card { background: linear-gradient(135deg, #3a2a2e 0%, #2d2024 100%); border-color: #5a3a42; }
-            .dictat-card.active { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); border-color: #10b981; }
-            .audio-player { background: #2a2020; border-color: #5a3a3a; }
-            .progress-bar-wrapper { background: #3a3a3a; }
+            .header-logo-img { width: 96px; height: 96px; border-radius: 24px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Logo de fondo transparente centrado -->
         <div class="logo-bg" aria-hidden="true">
             <img src="image.png" alt="">
         </div>
 
-        <!-- Header con logo + título -->
         <div class="header-logo">
             <img src="image.png" alt="DictCat" class="header-logo-img">
-            <h1>DICTCAT</h1>
+            <div class="header-text">
+                <h1>DICTCAT</h1>
+                <div class="subtitle">Dictats en català</div>
+            </div>
         </div>
 
-        <div class="dictats-section">
-            <h2>🎧 Tria un dictat</h2>
-            <div class="dictats-grid" id="dictatsGrid">
-                <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="seleccionarDictat(this)">
-                    <div class="dictat-icon">🏆</div>
-                    <div class="dictat-name">Campionat</div>
-                    <div class="dictat-status">Toca per escoltar</div>
-                </div>
-                <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="seleccionarDictat(this)">
-                    <div class="dictat-icon">🐱</div>
-                    <div class="dictat-name">El gat</div>
-                    <div class="dictat-status">Toca per escoltar</div>
-                </div>
-                <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="seleccionarDictat(this)">
-                    <div class="dictat-icon">☀️</div>
-                    <div class="dictat-name">Estiu</div>
-                    <div class="dictat-status">Toca per escoltar</div>
-                </div>
-                <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="seleccionarDictat(this)">
-                    <div class="dictat-icon">📅</div>
-                    <div class="dictat-name">Juliols</div>
-                    <div class="dictat-status">Toca per escoltar</div>
-                </div>
+        <div class="section-title">
+            <span class="icon-bounce">🎧</span>
+            <h2>Tria un dictat</h2>
+        </div>
+
+        <div class="dictats-grid" id="dictatsGrid">
+            <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="seleccionarDictat(this)">
+                <span class="dictat-icon">🏆</span>
+                <div class="dictat-name">Campionat</div>
+                <div class="dictat-status">Toca per escoltar</div>
+            </div>
+            <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="seleccionarDictat(this)">
+                <span class="dictat-icon">🐱</span>
+                <div class="dictat-name">El gat</div>
+                <div class="dictat-status">Toca per escoltar</div>
+            </div>
+            <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="seleccionarDictat(this)">
+                <span class="dictat-icon">☀️</span>
+                <div class="dictat-name">Estiu</div>
+                <div class="dictat-status">Toca per escoltar</div>
+            </div>
+            <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="seleccionarDictat(this)">
+                <span class="dictat-icon">📅</span>
+                <div class="dictat-name">Juliols</div>
+                <div class="dictat-status">Toca per escoltar</div>
             </div>
         </div>
 
@@ -795,20 +1037,23 @@
         </div>
 
         <div class="toolbar">
-            <button class="btn-danger" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
-            <button class="btn-success" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
-            <button class="btn-warning" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
+            <button class="btn btn-borrar" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
+            <button class="btn btn-corregir" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
+            <button class="btn btn-nuevo" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
         </div>
 
         <div class="writing-area">
-            <label for="textInput" class="writing-label">✍️ Escriu aquí el text amb el S-Pen:</label>
+            <label for="textInput" class="writing-label">
+                <span class="pen-icon">✍️</span>
+                Escriu aquí el text amb el S-Pen:
+            </label>
             <div class="textarea-wrapper">
                 <div class="lines-background"></div>
                 <div class="margin-line"></div>
                 <textarea 
                     id="textInput" 
                     class="lined-textarea"
-                    placeholder="Toca aquí i utilitza l'S-Pen o bé el teclat si escrius des d'un ordinador."
+                    placeholder="Toca aquí i utilitza el S-Pen. El teclat de Samsung reconeixerà automàticament la teva lletra manuscrita..."
                     inputmode="text"
                     autocomplete="off"
                     autocorrect="off"
@@ -819,17 +1064,26 @@
         </div>
 
         <div id="resultContainer" class="result-container">
-            <div class="result-title">📊 Resultats de la correcció</div>
-            <div class="stats">
-                <div class="stat-card">
+            <div class="result-header">
+                <span class="trophy" id="trophyEmoji">🏆</span>
+                <h2 id="resultTitle">Resultats de la correcció</h2>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-bubble errors">
+                    <span class="stat-emoji">🐛</span>
                     <div class="stat-number" id="errorCount">0</div>
                     <div class="stat-label">Errors</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-bubble accuracy">
+                    <span class="stat-emoji">⭐</span>
                     <div class="stat-number" id="accuracy">100%</div>
                     <div class="stat-label">Encerts</div>
                 </div>
             </div>
+
+            <div id="motivationArea"></div>
+
             <div class="comparison">
                 <div class="text-block">
                     <h3>✏️ El teu text</h3>
@@ -853,6 +1107,8 @@
             </div>
         </div>
     </div>
+
+    <div id="confettiContainer" class="confetti-container"></div>
 
     <script>
         let textoEscrito = '';
@@ -994,6 +1250,27 @@
             return m + ':' + (s < 10 ? '0' : '') + s;
         }
 
+        // ========== CONFETI ==========
+        function lanzarConfeti() {
+            const container = document.getElementById('confettiContainer');
+            container.innerHTML = '';
+            const colores = ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF9F43', '#2ECC71', '#9B59B6', '#E74C3C'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confeti = document.createElement('div');
+                confeti.className = 'confetti';
+                confeti.style.left = Math.random() * 100 + '%';
+                confeti.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+                confeti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confeti.style.animationDelay = Math.random() * 2 + 's';
+                confeti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(confeti);
+            }
+            
+            setTimeout(() => { container.innerHTML = ''; }, 4000);
+        }
+
+        // ========== CORRECCIÓ ==========
         async function corregirDictado() {
             const textInput = document.getElementById('textInput');
             textoEscrito = textInput.value.trim();
@@ -1041,21 +1318,54 @@
 
             document.getElementById('errorCount').textContent = numErrores;
             document.getElementById('accuracy').textContent = precision + '%';
-            
+
+            // Motivación infantil
+            const motivationArea = document.getElementById('motivationArea');
+            const trophyEmoji = document.getElementById('trophyEmoji');
+            let motivacion = '';
+            let clase = '';
+
+            if (precision === 100) {
+                trophyEmoji.textContent = '🏆';
+                clase = 'perfect';
+                motivacion = '🎉 GENIAL! Perfecte! Ets un crack! 🌟';
+                lanzarConfeti();
+            } else if (precision >= 90) {
+                trophyEmoji.textContent = '🥇';
+                clase = 'great';
+                motivacion = '👏 Molt bé! Gairebé perfecte! Segueix així! 💪';
+                lanzarConfeti();
+            } else if (precision >= 70) {
+                trophyEmoji.textContent = '🥈';
+                clase = 'good';
+                motivacion = '😊 Bon treball! Amb una mica més de pràctica seràs el millor! 📚';
+            } else {
+                trophyEmoji.textContent = '🌱';
+                clase = 'try';
+                motivacion = '💪 No et rendeixis! Cada error és una oportunitat per aprendre! 🚀';
+            }
+
+            motivationArea.innerHTML = `<div class="motivation-message ${clase}">${motivacion}</div>`;
+
             let html = source === 'languagetool' ? '<div class="success-notice">✅ Correcció amb LanguageTool</div>' : '';
             
             if (numErrores === 0) {
-                html += '<p style="color: #2d5016; font-size: 1.3em; text-align: center;">✅ Molt bé! No s\'han trobat errors!</p>';
+                html += '<p style="color: #1E8449; font-size: 1.4em; text-align: center; font-weight: 800; margin-top: 10px;">🎊 No has tingut cap error! Ets increïble! 🎊</p>';
             } else {
-                html += '<div style="margin-top: 20px;"><h4 style="color: #8B4513;">📋 Errors detectats:</h4>';
+                html += '<div class="errors-section"><h4>📋 Errors detectats:</h4>';
                 matches.forEach((match, i) => {
                     const palabra = textoEscrito.substring(match.offset, match.offset + match.length);
                     const sugerencias = (match.replacements || []).map(r => r.value).slice(0, 3);
                     html += `
                         <div class="error-card">
-                            <div style="margin-bottom: 8px;"><span class="error-word">${i + 1}. "${palabra}"</span></div>
+                            <div class="error-word">${i + 1}. "${palabra}"</div>
                             <div class="error-message">💡 ${match.message}</div>
-                            ${sugerencias.length ? `<div style="margin-bottom: 10px;"><span class="error-suggestion">✓ Correcció: </span><span style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #065f46;">${sugerencias.join(', ')}</span></div>` : ''}
+                            ${sugerencias.length ? `
+                            <div class="correction-box">
+                                <span class="error-suggestion">✓ Correcció: </span>
+                                <strong>${sugerencias.join(', ')}</strong>
+                            </div>` : ''}
+                            <br>
                             <a href="https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabra)}" target="_blank" class="softcatala-link">🔍 Consultar a Softcatalà</a>
                         </div>`;
                 });
@@ -1067,6 +1377,8 @@
         function mostrarError(mensaje) {
             document.getElementById('errorCount').textContent = '—';
             document.getElementById('accuracy').textContent = '—';
+            document.getElementById('motivationArea').innerHTML = '';
+            document.getElementById('trophyEmoji').textContent = '⚠️';
             document.getElementById('correccionText').innerHTML = `
                 <div class="error-notice">
                     <strong>❌ Error de connexió</strong><br>${mensaje}<br><br>
@@ -1075,7 +1387,7 @@
         }
 
         function setLoading(loading) {
-            document.querySelectorAll('.toolbar button').forEach(btn => btn.disabled = loading);
+            document.querySelectorAll('.toolbar .btn').forEach(btn => btn.disabled = loading);
         }
 
         function borrarTodo() {
@@ -1094,6 +1406,7 @@
                 c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
             });
             document.getElementById('audioPlayer').classList.remove('show');
+            document.getElementById('motivationArea').innerHTML = '';
             currentDictat = null;
             if (audio) {
                 audio.pause();
@@ -1104,7 +1417,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=2')
+                navigator.serviceWorker.register('sw.js?v=3')
                     .then(reg => { console.log('Service Worker registrat'); reg.update(); })
                     .catch(err => console.log('Error en Service Worker:', err));
             });
