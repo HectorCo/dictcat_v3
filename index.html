@@ -328,6 +328,41 @@
             margin-bottom: 15px;
             text-align: center;
         }
+
+        /* Footer / Credits */
+        .app-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85em;
+        }
+
+        .app-footer a {
+            color: #8B4513;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .app-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .lt-credit {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3f4f6;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+
+        .lt-credit img {
+            height: 16px;
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -381,6 +416,18 @@
                     <h3>🔍 Correcció</h3>
                     <div class="text-content" id="correccionText"></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Footer con créditos -->
+        <div class="app-footer">
+            <div>
+                DICTCAT - Dictats en Català · 
+                <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">Correcció ortogràfica per LanguageTool</a>
+            </div>
+            <div class="lt-credit">
+                <span>🔧</span>
+                <span>Powered by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool</a></span>
             </div>
         </div>
     </div>
