@@ -487,6 +487,49 @@
             touch-action: none;
         }
 
+        /* ===== GUÍAS DE LÍNEAS ===== */
+        .canvas-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                linear-gradient(90deg, transparent 0px, transparent 50px, rgba(255, 107, 157, 0.15) 50px, rgba(255, 107, 157, 0.15) 52px, transparent 52px);
+            background-size: 100% 100%;
+        }
+
+        .line-row {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            border-bottom: 2px solid rgba(78, 205, 196, 0.25);
+            pointer-events: none;
+        }
+
+        .line-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: rgba(255, 107, 157, 0.15);
+        }
+
+        .line-row::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 8px;
+            height: 1px;
+            border-bottom: 1px dashed rgba(255, 107, 157, 0.2);
+        }
+
         .canvas-controls {
             display: flex;
             gap: 10px;
@@ -1103,6 +1146,7 @@
                 Escriu aquí amb el S-Pen o el ratolí:
             </label>
             <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="canvas-lines" id="canvasLines"></div>
                 <canvas id="writingCanvas"></canvas>
             </div>
             <div class="canvas-controls">
@@ -1314,16 +1358,30 @@
         const canvas = document.getElementById('writingCanvas');
         const ctx = canvas.getContext('2d');
         const canvasWrapper = document.getElementById('canvasWrapper');
+        const canvasLines = document.getElementById('canvasLines');
         let isDrawing = false;
-        let strokes = []; // Historial de trazos para deshacer
+        let strokes = [];
         let currentStroke = [];
         let lastX = 0, lastY = 0;
+
+        function dibujarLineasCuaderno() {
+            canvasLines.innerHTML = '';
+            const rect = canvasWrapper.getBoundingClientRect();
+            const lineHeight = 60;
+            const numLines = Math.ceil(rect.height / lineHeight);
+            
+            for (let i = 1; i < numLines; i++) {
+                const line = document.createElement('div');
+                line.className = 'line-row';
+                line.style.top = (i * lineHeight) + 'px';
+                canvasLines.appendChild(line);
+            }
+        }
 
         function resizeCanvas() {
             const rect = canvasWrapper.getBoundingClientRect();
             const dpr = window.devicePixelRatio || 1;
             
-            // Guardar contenido actual si existe
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = canvas.width;
             tempCanvas.height = canvas.height;
@@ -1341,8 +1399,10 @@
             ctx.strokeStyle = '#2D3436';
             ctx.lineWidth = 3;
 
-            // Restaurar contenido
             ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
+            
+            // Redibujar líneas del cuaderno
+            dibujarLineasCuaderno();
         }
 
         function getPos(e) {
@@ -1398,19 +1458,16 @@
             currentStroke = [];
         }
 
-        // Eventos ratón
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseout', stopDrawing);
 
-        // Eventos táctiles (S-Pen, dedo)
         canvas.addEventListener('touchstart', startDrawing, { passive: false });
         canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing);
         canvas.addEventListener('touchcancel', stopDrawing);
 
-        // Pointer events para S-Pen (mejor soporte)
         canvas.addEventListener('pointerdown', (e) => {
             if (e.pointerType === 'pen' || e.pointerType === 'mouse' || e.pointerType === 'touch') {
                 startDrawing(e);
@@ -1424,8 +1481,10 @@
 
         window.addEventListener('resize', resizeCanvas);
         
-        // Inicializar canvas
-        setTimeout(resizeCanvas, 100);
+        setTimeout(() => {
+            resizeCanvas();
+            dibujarLineasCuaderno();
+        }, 100);
 
         function limpiarCanvas() {
             const rect = canvasWrapper.getBoundingClientRect();
@@ -1439,7 +1498,6 @@
         function deshacerTrazo() {
             if (strokes.length === 0) return;
             strokes.pop();
-            // Redibujar todos los trazos restantes
             const rect = canvasWrapper.getBoundingClientRect();
             ctx.clearRect(0, 0, rect.width, rect.height);
             
@@ -1468,7 +1526,6 @@
 
         // ========== CLOUD VISION OCR ==========
         async function enviarOCR() {
-            // Verificar que hay contenido
             const rect = canvasWrapper.getBoundingClientRect();
             const imageData = ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
             const hasContent = imageData.data.some((val, i) => i % 4 === 3 && val > 0);
@@ -1482,10 +1539,8 @@
             mostrarOCRStatus('🔍 Llegint la teva lletra... Espera un moment.', 'loading');
 
             try {
-                // Convertir canvas a base64 PNG
                 const base64Image = canvas.toDataURL('image/png').split(',')[1];
 
-                // Llamar a tu API de Vercel (corrector.js) que hará de proxy a Cloud Vision
                 const response = await fetch('/api/ocr', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
