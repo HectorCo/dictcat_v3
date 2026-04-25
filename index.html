@@ -1446,7 +1446,9 @@
                 canvasWrapper.style.cursor = 'crosshair';
                 ctx.globalCompositeOperation = 'source-over';
                 ctx.strokeStyle = '#2D3436';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#2D3436';
+                ctx.shadowBlur = 2;
             } else {
                 btnLapiz.classList.remove('active');
                 btnGoma.classList.add('active');
@@ -1484,7 +1486,9 @@
             } else {
                 ctx.globalCompositeOperation = 'source-over';
                 ctx.strokeStyle = '#2D3436';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#2D3436';
+                ctx.shadowBlur = 2;
             }
 
             ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
@@ -1605,7 +1609,9 @@
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.strokeStyle = '#2D3436';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 5;
+            ctx.shadowColor = '#2D3436';
+            ctx.shadowBlur = 2;
             
             strokes.forEach(stroke => {
                 if (stroke.length < 2) return;
@@ -1623,6 +1629,59 @@
             el.textContent = mensaje;
             el.className = 'ocr-status';
             if (tipo) el.classList.add('show', tipo);
+        }
+
+        // Limpia tokens huérfanos al final del texto OCR
+        function limpiarTextoOCR(texto) {
+            if (!texto) return texto;
+            // Palabras comunes válidas de 1-2 letras en catalán
+            const validas = new Set([
+                'a','e','i','o','u','y',           // vocales
+                'al','el','la','le','li','lo','ls','lt','lu','ly',
+                'de','di','do','du','dy',
+                'en','es','et','eu','ev','ex','ey','ez',
+                'fa','fe','fi','fo','fu',
+                'ha','he','hi','ho','hu','hy',
+                'if','ig','in','ir','is','it','iv','ix','iz',
+                'ja','je','ji','jo','ju','jy',
+                'ka','ke','ki','ko','ku','ky',
+                'ma','me','mi','mo','mu','my',
+                'na','ne','ni','no','nu','ny',
+                'oh','oi','om','on','or','os','ou','oy',
+                'pa','pe','pi','po','pu','py',
+                'qu',
+                'ra','re','ri','ro','ru','ry',
+                'sa','se','si','so','su','sy',
+                'ta','te','ti','to','tu','ty',
+                'un','us','ut','uv','uz',
+                'va','ve','vi','vo','vu','vy',
+                'xa','xe','xi','xo','xu','xy',
+                'za','ze','zi','zo','zu','zy',
+                // contracciones y artículos
+                'd'','l'','n'','s'',
+                // números romanos comunes
+                'i','ii','iii','iv','v','vi','vii','viii','ix','x',
+                'xi','xii','xiii','xiv','xv','xvi','xvii','xviii','xix','xx',
+                // abreviaturas comunes
+                'sr','sra','st','dr','dra','mr','mrs','km','cm','mm','kg','mg',
+                // preposiciones catalanas
+                'a','de','en','per','amb','sense','sota','sobre','entre','davant','darrere',
+                'contra','cap','fins','des','pel','pels','del','dels','al','als',
+                // pronombres/posesivos cortos
+                'em','et','es','ens','us','hi','ho','li','ls','la','lo','les','els','en','hi'
+            ]);
+
+            let palabras = texto.trim().split(/\s+/);
+            // Recortar desde el final palabras de 1-2 chars que no estén en la lista blanca
+            while (palabras.length > 0) {
+                const ultima = palabras[palabras.length - 1].toLowerCase().replace(/[^a-zàáèéíïòóúüç']/g, '');
+                if (ultima.length <= 2 && !validas.has(ultima)) {
+                    palabras.pop();
+                } else {
+                    break;
+                }
+            }
+            return palabras.join(' ');
         }
 
         // ========== CLOUD VISION OCR ==========
