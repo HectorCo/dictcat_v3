@@ -1656,7 +1656,7 @@
                 'xa','xe','xi','xo','xu','xy',
                 'za','ze','zi','zo','zu','zy',
                 // contracciones y artículos
-                'd'','l'','n'','s'',
+                "d'", "l'", "n'", "s'",
                 // números romanos comunes
                 'i','ii','iii','iv','v','vi','vii','viii','ix','x',
                 'xi','xii','xiii','xiv','xv','xvi','xvii','xviii','xix','xx',
@@ -1672,7 +1672,7 @@
             let palabras = texto.trim().split(/\s+/);
             // Recortar desde el final palabras de 1-2 chars que no estén en la lista blanca
             while (palabras.length > 0) {
-                const ultima = palabras[palabras.length - 1].toLowerCase().replace(/[^a-zàáèéíïòóúüç']/g, '');
+                const ultima = palabras[palabras.length - 1].toLowerCase().replace(/[^a-zàáèéíïòóúüç']/g, "");
                 if (ultima.length <= 2 && !validas.has(ultima)) {
                     palabras.pop();
                 } else {
