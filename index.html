@@ -213,594 +213,534 @@
         .dictat-name {
             font-weight: 800;
             color: var(--text);
-            font-size: 1em;
+            font-size: 0.95em;
+            margin-bottom: 6px;
         }
 
         .dictat-status {
             font-size: 0.8em;
             color: var(--text-light);
-            margin-top: 6px;
             font-weight: 600;
-            padding: 4px 10px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            display: inline-block;
         }
 
         .audio-player {
-            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%);
-            border: 3px solid var(--accent);
+            background: linear-gradient(145deg, var(--bg-yellow) 0%, var(--accent) 100%);
+            padding: 18px;
             border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-bottom: 20px;
-            display: none;
+            margin-bottom: 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
             position: relative;
             z-index: 1;
             box-shadow: var(--shadow-card);
         }
 
         .audio-player.show {
-            display: block;
-            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .audio-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .audio-info .audio-icon {
-            font-size: 2em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .audio-info .audio-title {
-            font-weight: 800;
-            color: var(--accent-orange);
-            font-size: 1.15em;
+            max-height: 250px;
+            margin-bottom: 18px;
         }
 
         .audio-controls {
             display: flex;
+            gap: 10px;
+            justify-content: center;
             align-items: center;
-            gap: 14px;
             margin-bottom: 12px;
         }
 
         .audio-btn {
-            width: 64px;
-            height: 64px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: none;
+            font-size: 1.6em;
             cursor: pointer;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-card);
         }
 
-        .audio-btn.play {
-            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
+        .audio-btn.play-pause {
+            background: linear-gradient(145deg, var(--success), #27AE60);
             color: white;
+            width: 70px;
+            height: 70px;
+            font-size: 2em;
         }
 
-        .audio-btn.pause {
-            background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%);
+        .audio-btn.speed {
+            background: linear-gradient(145deg, var(--secondary), var(--secondary-light));
             color: white;
+            font-size: 0.9em;
+            font-weight: 700;
         }
 
-        .audio-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .audio-btn:hover:not(:disabled) {
-            transform: scale(1.12) rotate(5deg);
-        }
-
-        .audio-btn:active:not(:disabled) {
+        .audio-btn:active {
             transform: scale(0.92);
         }
 
         .progress-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .progress-bar-wrapper {
-            position: relative;
-            height: 14px;
-            background: rgba(255, 255, 255, 0.8);
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 10px;
             overflow: hidden;
-            cursor: pointer;
-            border: 2px solid var(--accent);
+            margin-bottom: 8px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent-orange) 100%);
-            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-orange));
             width: 0%;
-            transition: width 0.1s linear;
-            position: relative;
+            transition: width 0.2s linear;
+            border-radius: 10px;
         }
 
-        .progress-bar::after {
-            content: '🐱';
-            position: absolute;
-            right: -14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-        }
-
-        .time-display {
+        .audio-time {
             display: flex;
             justify-content: space-between;
             font-size: 0.85em;
-            color: var(--text-light);
             font-weight: 700;
-            font-variant-numeric: tabular-nums;
+            color: var(--text);
         }
 
-        .audio-hint {
-            text-align: center;
-            color: var(--accent-orange);
-            font-size: 0.9em;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 8px;
-            border-radius: 12px;
-        }
-
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn {
-            padding: 14px 24px;
-            font-size: 1em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-weight: 800;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            white-space: nowrap;
-            min-height: 52px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-corregir {
-            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
-            color: white;
-        }
-
-        .btn-borrar {
-            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
-            color: white;
-        }
-
-        .btn-nuevo {
-            background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%);
-            color: white;
-        }
-
-        .btn-ocr {
-            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
-            color: white;
-        }
-
-        /* ===== CANVAS DE ESCRITURA ===== */
-        .writing-area {
-            margin: 16px 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .writing-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: clamp(1.1em, 3.5vw, 1.3em);
-            color: var(--primary-dark);
-            margin-bottom: 14px;
-            font-weight: 800;
-            text-align: center;
-        }
-
-        .writing-label .pen-icon {
-            font-size: 1.3em;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            border: 3px solid var(--primary-light);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
+        .canvas-container {
             background: white;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 18px;
             box-shadow: var(--shadow-card);
-            flex: 1;
-            min-height: 300px;
-            transition: border-color 0.3s;
-            cursor: crosshair;
-        }
-
-        .canvas-wrapper:focus-within, .canvas-wrapper.drawing {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15);
-        }
-
-        #writingCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            touch-action: none;
-        }
-
-        /* ===== GUÍAS DE LÍNEAS ===== */
-        .canvas-lines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
+            position: relative;
             z-index: 1;
-            background-image: 
-                linear-gradient(90deg, transparent 0px, transparent 50px, rgba(255, 107, 157, 0.15) 50px, rgba(255, 107, 157, 0.15) 52px, transparent 52px);
-            background-size: 100% 100%;
+            border: 3px dashed var(--secondary);
         }
 
-        .line-row {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 60px;
-            border-bottom: 2px solid rgba(78, 205, 196, 0.25);
-            pointer-events: none;
-        }
-
-        .line-row::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 1px;
-            background: rgba(255, 107, 157, 0.15);
-        }
-
-        .line-row::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 8px;
-            height: 1px;
-            border-bottom: 1px dashed rgba(255, 107, 157, 0.2);
-        }
-
-        .canvas-controls {
+        .canvas-header {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            justify-content: center;
+            gap: 10px;
         }
+
+        .canvas-title {
+            font-weight: 800;
+            color: var(--secondary);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========== TOOL SELECTOR (NUEVO) ========== */
+        .tool-selector {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-cream);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .tool-btn {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4em;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tool-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .tool-btn:active {
+            transform: scale(0.94);
+        }
+
+        .tool-btn.active {
+            background: linear-gradient(145deg, var(--primary-light), var(--primary));
+            border-color: var(--primary-dark);
+            color: white;
+            box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+        }
+
+        .tool-btn.eraser.active {
+            background: linear-gradient(145deg, #95A5A6, #7F8C8D);
+            border-color: #5D6D7E;
+        }
+
+        /* ========== FIN TOOL SELECTOR ========== */
 
         .canvas-btn {
-            padding: 10px 18px;
-            font-size: 0.9em;
+            background: linear-gradient(145deg, var(--secondary), var(--secondary-light));
+            color: white;
             border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 10px 16px;
+            border-radius: 12px;
             font-weight: 700;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            box-shadow: var(--shadow-card);
         }
 
         .canvas-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(78, 205, 196, 0.3);
         }
 
-        .canvas-btn.undo {
-            background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%);
-            color: white;
+        .canvas-btn:active {
+            transform: scale(0.96);
         }
 
-        .canvas-btn.clear {
-            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
-            color: white;
-        }
-
-        .canvas-btn.ocr {
-            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
-            color: white;
-        }
-
-        .canvas-tip {
-            text-align: center;
-            color: var(--text-light);
-            margin-top: 10px;
-            font-size: 0.9em;
-            font-weight: 600;
+        #drawingCanvas {
+            border: 2px solid var(--secondary-light);
+            border-radius: 12px;
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+            max-width: 100%;
+            display: block;
+            background: #FAFAFA;
         }
 
         .ocr-status {
-            text-align: center;
+            margin-top: 12px;
             padding: 12px;
-            border-radius: 12px;
-            margin-top: 10px;
+            border-radius: 10px;
             font-weight: 700;
+            text-align: center;
+            font-size: 0.95em;
             display: none;
         }
 
         .ocr-status.show {
             display: block;
-            animation: popIn 0.3s ease;
-        }
-
-        .ocr-status.loading {
-            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%);
-            color: var(--accent-orange);
-            border: 2px solid var(--accent);
         }
 
         .ocr-status.success {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
+            background: linear-gradient(145deg, #D5F5E3, #ABEBC6);
             color: #1E8449;
-            border: 2px solid var(--success);
         }
 
         .ocr-status.error {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            color: #922B21;
-            border: 2px solid var(--danger);
+            background: linear-gradient(145deg, #FADBD8, #F5B7B1);
+            color: #A93226;
         }
 
-        /* Texto extraído editable */
+        .ocr-status.loading {
+            background: linear-gradient(145deg, #D6EAF8, #AED6F1);
+            color: #1F618D;
+        }
+
         .extracted-text-area {
-            margin-top: 16px;
-            display: none;
+            background: white;
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-card);
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .extracted-text-area.show {
+            max-height: 600px;
+            margin-bottom: 18px;
+        }
+
+        .extracted-text-area label {
             display: block;
-            animation: popIn 0.4s ease;
-        }
-
-        .extracted-text-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 1.1em;
-            color: var(--primary-dark);
-            margin-bottom: 10px;
             font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
-        .extracted-textarea {
+        .extracted-text-area textarea {
             width: 100%;
-            min-height: 120px;
-            padding: 16px;
-            font-size: 18px;
+            min-height: 150px;
+            padding: 14px;
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
             font-family: 'Nunito', sans-serif;
-            line-height: 1.8;
-            border: 3px solid var(--secondary);
-            border-radius: var(--radius-sm);
-            outline: none;
+            font-size: 1em;
             resize: vertical;
-            color: var(--text);
-            background: var(--bg-blue);
-            font-weight: 600;
+            transition: all 0.2s ease;
+            background: var(--bg-cream);
         }
 
-        .extracted-textarea:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15);
+        .extracted-text-area textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.1);
         }
 
-        /* Resultados */
-        .result-container {
-            margin-top: 20px;
-            padding: 24px;
-            background: linear-gradient(145deg, var(--bg-cream) 0%, white 100%);
-            border-radius: var(--radius);
-            display: none;
-            flex-shrink: 0;
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 18px;
             position: relative;
             z-index: 1;
-            border: 3px solid var(--accent);
-            box-shadow: var(--shadow-soft);
+        }
+
+        .btn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-card);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, var(--accent-orange), #E67E22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, var(--danger), #C0392B);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result-container {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-card);
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .result-container.show {
-            display: block;
-            animation: celebrateIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes celebrateIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .result-header {
-            text-align: center;
+            max-height: 3000px;
             margin-bottom: 20px;
-        }
-
-        .result-header .trophy {
-            font-size: 3.5em;
-            margin-bottom: 8px;
-            display: inline-block;
-            animation: trophyBounce 1s ease infinite;
-        }
-
-        @keyframes trophyBounce {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-        }
-
-        .result-header h2 {
-            color: var(--primary-dark);
-            font-size: 1.6em;
-            font-weight: 900;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .stat-bubble {
-            background: white;
-            border-radius: var(--radius-sm);
-            padding: 20px;
+        .stat-card {
+            background: linear-gradient(145deg, var(--bg-pink), var(--primary-light));
+            padding: 16px;
+            border-radius: 14px;
             text-align: center;
             box-shadow: var(--shadow-card);
-            border: 3px solid transparent;
-            transition: transform 0.3s;
-            position: relative;
-            overflow: hidden;
         }
 
-        .stat-bubble:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-bubble.errors {
-            border-color: var(--danger);
-            background: linear-gradient(145deg, #ffffff 0%, #FADBD8 100%);
-        }
-
-        .stat-bubble.accuracy {
-            border-color: var(--success);
-            background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%);
-        }
-
-        .stat-bubble .stat-emoji {
-            font-size: 2.5em;
-            margin-bottom: 8px;
+        .stat-number {
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--primary-dark);
             display: block;
         }
 
-        .stat-bubble .stat-number {
-            font-size: 2.8em;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .stat-bubble.errors .stat-number {
-            color: var(--danger);
-        }
-
-        .stat-bubble.accuracy .stat-number {
-            color: var(--success);
-        }
-
-        .stat-bubble .stat-label {
-            color: var(--text-light);
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text);
             font-weight: 700;
-            font-size: 0.95em;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .motivation-area {
+            margin-bottom: 18px;
         }
 
         .motivation-message {
-            text-align: center;
-            padding: 20px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-            font-size: 1.2em;
+            padding: 18px;
+            border-radius: 14px;
             font-weight: 800;
-            animation: fadeInUp 0.5s ease 0.3s both;
+            text-align: center;
+            font-size: 1.15em;
+            box-shadow: var(--shadow-card);
         }
 
         .motivation-message.perfect {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
+            background: linear-gradient(145deg, #D5F5E3, #ABEBC6);
             color: #1E8449;
-            border: 3px solid var(--success);
         }
 
         .motivation-message.great {
-            background: linear-gradient(145deg, #FCF3CF 0%, #F9E79F 100%);
-            color: #9A7D0A;
-            border: 3px solid var(--accent);
+            background: linear-gradient(145deg, #D6EAF8, #AED6F1);
+            color: #1F618D;
         }
 
         .motivation-message.good {
-            background: linear-gradient(145deg, #D6EAF8 0%, #AED6F1 100%);
-            color: #1A5276;
-            border: 3px solid var(--secondary);
+            background: linear-gradient(145deg, #FCF3CF, #F9E79F);
+            color: #9A7D0A;
         }
 
         .motivation-message.try {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            color: #922B21;
-            border: 3px solid var(--danger);
+            background: linear-gradient(145deg, #FADBD8, #F5B7B1);
+            color: #A93226;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .texto-escrito {
+            background: var(--bg-cream);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 5px solid var(--accent-orange);
         }
 
-        .confetti-container {
+        .texto-escrito h3 {
+            color: var(--accent-orange);
+            font-size: 1.1em;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .texto-escrito p {
+            color: var(--text);
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .correccion-result {
+            background: var(--bg-blue);
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .correccion-result h3 {
+            color: var(--secondary);
+            font-size: 1.1em;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .success-notice {
+            background: linear-gradient(145deg, #D5F5E3, #ABEBC6);
+            color: #1E8449;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .error-notice {
+            background: linear-gradient(145deg, #FADBD8, #F5B7B1);
+            color: #A93226;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .errors-section h4 {
+            color: var(--text);
+            font-weight: 800;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .error-card {
+            background: white;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-card);
+            border-left: 4px solid var(--warning);
+        }
+
+        .error-word {
+            font-weight: 800;
+            color: var(--danger);
+            font-size: 1.05em;
+            margin-bottom: 6px;
+        }
+
+        .error-message {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .correction-box {
+            background: var(--bg-yellow);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 0.95em;
+        }
+
+        .error-suggestion {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .softcatala-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .softcatala-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-light);
+            font-weight: 700;
+            padding: 20px;
+            font-size: 1.1em;
+        }
+
+        #confettiContainer {
             position: fixed;
             top: 0;
             left: 0;
@@ -813,649 +753,252 @@
 
         .confetti {
             position: absolute;
-            width: 12px;
-            height: 12px;
-            animation: confettiFall 3s ease-out forwards;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall linear forwards;
         }
 
-        @keyframes confettiFall {
-            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
-        .comparison {
-            display: grid;
-            gap: 16px;
-            margin-top: 20px;
-        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 16px;
+            }
 
-        .text-block {
-            padding: 18px;
-            background: white;
-            border-radius: var(--radius-sm);
-            border-left: 5px solid var(--primary);
-            box-shadow: var(--shadow-card);
-            word-break: break-word;
-        }
+            .header-text h1 {
+                font-size: 2em;
+            }
 
-        .text-block h3 {
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+            .btn {
+                font-size: 0.95em;
+                padding: 12px 18px;
+            }
 
-        .text-content {
-            font-size: clamp(16px, 3.5vw, 18px);
-            line-height: 1.8;
-            font-weight: 600;
-            color: var(--text);
-        }
+            .dictats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 10px;
+            }
 
-        .errors-section {
-            margin-top: 20px;
-        }
+            .stat-card {
+                padding: 12px;
+            }
 
-        .errors-section h4 {
-            color: var(--primary-dark);
-            font-size: 1.2em;
-            font-weight: 800;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .error-card {
-            background: white;
-            padding: 18px;
-            border-radius: var(--radius-sm);
-            border: 3px solid var(--danger);
-            box-shadow: var(--shadow-card);
-            margin-bottom: 14px;
-            word-break: break-word;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .error-card::before {
-            content: '❌';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 2em;
-            opacity: 0.1;
-        }
-
-        .error-word {
-            font-weight: 900;
-            color: var(--danger);
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .error-message {
-            color: var(--text);
-            margin: 10px 0;
-            font-size: 1em;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-
-        .error-suggestion {
-            color: var(--success);
-            font-weight: 800;
-            font-size: 1.1em;
-        }
-
-        .correction-box {
-            background: #EAFAF1;
-            border: 2px dashed var(--success);
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: inline-block;
-            margin-top: 8px;
-        }
-
-        .softcatala-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 800;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
-            font-size: 0.9em;
-            transition: transform 0.2s;
-        }
-
-        .softcatala-link:hover {
-            transform: scale(1.05);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 4px solid var(--primary);
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 12px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error-notice {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            border: 3px solid var(--danger);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            color: #922B21;
-            font-size: 1em;
-            margin-bottom: 16px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .success-notice {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
-            border: 3px solid var(--success);
-            border-radius: var(--radius-sm);
-            padding: 12px;
-            color: #1E8449;
-            font-size: 0.95em;
-            margin-bottom: 16px;
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .app-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 2px dashed var(--primary-light);
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.85em;
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
-            font-weight: 600;
-        }
-
-        .app-footer a {
-            color: var(--primary-dark);
-            text-decoration: none;
-            font-weight: 800;
-        }
-
-        .app-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .lt-credit {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--bg-pink);
-            padding: 6px 14px;
-            border-radius: 20px;
-            margin-top: 6px;
-            font-weight: 700;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .container { padding: 18px; border-radius: 20px; min-height: calc(100vh - 16px); }
-            .header-logo-img { width: 68px; height: 68px; border-radius: 18px; }
-            .header-text h1 { font-size: 1.8em; }
-            .dictats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .dictat-card { padding: 14px 10px; }
-            .audio-btn { width: 56px; height: 56px; font-size: 1.6em; }
-            .canvas-wrapper { min-height: 250px; }
-            #writingCanvas { min-height: 250px; }
-            .stats-grid { gap: 10px; }
-            .stat-bubble { padding: 16px; }
-            .stat-bubble .stat-number { font-size: 2.2em; }
-            .stat-bubble .stat-emoji { font-size: 2em; }
-            .btn { padding: 12px 18px; font-size: 0.95em; min-height: 48px; }
-        }
-
-        @media (max-width: 380px) {
-            .header-logo-img { width: 56px; height: 56px; }
-            .header-text h1 { font-size: 1.6em; }
-            .btn { font-size: 0.85em; padding: 10px 14px; }
-            .dictat-name { font-size: 0.9em; }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            .container { padding: 12px; }
-            .header-logo { margin-bottom: 12px; }
-            .header-logo-img { width: 52px; height: 52px; }
-            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-            .dictat-card { padding: 10px 6px; }
-            .dictat-icon { font-size: 1.8em; }
-            .writing-area { margin: 8px 0; }
-            .canvas-wrapper { min-height: 180px; }
-            #writingCanvas { min-height: 180px; }
-        }
-
-        @media (min-width: 1024px) {
-            .container { padding: 40px; }
-            .canvas-wrapper { min-height: 450px; }
-            #writingCanvas { min-height: 450px; }
-            .header-logo-img { width: 96px; height: 96px; border-radius: 24px; }
+            .stat-number {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo-bg" aria-hidden="true">
-            <img src="image.png" alt="">
+        <div class="logo-bg">
+            <img src="image.png" alt="Logo DICTCAT">
         </div>
 
         <div class="header-logo">
-            <img src="image.png" alt="DictCat" class="header-logo-img">
+            <img src="image.png" alt="Logo DICTCAT" class="header-logo-img">
             <div class="header-text">
                 <h1>DICTCAT</h1>
-                <div class="subtitle">Dictats en català</div>
+                <div class="subtitle">Dictats en Català</div>
             </div>
         </div>
 
         <div class="section-title">
-            <span class="icon-bounce">🎧</span>
-            <h2>Tria un dictat</h2>
+            <span class="icon-bounce">📝</span>
+            <h2>Escull un dictat</h2>
         </div>
 
-        <div class="dictats-grid" id="dictatsGrid">
-            <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">🏆</span>
-                <div class="dictat-name">Campionat</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">🐱</span>
-                <div class="dictat-name">El gat</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">☀️</span>
-                <div class="dictat-name">Estiu</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">📅</span>
-                <div class="dictat-name">Juliols</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-        </div>
+        <div class="dictats-grid" id="dictatsGrid"></div>
 
-        <div id="audioPlayer" class="audio-player">
-            <div class="audio-info">
-                <span class="audio-icon">🎵</span>
-                <span class="audio-title" id="audioTitle">Cap dictat seleccionat</span>
-            </div>
+        <div class="audio-player" id="audioPlayer">
             <div class="audio-controls">
-                <button class="audio-btn play" id="playPauseBtn" onclick="togglePlayPause()" disabled>▶️</button>
-                <div class="progress-container">
-                    <div class="progress-bar-wrapper" id="progressBarWrapper" onclick="seekAudio(event)">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <div class="time-display">
-                        <span id="currentTime">0:00</span>
-                        <span id="duration">0:00</span>
-                    </div>
+                <button class="audio-btn speed" id="speedBtn" onclick="changeSpeed()">1.0x</button>
+                <button class="audio-btn play-pause" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+                <button class="audio-btn speed" onclick="skipBackward()">⏪</button>
+                <button class="audio-btn speed" onclick="skipForward()">⏩</button>
+            </div>
+            <div class="progress-container" onclick="seekAudio(event)">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="audio-time">
+                <span id="currentTime">0:00</span>
+                <span id="totalTime">0:00</span>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <div class="canvas-header">
+                <div class="canvas-title">
+                    ✍️ Escriu el dictat aquí
+                </div>
+                <div class="tool-selector">
+                    <button class="tool-btn pencil active" id="pencilBtn" onclick="selectTool('pencil')" title="Lápiz">
+                        ✏️
+                    </button>
+                    <button class="tool-btn eraser" id="eraserBtn" onclick="selectTool('eraser')" title="Goma de borrar">
+                        🧹
+                    </button>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="canvas-btn" onclick="limpiarCanvas()">🗑️ Netejar</button>
+                    <button class="canvas-btn" onclick="reconocerTexto()">📷 Reconèixer text</button>
                 </div>
             </div>
-            <p class="audio-hint">💡 Pausa l'àudio per escriure, reprèn quan estiguis llest</p>
+            <canvas id="drawingCanvas" width="800" height="400"></canvas>
+            <div class="ocr-status" id="ocrStatus"></div>
+        </div>
+
+        <div class="extracted-text-area" id="extractedTextArea">
+            <label for="extractedText">📝 Text reconegut / Edita aquí:</label>
+            <textarea id="extractedText" placeholder="El text reconegut apareixerà aquí. També pots escriure o editar directament..."></textarea>
         </div>
 
         <div class="toolbar">
-            <button class="btn btn-borrar" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
-            <button class="btn btn-ocr" onclick="enviarOCR()" id="btnOCR">🔍 Llegir text (OCR)</button>
-            <button class="btn btn-corregir" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
-            <button class="btn btn-nuevo" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
+            <button class="btn btn-primary" onclick="corregirDictado()">✅ Corregir</button>
+            <button class="btn btn-secondary" onclick="nuevoIntento()">🔄 Nou intent</button>
         </div>
 
-        <!-- ÁREA DE ESCRITURA MANUSCRITA -->
-        <div class="writing-area">
-            <label class="writing-label">
-                <span class="pen-icon">✍️</span>
-                Escriu aquí amb el S-Pen o el ratolí:
-            </label>
-            <div class="canvas-wrapper" id="canvasWrapper">
-                <div class="canvas-lines" id="canvasLines"></div>
-                <canvas id="writingCanvas"></canvas>
-            </div>
-            <div class="canvas-controls">
-                <button class="canvas-btn undo" onclick="deshacerTrazo()" title="Desfés l'últim traç">↩️ Desfés</button>
-                <button class="canvas-btn clear" onclick="limpiarCanvas()" title="Esborra tot">🧹 Netejar</button>
-            </div>
-            <p class="canvas-tip">💡 Escriu amb el S-Pen, el dit o el ratolí. Després prem "Llegir text" per convertir-ho a text.</p>
-            
-            <div id="ocrStatus" class="ocr-status"></div>
-
-            <!-- Texto extraído editable -->
-            <div id="extractedTextArea" class="extracted-text-area">
-                <div class="extracted-text-label">
-                    <span>📝</span>
-                    Text reconegut (pots editar-lo abans de corregir):
-                </div>
-                <textarea id="extractedText" class="extracted-textarea" placeholder="Aquí apareixerà el text reconegut per OCR..."></textarea>
-            </div>
-        </div>
-
-        <div id="resultContainer" class="result-container">
-            <div class="result-header">
-                <span class="trophy" id="trophyEmoji">🏆</span>
-                <h2 id="resultTitle">Resultats de la correcció</h2>
-            </div>
-
+        <div class="result-container" id="resultContainer">
             <div class="stats-grid">
-                <div class="stat-bubble errors">
-                    <span class="stat-emoji">🐛</span>
-                    <div class="stat-number" id="errorCount">0</div>
-                    <div class="stat-label">Errors</div>
+                <div class="stat-card">
+                    <span id="trophyEmoji" style="font-size: 2em; display: block; margin-bottom: 8px;">🏆</span>
+                    <span class="stat-number" id="errorCount">0</span>
+                    <span class="stat-label">Errors</span>
                 </div>
-                <div class="stat-bubble accuracy">
-                    <span class="stat-emoji">⭐</span>
-                    <div class="stat-number" id="accuracy">100%</div>
-                    <div class="stat-label">Encerts</div>
+                <div class="stat-card">
+                    <span style="font-size: 2em; display: block; margin-bottom: 8px;">🎯</span>
+                    <span class="stat-number" id="accuracy">100%</span>
+                    <span class="stat-label">Precisió</span>
                 </div>
             </div>
 
-            <div id="motivationArea"></div>
+            <div class="motivation-area" id="motivationArea"></div>
 
-            <div class="comparison">
-                <div class="text-block">
-                    <h3>✏️ El teu text</h3>
-                    <div class="text-content" id="escritoText"></div>
-                </div>
-                <div class="text-block">
-                    <h3>🔍 Correcció</h3>
-                    <div class="text-content" id="correccionText"></div>
-                </div>
+            <div class="texto-escrito">
+                <h3>📄 El teu text:</h3>
+                <p id="escritoText"></p>
             </div>
-        </div>
 
-        <div class="app-footer">
-            <div>
-                DICTCAT - Dictats en Català · 
-                <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">Correcció ortogràfica per LanguageTool</a>
-            </div>
-            <div class="lt-credit">
-                <span>🔧</span>
-                <span>Powered by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool</a> + Google Cloud Vision</span>
+            <div class="correccion-result">
+                <h3>🔍 Correcció:</h3>
+                <div id="correccionText"></div>
             </div>
         </div>
     </div>
 
-    <div id="confettiContainer" class="confetti-container"></div>
+    <div id="confettiContainer"></div>
 
     <script>
-        // ========== AUDIO ==========
+        const dictados = [
+            { nombre: 'El gat i el ratolí', emoji: '🐱', archivo: 'dictat1.mp3' },
+            { nombre: 'La primavera', emoji: '🌸', archivo: 'dictat2.mp3' },
+            { nombre: 'El mar', emoji: '🌊', archivo: 'dictat3.mp3' },
+            { nombre: 'Els animals', emoji: '🦁', archivo: 'dictat4.mp3' },
+            { nombre: 'La muntanya', emoji: '⛰️', archivo: 'dictat5.mp3' },
+            { nombre: 'L\'escola', emoji: '🏫', archivo: 'dictat6.mp3' }
+        ];
+
         let audio = null;
         let currentDictat = null;
-        let progressInterval = null;
+        let currentSpeed = 1.0;
 
-        function seleccionarDictat(card) {
-            const src = card.dataset.audio;
-            const nombre = card.querySelector('.dictat-name').textContent;
-
-            document.querySelectorAll('.dictat-card').forEach(c => {
-                c.classList.remove('active');
-                c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
-            });
-
-            if (currentDictat === src && audio && !audio.paused) {
-                pauseAudio();
-                return;
-            }
-
-            card.classList.add('active');
-            card.querySelector('.dictat-status').textContent = 'Reproduint...';
-            currentDictat = src;
-
-            document.getElementById('audioPlayer').classList.add('show');
-            document.getElementById('audioTitle').textContent = nombre;
-
-            if (audio) {
-                audio.pause();
-                audio.src = '';
-            }
-
-            audio = new Audio(src);
-            audio.preload = 'auto';
-
-            const btn = document.getElementById('playPauseBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳';
-
-            audio.addEventListener('canplaythrough', () => {
-                btn.disabled = false;
-                btn.textContent = '⏸️';
-                btn.classList.remove('play');
-                btn.classList.add('pause');
-                updateDuration();
-                audio.play();
-                startProgress();
-            });
-
-            audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('ended', () => {
-                btn.textContent = '▶️';
-                btn.classList.remove('pause');
-                btn.classList.add('play');
-                card.querySelector('.dictat-status').textContent = 'Finalitzat';
-                stopProgress();
-                document.getElementById('progressBar').style.width = '100%';
-            });
-
-            audio.addEventListener('error', () => {
-                btn.disabled = true;
-                btn.textContent = '❌';
-                card.querySelector('.dictat-status').textContent = 'Error';
-                alert('No s\'ha pogut carregar l\'àudio. Verifica que el fitxer existeix a: ' + src);
-            });
-
-            audio.load();
-        }
-
-        function togglePlayPause() {
-            if (!audio) return;
-            const btn = document.getElementById('playPauseBtn');
-            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
-
-            if (audio.paused) {
-                audio.play();
-                btn.textContent = '⏸️';
-                btn.classList.remove('play');
-                btn.classList.add('pause');
-                if (statusEl) statusEl.textContent = 'Reproduint...';
-                startProgress();
-            } else {
-                pauseAudio();
-            }
-        }
-
-        function pauseAudio() {
-            if (!audio) return;
-            audio.pause();
-            const btn = document.getElementById('playPauseBtn');
-            btn.textContent = '▶️';
-            btn.classList.remove('pause');
-            btn.classList.add('play');
-            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
-            if (statusEl) statusEl.textContent = 'Pausat';
-            stopProgress();
-        }
-
-        function startProgress() {
-            stopProgress();
-            progressInterval = setInterval(updateProgress, 100);
-        }
-
-        function stopProgress() {
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
-        }
-
-        function updateProgress() {
-            if (!audio || !audio.duration) return;
-            const pct = (audio.currentTime / audio.duration) * 100;
-            document.getElementById('progressBar').style.width = pct + '%';
-            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
-        }
-
-        function updateDuration() {
-            if (audio && audio.duration) {
-                document.getElementById('duration').textContent = formatTime(audio.duration);
-            }
-        }
-
-        function seekAudio(event) {
-            if (!audio || !audio.duration) return;
-            const wrapper = document.getElementById('progressBarWrapper');
-            const rect = wrapper.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const pct = Math.max(0, Math.min(1, x / rect.width));
-            audio.currentTime = pct * audio.duration;
-            updateProgress();
-        }
-
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
-            const m = Math.floor(seconds / 60);
-            const s = Math.floor(seconds % 60);
-            return m + ':' + (s < 10 ? '0' : '') + s;
-        }
-
-        // ========== CANVAS DE ESCRITURA ==========
-        const canvas = document.getElementById('writingCanvas');
+        // ========== CANVAS & DRAWING ==========
+        const canvas = document.getElementById('drawingCanvas');
         const ctx = canvas.getContext('2d');
-        const canvasWrapper = document.getElementById('canvasWrapper');
-        const canvasLines = document.getElementById('canvasLines');
         let isDrawing = false;
-        let strokes = [];
-        let currentStroke = [];
-        let lastX = 0, lastY = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let currentTool = 'pencil'; // 'pencil' o 'eraser'
 
-        function dibujarLineasCuaderno() {
-            canvasLines.innerHTML = '';
-            const rect = canvasWrapper.getBoundingClientRect();
-            const lineHeight = 60;
-            const numLines = Math.ceil(rect.height / lineHeight);
+        function selectTool(tool) {
+            currentTool = tool;
             
-            for (let i = 1; i < numLines; i++) {
-                const line = document.createElement('div');
-                line.className = 'line-row';
-                line.style.top = (i * lineHeight) + 'px';
-                canvasLines.appendChild(line);
+            // Actualizar botones activos
+            document.getElementById('pencilBtn').classList.toggle('active', tool === 'pencil');
+            document.getElementById('eraserBtn').classList.toggle('active', tool === 'eraser');
+            
+            // Cambiar cursor
+            if (tool === 'eraser') {
+                canvas.style.cursor = 'grab';
+            } else {
+                canvas.style.cursor = 'crosshair';
             }
         }
 
         function resizeCanvas() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
-            
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.drawImage(canvas, 0, 0);
-
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
+            const rect = canvas.getBoundingClientRect();
+            const scale = window.devicePixelRatio || 1;
+            canvas.width = rect.width * scale;
+            canvas.height = rect.height * scale;
+            ctx.scale(scale, scale);
             canvas.style.width = rect.width + 'px';
             canvas.style.height = rect.height + 'px';
             
-            ctx.scale(dpr, dpr);
+            // Restaurar configuración del canvas
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#2D3436';
-            ctx.lineWidth = 3;
-
-            ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
-            
-            // Redibujar líneas del cuaderno
-            dibujarLineasCuaderno();
         }
 
-        function getPos(e) {
+        function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
-            let clientX, clientY;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
             
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             
             return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
             };
         }
 
         function startDrawing(e) {
             e.preventDefault();
             isDrawing = true;
-            canvasWrapper.classList.add('drawing');
-            const pos = getPos(e);
+            const pos = getMousePos(e);
             lastX = pos.x;
             lastY = pos.y;
-            currentStroke = [{x: pos.x, y: pos.y}];
         }
 
         function draw(e) {
             if (!isDrawing) return;
             e.preventDefault();
-            const pos = getPos(e);
+
+            const pos = getMousePos(e);
             
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(pos.x, pos.y);
+            
+            if (currentTool === 'eraser') {
+                // Modo goma de borrar
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = 20;
+                ctx.strokeStyle = 'rgba(0,0,0,1)';
+            } else {
+                // Modo lápiz normal
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#2D3436';
+            }
+            
             ctx.stroke();
             
             lastX = pos.x;
             lastY = pos.y;
-            currentStroke.push({x: pos.x, y: pos.y});
         }
 
-        function stopDrawing(e) {
-            if (!isDrawing) return;
+        function stopDrawing() {
             isDrawing = false;
-            canvasWrapper.classList.remove('drawing');
-            if (currentStroke.length > 1) {
-                strokes.push([...currentStroke]);
-            }
-            currentStroke = [];
+            // Restaurar el modo por defecto
+            ctx.globalCompositeOperation = 'source-over';
         }
 
         canvas.addEventListener('mousedown', startDrawing);
@@ -1463,80 +1006,171 @@
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseout', stopDrawing);
 
-        canvas.addEventListener('touchstart', startDrawing, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
         canvas.addEventListener('touchend', stopDrawing);
         canvas.addEventListener('touchcancel', stopDrawing);
 
-        canvas.addEventListener('pointerdown', (e) => {
-            if (e.pointerType === 'pen' || e.pointerType === 'mouse' || e.pointerType === 'touch') {
-                startDrawing(e);
-            }
-        });
-        canvas.addEventListener('pointermove', (e) => {
-            if (isDrawing) draw(e);
-        });
-        canvas.addEventListener('pointerup', stopDrawing);
-        canvas.addEventListener('pointercancel', stopDrawing);
-
         window.addEventListener('resize', resizeCanvas);
-        
-        setTimeout(() => {
-            resizeCanvas();
-            dibujarLineasCuaderno();
-        }, 100);
+        resizeCanvas();
 
         function limpiarCanvas() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            strokes = [];
-            document.getElementById('extractedText').value = '';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             document.getElementById('extractedTextArea').classList.remove('show');
-            mostrarOCRStatus('', '');
+            document.getElementById('extractedText').value = '';
+            document.getElementById('ocrStatus').classList.remove('show');
         }
 
-        function deshacerTrazo() {
-            if (strokes.length === 0) return;
-            strokes.pop();
-            const rect = canvasWrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height);
+        // ========== DICTADOS ==========
+        function cargarDictados() {
+            const grid = document.getElementById('dictatsGrid');
+            grid.innerHTML = '';
             
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#2D3436';
-            ctx.lineWidth = 3;
-            
-            strokes.forEach(stroke => {
-                if (stroke.length < 2) return;
-                ctx.beginPath();
-                ctx.moveTo(stroke[0].x, stroke[0].y);
-                for (let i = 1; i < stroke.length; i++) {
-                    ctx.lineTo(stroke[i].x, stroke[i].y);
-                }
-                ctx.stroke();
+            dictados.forEach((dictat, idx) => {
+                const card = document.createElement('div');
+                card.className = 'dictat-card';
+                card.innerHTML = `
+                    <span class="dictat-icon">${dictat.emoji}</span>
+                    <div class="dictat-name">${dictat.nombre}</div>
+                    <div class="dictat-status">Toca per escoltar</div>
+                `;
+                card.onclick = () => cargarAudio(dictat, card);
+                grid.appendChild(card);
             });
         }
 
-        function mostrarOCRStatus(mensaje, tipo) {
-            const el = document.getElementById('ocrStatus');
-            el.textContent = mensaje;
-            el.className = 'ocr-status';
-            if (tipo) el.classList.add('show', tipo);
+        function cargarAudio(dictat, card) {
+            if (currentDictat === dictat) {
+                if (audio && !audio.paused) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
+                return;
+            }
+
+            document.querySelectorAll('.dictat-card').forEach(c => {
+                c.classList.remove('active');
+                c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
+            });
+
+            if (audio) {
+                audio.pause();
+                audio = null;
+            }
+
+            currentDictat = dictat;
+            card.classList.add('active');
+            card.querySelector('.dictat-status').textContent = '▶️ Carregant...';
+
+            audio = new Audio(dictat.archivo);
+            audio.playbackRate = currentSpeed;
+
+            audio.addEventListener('loadedmetadata', () => {
+                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+                card.querySelector('.dictat-status').textContent = '✅ Llest per escoltar';
+                document.getElementById('audioPlayer').classList.add('show');
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+            });
+
+            audio.addEventListener('ended', () => {
+                document.getElementById('playPauseBtn').textContent = '▶️';
+                card.querySelector('.dictat-status').textContent = '🎧 Finalitzat';
+            });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Error carregant àudio:', e);
+                card.querySelector('.dictat-status').textContent = '❌ Error carregant';
+                alert('❌ No s\'ha pogut carregar l\'àudio "' + dictat.archivo + '". Verifica que el fitxer existeix.');
+            });
         }
 
-        // ========== CLOUD VISION OCR ==========
-        async function enviarOCR() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            const imageData = ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
-            const hasContent = imageData.data.some((val, i) => i % 4 === 3 && val > 0);
+        function togglePlayPause() {
+            if (!audio) return;
             
-            if (!hasContent) {
-                alert('✍️ Si us plau, escriu alguna cosa al canvas abans de llegir el text.');
+            if (audio.paused) {
+                playAudio();
+            } else {
+                pauseAudio();
+            }
+        }
+
+        function playAudio() {
+            if (!audio) return;
+            audio.play();
+            document.getElementById('playPauseBtn').textContent = '⏸️';
+            const activeCard = document.querySelector('.dictat-card.active .dictat-status');
+            if (activeCard) activeCard.textContent = '🎵 Reproduint...';
+        }
+
+        function pauseAudio() {
+            if (!audio) return;
+            audio.pause();
+            document.getElementById('playPauseBtn').textContent = '▶️';
+            const activeCard = document.querySelector('.dictat-card.active .dictat-status');
+            if (activeCard) activeCard.textContent = '⏸️ Pausat';
+        }
+
+        function changeSpeed() {
+            const speeds = [0.5, 0.75, 1.0, 1.25, 1.5];
+            const idx = speeds.indexOf(currentSpeed);
+            currentSpeed = speeds[(idx + 1) % speeds.length];
+            
+            document.getElementById('speedBtn').textContent = currentSpeed + 'x';
+            
+            if (audio) {
+                audio.playbackRate = currentSpeed;
+            }
+        }
+
+        function skipBackward() {
+            if (!audio) return;
+            audio.currentTime = Math.max(0, audio.currentTime - 5);
+        }
+
+        function skipForward() {
+            if (!audio) return;
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+        }
+
+        function seekAudio(e) {
+            if (!audio) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds === Infinity) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return mins + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+
+        // ========== OCR ==========
+        function mostrarOCRStatus(mensaje, tipo) {
+            const status = document.getElementById('ocrStatus');
+            status.textContent = mensaje;
+            status.className = 'ocr-status show ' + tipo;
+        }
+
+        async function reconocerTexto() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const isBlank = pixels.every((val, i) => i % 4 === 3 ? true : val === 0);
+
+            if (isBlank) {
+                alert('⚠️ El canvas està buit. Escriu alguna cosa primer!');
                 return;
             }
 
             setLoading(true);
-            mostrarOCRStatus('🔍 Llegint la teva lletra... Espera un moment.', 'loading');
+            mostrarOCRStatus('🔍 Llegint el text del canvas...', 'loading');
 
             try {
                 const base64Image = canvas.toDataURL('image/png').split(',')[1];
@@ -1739,6 +1373,8 @@
             
             setTimeout(() => { container.innerHTML = ''; }, 4000);
         }
+
+        cargarDictados();
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
