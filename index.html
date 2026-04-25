@@ -1516,7 +1516,6 @@
         }
 
         function startDrawing(e) {
-            e.preventDefault();
             isDrawing = true;
             canvasWrapper.classList.add('drawing');
             const pos = getPos(e);
@@ -1538,7 +1537,6 @@
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault();
             const pos = getPos(e);
             
             ctx.beginPath();
@@ -1563,16 +1561,14 @@
 
         // Usar solo Pointer Events (cubren mouse, touch y S-Pen)
         canvas.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
+            if (e.target !== canvas) return;
             canvas.setPointerCapture(e.pointerId);
             startDrawing(e);
         });
         canvas.addEventListener('pointermove', (e) => {
-            e.preventDefault();
             if (isDrawing) draw(e);
         });
         canvas.addEventListener('pointerup', (e) => {
-            e.preventDefault();
             canvas.releasePointerCapture(e.pointerId);
             stopDrawing(e);
         });
@@ -1906,6 +1902,9 @@
             
             setTimeout(() => { container.innerHTML = ''; }, 4000);
         }
+
+        // Inicializar soporte S-Pen para botones
+        initPointerButtons();
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
