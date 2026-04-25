@@ -584,15 +584,16 @@
     };
 
     // ═══════════════════════════════════════════════════════════════
-    // MÓDULO: Canvas (con navegación entre páginas)
+    // MÓDULO: Canvas (con edición in-situ de páginas guardadas)
     // ═══════════════════════════════════════════════════════════════
     app.canvas = {
         canvas: null, ctx: null, wrapper: null, lines: null,
         isDrawing: false, strokes: [], currentStroke: [],
         lastX: 0, lastY: 0, tool: 'pen',
         pages: [],      // Array de { image: dataURL, strokes: [] }
-        currentPage: 1, // 1-based: 1 = primera página, pages.length+1 = página actual en blanco
-        viewingPage: null, // null = estamos en página actual editable, número = viendo página guardada
+        currentPage: 1, // 1-based
+        viewingPage: null, // null = página actual editable, número = viendo página guardada
+        isEditingSavedPage: false, // true cuando estamos editando una página ya guardada
         ERASER_SIZE: 24,
 
         init() {
@@ -663,6 +664,11 @@
                 this.strokes.push([...this.currentStroke]);
             }
             this.currentStroke = [];
+
+            // Si estamos editando una página guardada, auto-guardar el cambio
+            if (this.isEditingSavedPage && this.viewingPage !== null) {
+                this.saveCurrentPageEdit();
+            }
         },
 
         setTool(tool) {
@@ -721,6 +727,9 @@
             if (this.strokes.length === 0) return;
             this.strokes.pop();
             this.redrawStrokes();
+            if (this.isEditingSavedPage && this.viewingPage !== null) {
+                this.saveCurrentPageEdit();
+            }
         },
 
         redrawStrokes() {
@@ -738,14 +747,24 @@
             });
         },
 
+        // ─── GUARDAR EDICIÓN DE PÁGINA ───
+        saveCurrentPageEdit() {
+            if (this.viewingPage === null || this.viewingPage > this.pages.length) return;
+            const pageIndex = this.viewingPage - 1;
+            this.pages[pageIndex] = {
+                image: this.canvas.toDataURL('image/png'),
+                strokes: [...this.strokes]
+            };
+        },
+
         // ─── NAVEGACIÓN ENTRE PÁGINAS ───
         goToPage(delta) {
             const totalPages = this.pages.length + 1;
             const targetPage = this.currentPage + delta;
             if (targetPage < 1 || targetPage > totalPages) return;
 
-            // Si estamos en la página actual (la última, en blanco) y tenemos contenido, guardarla
-            if (this.currentPage === totalPages && this.hasContent()) {
+            // Si estamos en la página actual editable (la última) y tenemos contenido, guardarla
+            if (this.currentPage === totalPages && !this.isEditingSavedPage && this.hasContent()) {
                 this.pages.push({
                     image: this.canvas.toDataURL('image/png'),
                     strokes: [...this.strokes]
@@ -754,15 +773,14 @@
 
             this.currentPage = targetPage;
             this.viewingPage = targetPage <= this.pages.length ? targetPage : null;
+            this.isEditingSavedPage = this.viewingPage !== null;
 
             // Cargar la página seleccionada
             if (this.viewingPage !== null) {
-                // Mostrar página guardada
                 const pageData = this.pages[this.viewingPage - 1];
                 this.loadImageToCanvas(pageData.image);
                 this.strokes = [...pageData.strokes];
             } else {
-                // Página actual en blanco
                 const rect = this.wrapper.getBoundingClientRect();
                 this.ctx.clearRect(0, 0, rect.width, rect.height);
                 this.strokes = [];
@@ -782,48 +800,30 @@
             img.src = dataURL;
         },
 
-        // ─── REESCRIBIR PÁGINA ───
-        editCurrentPage() {
-            if (this.viewingPage === null) return; // Solo se puede reescribir páginas guardadas
-
-            const pageIndex = this.viewingPage - 1;
-            if (!confirm('⚠️ Vols reescriure aquesta pàgina? El contingut anterior es perdrà.')) return;
-
-            // Borrar la página guardada y convertirla en la página actual editable
-            this.pages.splice(pageIndex, 1);
-
-            // Recalcular currentPage: ahora estamos en la posición de la página borrada
-            // que ahora es la última página (en blanco) o la siguiente
-            this.currentPage = pageIndex + 1;
-            this.viewingPage = null;
-
-            // Limpiar canvas para reescribir
-            const rect = this.wrapper.getBoundingClientRect();
-            this.ctx.clearRect(0, 0, rect.width, rect.height);
-            this.strokes = [];
-            this.setTool('pen');
-
-            this.updatePageIndicator();
-            this.updateEditButton();
-            this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        },
-
-        // ─── BOTÓN PÀGINA SEGÜENT (guardar y continuar) ───
+        // ─── BOTÓN PÀGINA SEGÜENT ───
         nextPage() {
             if (!this.hasContent()) {
                 alert("✍️ Si us plau, escriu alguna cosa abans de passar a la pàgina següent.");
                 return;
             }
 
-            // Guardar página actual
-            this.pages.push({
-                image: this.canvas.toDataURL('image/png'),
-                strokes: [...this.strokes]
-            });
-            this.currentPage++;
-            this.viewingPage = null;
+            // Si estamos editando una página guardada, guardar cambios y salir del modo edición
+            if (this.isEditingSavedPage && this.viewingPage !== null) {
+                this.saveCurrentPageEdit();
+                this.isEditingSavedPage = false;
+            } else {
+                // Guardar página actual como nueva
+                this.pages.push({
+                    image: this.canvas.toDataURL('image/png'),
+                    strokes: [...this.strokes]
+                });
+            }
 
-            // Limpiar canvas
+            this.currentPage = this.pages.length + 1;
+            this.viewingPage = null;
+            this.isEditingSavedPage = false;
+
+            // Limpiar canvas para nueva página
             const rect = this.wrapper.getBoundingClientRect();
             this.ctx.clearRect(0, 0, rect.width, rect.height);
             this.strokes = [];
@@ -868,18 +868,16 @@
 
         updateEditButton() {
             const btn = document.getElementById('btnEditPage');
-            if (this.viewingPage !== null && this.viewingPage <= this.pages.length) {
-                btn.style.display = 'inline-flex';
-            } else {
-                btn.style.display = 'none';
-            }
+            // Ocultar el botón de reescribir - ahora la edición es directa
+            btn.style.display = 'none';
         },
 
         // ─── LIMPIEZA ───
         clear() {
             const rect = this.wrapper.getBoundingClientRect();
             this.ctx.clearRect(0, 0, rect.width, rect.height);
-            this.strokes = []; this.pages = []; this.currentPage = 1; this.viewingPage = null;
+            this.strokes = []; this.pages = []; this.currentPage = 1;
+            this.viewingPage = null; this.isEditingSavedPage = false;
             this.setTool('pen'); this.updatePageIndicator(); this.updateEditButton();
         },
 
@@ -897,11 +895,13 @@
         },
 
         getAllImages() {
-            const images = this.pages.map(p => p.image);
+            const images = [];
+            for (let i = 0; i < this.pages.length; i++) {
+                images.push(this.pages[i].image);
+            }
+            // Si estamos en la página actual (no guardada aún) y tiene contenido
             if (this.viewingPage === null && this.hasContent()) {
                 images.push(this.canvas.toDataURL('image/png'));
-            } else if (this.viewingPage !== null) {
-                images.push(this.pages[this.viewingPage - 1].image);
             }
             return images;
         }
