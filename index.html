@@ -1561,26 +1561,28 @@
             currentStroke = [];
         }
 
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        canvas.addEventListener('touchstart', startDrawing, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        canvas.addEventListener('touchend', stopDrawing);
-        canvas.addEventListener('touchcancel', stopDrawing);
-
+        // Usar solo Pointer Events (cubren mouse, touch y S-Pen)
         canvas.addEventListener('pointerdown', (e) => {
-            if (e.pointerType === 'pen' || e.pointerType === 'mouse' || e.pointerType === 'touch') {
-                startDrawing(e);
-            }
+            e.preventDefault();
+            canvas.setPointerCapture(e.pointerId);
+            startDrawing(e);
         });
         canvas.addEventListener('pointermove', (e) => {
+            e.preventDefault();
             if (isDrawing) draw(e);
         });
-        canvas.addEventListener('pointerup', stopDrawing);
-        canvas.addEventListener('pointercancel', stopDrawing);
+        canvas.addEventListener('pointerup', (e) => {
+            e.preventDefault();
+            canvas.releasePointerCapture(e.pointerId);
+            stopDrawing(e);
+        });
+        canvas.addEventListener('pointercancel', (e) => {
+            canvas.releasePointerCapture(e.pointerId);
+            stopDrawing(e);
+        });
+        canvas.addEventListener('pointerleave', (e) => {
+            if (isDrawing) stopDrawing(e);
+        });
 
         window.addEventListener('resize', resizeCanvas);
         
