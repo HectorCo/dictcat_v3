@@ -1180,7 +1180,6 @@
         </div>
 
         <div class="toolbar">
-            <button class="btn btn-borrar" onclick="borrarTodo()" id="btnBorrar">🗑️ Esborrar</button>
             <button class="btn btn-ocr" onclick="enviarOCR()" id="btnOCR">🔍 Llegir text (OCR)</button>
             <button class="btn btn-corregir" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
             <button class="btn btn-nuevo" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
@@ -1206,7 +1205,6 @@
                     </button>
                 </div>
                 <button class="canvas-btn undo" onclick="deshacerTrazo()" title="Desfés l'últim traç">↩️ Desfés</button>
-                <button class="canvas-btn clear" onclick="limpiarCanvas()" title="Esborra tot">🧹 Netejar</button>
             </div>
             <p class="canvas-tip">💡 Escriu amb el S-Pen, el dit o el ratolí. Després prem "Llegir text" per convertir-ho a text.</p>
             
@@ -1802,6 +1800,11 @@
             limpiarCanvas();
             document.getElementById('resultContainer').classList.remove('show');
             document.getElementById('motivationArea').innerHTML = '';
+        }
+
+        // Alias para compatibilidad (ya no hay botón separado)
+        function limpiarCanvasYResultados() {
+            borrarTodo();
         }
 
         function nuevoIntento() {
