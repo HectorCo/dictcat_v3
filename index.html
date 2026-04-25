@@ -14,1143 +14,193 @@
     <link rel="manifest" href="manifest.json?v=3">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         :root {
-            --primary: #FF6B9D;
-            --primary-light: #FF8FB3;
-            --primary-dark: #E85A8A;
-            --secondary: #4ECDC4;
-            --secondary-light: #7EDDD7;
-            --accent: #FFE66D;
-            --accent-orange: #FF9F43;
-            --success: #2ECC71;
-            --warning: #F39C12;
-            --danger: #E74C3C;
-            --text: #2D3436;
-            --text-light: #636E72;
-            --bg-cream: #FFF9F0;
-            --bg-pink: #FFE4EC;
-            --bg-blue: #E0F7FA;
-            --bg-yellow: #FFF8E1;
+            --primary: #FF6B9D; --primary-light: #FF8FB3; --primary-dark: #E85A8A;
+            --secondary: #4ECDC4; --secondary-light: #7EDDD7;
+            --accent: #FFE66D; --accent-orange: #FF9F43;
+            --success: #2ECC71; --warning: #F39C12; --danger: #E74C3C;
+            --text: #2D3436; --text-light: #636E72;
+            --bg-cream: #FFF9F0; --bg-pink: #FFE4EC; --bg-blue: #E0F7FA; --bg-yellow: #FFF8E1;
             --shadow-soft: 0 8px 32px rgba(255, 107, 157, 0.15);
             --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --radius: 24px;
-            --radius-sm: 16px;
+            --radius: 24px; --radius-sm: 16px;
         }
-
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow-x: hidden; }
         body {
             font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-pink) 50%, var(--bg-blue) 100%);
-            min-height: 100vh;
-            padding: 12px;
-            overflow-y: auto;
-            touch-action: pan-y;
-            color: var(--text);
+            min-height: 100vh; padding: 12px; overflow-y: auto; touch-action: pan-y; color: var(--text);
         }
-
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow-soft);
-            min-height: calc(100vh - 24px);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
+            max-width: 900px; margin: 0 auto; background: white; border-radius: var(--radius);
+            padding: 24px; box-shadow: var(--shadow-soft); min-height: calc(100vh - 24px);
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
         }
-
-        .logo-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 75%;
-            max-width: 450px;
-            opacity: 0.035;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .logo-bg img {
-            width: 100%;
-            height: auto;
-        }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header-logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 22px;
-            object-fit: cover;
-            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
-            border: 3px solid white;
-            background: var(--bg-pink);
-            padding: 4px;
-        }
-
-        .header-text {
-            text-align: left;
-        }
-
-        .header-text h1 {
-            color: var(--primary);
-            font-size: clamp(2em, 6vw, 2.8em);
-            font-weight: 900;
-            letter-spacing: -1px;
-            line-height: 1;
-            text-shadow: 2px 2px 0px var(--accent);
-        }
-
-        .header-text .subtitle {
-            color: var(--text-light);
-            font-size: 0.95em;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-title h2 {
-            color: var(--primary-dark);
-            font-size: 1.3em;
-            font-weight: 800;
-        }
-
-        .section-title .icon-bounce {
-            font-size: 1.4em;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        .dictats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
+        .logo-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; max-width: 450px; opacity: 0.035; pointer-events: none; z-index: 0; }
+        .logo-bg img { width: 100%; height: auto; }
+        .header-logo { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 20px; position: relative; z-index: 1; }
+        .header-logo-img { width: 80px; height: 80px; border-radius: 22px; object-fit: cover; box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3); border: 3px solid white; background: var(--bg-pink); padding: 4px; }
+        .header-text { text-align: left; }
+        .header-text h1 { color: var(--primary); font-size: clamp(2em, 6vw, 2.8em); font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 2px 2px 0px var(--accent); }
+        .header-text .subtitle { color: var(--text-light); font-size: 0.95em; font-weight: 600; margin-top: 4px; }
+        .section-title { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; position: relative; z-index: 1; }
+        .section-title h2 { color: var(--primary-dark); font-size: 1.3em; font-weight: 800; }
+        .icon-bounce { font-size: 1.4em; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .dictats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; position: relative; z-index: 1; }
         .dictat-card {
-            background: linear-gradient(145deg, #ffffff 0%, var(--bg-pink) 100%);
-            border: 3px solid transparent;
-            border-radius: var(--radius-sm);
-            padding: 18px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            box-shadow: var(--shadow-card);
+            background: linear-gradient(145deg, #ffffff 0%, var(--bg-pink) 100%); border: 3px solid transparent;
+            border-radius: var(--radius-sm); padding: 18px 12px; text-align: center; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; box-shadow: var(--shadow-card);
         }
-
-        .dictat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.2);
-            border-color: var(--primary-light);
-        }
-
-        .dictat-card:active {
-            transform: scale(0.96);
-        }
-
-        .dictat-card.active {
-            background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%);
-            border-color: var(--success);
-            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.25);
-        }
-
-        .dictat-card.active .dictat-icon {
-            animation: wiggle 0.5s ease;
-        }
-
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            75% { transform: rotate(10deg); }
-        }
-
-        .dictat-icon {
-            font-size: 2.4em;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .dictat-name {
-            font-weight: 800;
-            color: var(--text);
-            font-size: 1em;
-        }
-
-        .dictat-status {
-            font-size: 0.8em;
-            color: var(--text-light);
-            margin-top: 6px;
-            font-weight: 600;
-            padding: 4px 10px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            display: inline-block;
-        }
-
+        .dictat-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 30px rgba(255, 107, 157, 0.2); border-color: var(--primary-light); }
+        .dictat-card:active { transform: scale(0.96); }
+        .dictat-card.active { background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%); border-color: var(--success); box-shadow: 0 8px 25px rgba(46, 204, 113, 0.25); }
+        .dictat-card.active .dictat-icon { animation: wiggle 0.5s ease; }
+        @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+        .dictat-icon { font-size: 2.4em; margin-bottom: 8px; display: block; }
+        .dictat-name { font-weight: 800; color: var(--text); font-size: 1em; }
+        .dictat-status { font-size: 0.8em; color: var(--text-light); margin-top: 6px; font-weight: 600; padding: 4px 10px; background: rgba(255, 255, 255, 0.8); border-radius: 20px; display: inline-block; }
         .audio-player {
-            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%);
-            border: 3px solid var(--accent);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-bottom: 20px;
-            display: none;
-            position: relative;
-            z-index: 1;
-            box-shadow: var(--shadow-card);
-        }
-
-        .audio-player.show {
-            display: block;
-            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .audio-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .audio-info .audio-icon {
-            font-size: 2em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .audio-info .audio-title {
-            font-weight: 800;
-            color: var(--accent-orange);
-            font-size: 1.15em;
-        }
-
-        .audio-controls {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        .audio-btn {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-
-        .audio-btn.play {
-            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
-            color: white;
-        }
-
-        .audio-btn.pause {
-            background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%);
-            color: white;
-        }
-
-        .audio-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .audio-btn:hover:not(:disabled) {
-            transform: scale(1.12) rotate(5deg);
-        }
-
-        .audio-btn:active:not(:disabled) {
-            transform: scale(0.92);
-        }
-
-        .progress-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .progress-bar-wrapper {
-            position: relative;
-            height: 14px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid var(--accent);
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent-orange) 100%);
-            border-radius: 10px;
-            width: 0%;
-            transition: width 0.1s linear;
-            position: relative;
-        }
-
-        .progress-bar::after {
-            content: '🐱';
-            position: absolute;
-            right: -14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85em;
-            color: var(--text-light);
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .audio-hint {
-            text-align: center;
-            color: var(--accent-orange);
-            font-size: 0.9em;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 8px;
-            border-radius: 12px;
-        }
-
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn {
-            padding: 14px 24px;
-            font-size: 1em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-weight: 800;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            white-space: nowrap;
-            min-height: 52px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-corregir {
-            background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%);
-            color: white;
-        }
-
-        .btn-borrar {
-            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
-            color: white;
-        }
-
-        .btn-nuevo {
-            background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%);
-            color: white;
-        }
-
-        .btn-ocr {
-            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
-            color: white;
-        }
-
-        /* ===== CANVAS DE ESCRITURA ===== */
-        .writing-area {
-            margin: 16px 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .writing-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: clamp(1.1em, 3.5vw, 1.3em);
-            color: var(--primary-dark);
-            margin-bottom: 14px;
-            font-weight: 800;
-            text-align: center;
-        }
-
-        .writing-label .pen-icon {
-            font-size: 1.3em;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            border: 3px solid var(--primary-light);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            background: white;
-            box-shadow: var(--shadow-card);
-            flex: 1;
-            min-height: 300px;
-            transition: border-color 0.3s;
-            cursor: crosshair;
-        }
-
-        .canvas-wrapper:focus-within, .canvas-wrapper.drawing {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15);
-        }
-
-        #writingCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            touch-action: none;
-        }
-
-
-        /* ===== SELECTOR LÁPIZ / GOMA ===== */
-        .tool-selector {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(145deg, #ffffff 0%, var(--bg-pink) 100%);
-            border: 2px solid var(--primary-light);
-            border-radius: 50px;
-            padding: 4px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-
-        .tool-btn {
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            padding: 8px 14px;
-            border-radius: 50px;
-            font-size: 1.1em;
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 700;
-            color: var(--text-light);
-        }
-
-        .tool-btn.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.35);
-            transform: scale(1.05);
-        }
-
-        .tool-btn:not(.active):hover {
-            background: rgba(255, 107, 157, 0.1);
-            color: var(--primary-dark);
-        }
-
-        .canvas-wrapper.erasing {
-            border-color: var(--danger) !important;
-            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15) !important;
-            cursor: cell;
-        }
-
-
-        .page-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
-            font-weight: 700;
-            color: var(--text-light);
-            font-size: 0.95em;
-        }
-
-        .page-dots {
-            display: flex;
-            gap: 6px;
-        }
-
-        .page-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            transition: all 0.3s;
-        }
-
-        .page-dot.active {
-            background: var(--primary);
-            transform: scale(1.3);
-        }
-
-        .page-dot.filled {
-            background: var(--success);
-        }
-
-        .canvas-btn.next-page {
-            background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%);
-            color: white;
-        }
-
-        /* ===== GUÍAS DE LÍNEAS ===== */
-        .canvas-lines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 1;
-            background-image: 
-                linear-gradient(90deg, transparent 0px, transparent 50px, rgba(255, 107, 157, 0.15) 50px, rgba(255, 107, 157, 0.15) 52px, transparent 52px);
-            background-size: 100% 100%;
-        }
-
-        .line-row {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 60px;
-            border-bottom: 2px solid rgba(78, 205, 196, 0.25);
-            pointer-events: none;
-        }
-
-        .line-row::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 1px;
-            background: rgba(255, 107, 157, 0.15);
-        }
-
-        .line-row::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 8px;
-            height: 1px;
-            border-bottom: 1px dashed rgba(255, 107, 157, 0.2);
-        }
-
-        .canvas-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .canvas-btn {
-            padding: 10px 18px;
-            font-size: 0.9em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 700;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .canvas-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .canvas-btn.undo {
-            background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%);
-            color: white;
-        }
-
-        .canvas-btn.clear {
-            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
-            color: white;
-        }
-
-        .canvas-btn.ocr {
-            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
-            color: white;
-        }
-
-        .canvas-tip {
-            text-align: center;
-            color: var(--text-light);
-            margin-top: 10px;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        .ocr-status {
-            text-align: center;
-            padding: 12px;
-            border-radius: 12px;
-            margin-top: 10px;
-            font-weight: 700;
-            display: none;
-        }
-
-        .ocr-status.show {
-            display: block;
-            animation: popIn 0.3s ease;
-        }
-
-        .ocr-status.loading {
-            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%);
-            color: var(--accent-orange);
-            border: 2px solid var(--accent);
-        }
-
-        .ocr-status.success {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
-            color: #1E8449;
-            border: 2px solid var(--success);
-        }
-
-        .ocr-status.error {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            color: #922B21;
-            border: 2px solid var(--danger);
-        }
-
-        /* Texto extraído editable */
-        .extracted-text-area {
-            margin-top: 16px;
-            display: none;
-        }
-
-        .extracted-text-area.show {
-            display: block;
-            animation: popIn 0.4s ease;
-        }
-
-        .extracted-text-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 1.1em;
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-weight: 800;
-        }
-
-        .extracted-textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 16px;
-            font-size: 18px;
-            font-family: 'Nunito', sans-serif;
-            line-height: 1.8;
-            border: 3px solid var(--secondary);
-            border-radius: var(--radius-sm);
-            outline: none;
-            resize: vertical;
-            color: var(--text);
-            background: var(--bg-blue);
-            font-weight: 600;
-        }
-
-        .extracted-textarea:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15);
-        }
-
-        /* Resultados */
-        .result-container {
-            margin-top: 20px;
-            padding: 24px;
-            background: linear-gradient(145deg, var(--bg-cream) 0%, white 100%);
-            border-radius: var(--radius);
-            display: none;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-            border: 3px solid var(--accent);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .result-container.show {
-            display: block;
-            animation: celebrateIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes celebrateIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .result-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .result-header .trophy {
-            font-size: 3.5em;
-            margin-bottom: 8px;
-            display: inline-block;
-            animation: trophyBounce 1s ease infinite;
-        }
-
-        @keyframes trophyBounce {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-        }
-
-        .result-header h2 {
-            color: var(--primary-dark);
-            font-size: 1.6em;
-            font-weight: 900;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        .stat-bubble {
-            background: white;
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow-card);
-            border: 3px solid transparent;
-            transition: transform 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-bubble:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-bubble.errors {
-            border-color: var(--danger);
-            background: linear-gradient(145deg, #ffffff 0%, #FADBD8 100%);
-        }
-
-        .stat-bubble.accuracy {
-            border-color: var(--success);
-            background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%);
-        }
-
-        .stat-bubble .stat-emoji {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .stat-bubble .stat-number {
-            font-size: 2.8em;
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .stat-bubble.errors .stat-number {
-            color: var(--danger);
-        }
-
-        .stat-bubble.accuracy .stat-number {
-            color: var(--success);
-        }
-
-        .stat-bubble .stat-label {
-            color: var(--text-light);
-            font-weight: 700;
-            font-size: 0.95em;
-            margin-top: 6px;
-        }
-
-        .motivation-message {
-            text-align: center;
-            padding: 20px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            font-weight: 800;
-            animation: fadeInUp 0.5s ease 0.3s both;
-        }
-
-        .motivation-message.perfect {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
-            color: #1E8449;
-            border: 3px solid var(--success);
-        }
-
-        .motivation-message.great {
-            background: linear-gradient(145deg, #FCF3CF 0%, #F9E79F 100%);
-            color: #9A7D0A;
-            border: 3px solid var(--accent);
-        }
-
-        .motivation-message.good {
-            background: linear-gradient(145deg, #D6EAF8 0%, #AED6F1 100%);
-            color: #1A5276;
-            border: 3px solid var(--secondary);
-        }
-
-        .motivation-message.try {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            color: #922B21;
-            border: 3px solid var(--danger);
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .confetti-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            animation: confettiFall 3s ease-out forwards;
-        }
-
-        @keyframes confettiFall {
-            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-
-        .comparison {
-            display: grid;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .text-block {
-            padding: 18px;
-            background: white;
-            border-radius: var(--radius-sm);
-            border-left: 5px solid var(--primary);
-            box-shadow: var(--shadow-card);
-            word-break: break-word;
-        }
-
-        .text-block h3 {
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .text-content {
-            font-size: clamp(16px, 3.5vw, 18px);
-            line-height: 1.8;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .errors-section {
-            margin-top: 20px;
-        }
-
-        .errors-section h4 {
-            color: var(--primary-dark);
-            font-size: 1.2em;
-            font-weight: 800;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .error-card {
-            background: white;
-            padding: 18px;
-            border-radius: var(--radius-sm);
-            border: 3px solid var(--danger);
-            box-shadow: var(--shadow-card);
-            margin-bottom: 14px;
-            word-break: break-word;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .error-card::before {
-            content: '❌';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 2em;
-            opacity: 0.1;
-        }
-
-        .error-word {
-            font-weight: 900;
-            color: var(--danger);
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .error-message {
-            color: var(--text);
-            margin: 10px 0;
-            font-size: 1em;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-
-        .error-suggestion {
-            color: var(--success);
-            font-weight: 800;
-            font-size: 1.1em;
-        }
-
-        .correction-box {
-            background: #EAFAF1;
-            border: 2px dashed var(--success);
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: inline-block;
-            margin-top: 8px;
-        }
-
-        .softcatala-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 800;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
-            font-size: 0.9em;
-            transition: transform 0.2s;
-        }
-
-        .softcatala-link:hover {
-            transform: scale(1.05);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 4px solid var(--primary);
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 12px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error-notice {
-            background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%);
-            border: 3px solid var(--danger);
-            border-radius: var(--radius-sm);
-            padding: 20px;
-            color: #922B21;
-            font-size: 1em;
-            margin-bottom: 16px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .success-notice {
-            background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%);
-            border: 3px solid var(--success);
-            border-radius: var(--radius-sm);
-            padding: 12px;
-            color: #1E8449;
-            font-size: 0.95em;
-            margin-bottom: 16px;
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .app-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 2px dashed var(--primary-light);
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.85em;
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
-            font-weight: 600;
-        }
-
-        .app-footer a {
-            color: var(--primary-dark);
-            text-decoration: none;
-            font-weight: 800;
-        }
-
-        .app-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .lt-credit {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--bg-pink);
-            padding: 6px 14px;
-            border-radius: 20px;
-            margin-top: 6px;
-            font-weight: 700;
-        }
-
-        /* Responsive */
+            background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%); border: 3px solid var(--accent);
+            border-radius: var(--radius-sm); padding: 20px; margin-bottom: 20px; display: none;
+            position: relative; z-index: 1; box-shadow: var(--shadow-card);
+        }
+        .audio-player.show { display: block; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .audio-info { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .audio-icon { font-size: 2em; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .audio-title { font-weight: 800; color: var(--accent-orange); font-size: 1.15em; }
+        .audio-controls { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+        .audio-btn { width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer; font-size: 1.8em; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .audio-btn.play { background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%); color: white; }
+        .audio-btn.pause { background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%); color: white; }
+        .audio-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .audio-btn:hover:not(:disabled) { transform: scale(1.12) rotate(5deg); }
+        .audio-btn:active:not(:disabled) { transform: scale(0.92); }
+        .progress-container { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .progress-bar-wrapper { position: relative; height: 14px; background: rgba(255, 255, 255, 0.8); border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid var(--accent); }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent-orange) 100%); border-radius: 10px; width: 0%; transition: width 0.1s linear; position: relative; }
+        .progress-bar::after { content: '🐱'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 18px; }
+        .time-display { display: flex; justify-content: space-between; font-size: 0.85em; color: var(--text-light); font-weight: 700; font-variant-numeric: tabular-nums; }
+        .audio-hint { text-align: center; color: var(--accent-orange); font-size: 0.9em; font-weight: 700; background: rgba(255, 255, 255, 0.6); padding: 8px; border-radius: 12px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+        .btn { padding: 14px 24px; font-size: 1em; border: none; border-radius: 50px; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); font-weight: 800; box-shadow: 0 4px 15px rgba(0,0,0,0.1); white-space: nowrap; min-height: 52px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.3px; }
+        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .btn:active { transform: scale(0.95); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-corregir { background: linear-gradient(135deg, var(--success) 0%, #27AE60 100%); color: white; }
+        .btn-borrar { background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%); color: white; }
+        .btn-nuevo { background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%); color: white; }
+        .btn-ocr { background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%); color: white; }
+        .writing-area { margin: 16px 0; flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; z-index: 1; }
+        .writing-label { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: clamp(1.1em, 3.5vw, 1.3em); color: var(--primary-dark); margin-bottom: 14px; font-weight: 800; text-align: center; }
+        .pen-icon { font-size: 1.3em; }
+        .canvas-wrapper { position: relative; border: 3px solid var(--primary-light); border-radius: var(--radius-sm); overflow: hidden; background: white; box-shadow: var(--shadow-card); flex: 1; min-height: 300px; transition: border-color 0.3s; cursor: crosshair; }
+        .canvas-wrapper:focus-within, .canvas-wrapper.drawing { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15); }
+        .canvas-wrapper.erasing { border-color: var(--danger) !important; box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15) !important; cursor: cell; }
+        #writingCanvas { display: block; width: 100%; height: 100%; min-height: 300px; touch-action: none; }
+        .canvas-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1; background-image: linear-gradient(90deg, transparent 0px, transparent 50px, rgba(255, 107, 157, 0.15) 50px, rgba(255, 107, 157, 0.15) 52px, transparent 52px); background-size: 100% 100%; }
+        .line-row { position: absolute; left: 0; right: 0; height: 60px; border-bottom: 2px solid rgba(78, 205, 196, 0.25); pointer-events: none; }
+        .line-row::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255, 107, 157, 0.15); }
+        .line-row::after { content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; border-bottom: 1px dashed rgba(255, 107, 157, 0.2); }
+        .canvas-controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+        .canvas-btn { padding: 10px 18px; font-size: 0.9em; border: none; border-radius: 50px; cursor: pointer; transition: all 0.2s; font-weight: 700; box-shadow: 0 3px 10px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px; }
+        .canvas-btn:hover { transform: translateY(-2px); }
+        .canvas-btn.undo { background: linear-gradient(135deg, var(--warning) 0%, #E67E22 100%); color: white; }
+        .canvas-btn.clear { background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%); color: white; }
+        .canvas-btn.next-page { background: linear-gradient(135deg, var(--secondary) 0%, #00B894 100%); color: white; }
+        .tool-selector { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(145deg, #ffffff 0%, var(--bg-pink) 100%); border: 2px solid var(--primary-light); border-radius: 50px; padding: 4px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+        .tool-btn { border: none; background: transparent; cursor: pointer; padding: 8px 14px; border-radius: 50px; font-size: 1.1em; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: var(--text-light); }
+        .tool-btn.active { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; box-shadow: 0 4px 12px rgba(255, 107, 157, 0.35); transform: scale(1.05); }
+        .tool-btn:not(.active):hover { background: rgba(255, 107, 157, 0.1); color: var(--primary-dark); }
+        .page-indicator { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; font-weight: 700; color: var(--text-light); font-size: 0.95em; }
+        .page-dots { display: flex; gap: 6px; }
+        .page-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary-light); transition: all 0.3s; }
+        .page-dot.active { background: var(--primary); transform: scale(1.3); }
+        .page-dot.filled { background: var(--success); }
+        .canvas-tip { text-align: center; color: var(--text-light); margin-top: 10px; font-size: 0.9em; font-weight: 600; }
+        .ocr-status { text-align: center; padding: 12px; border-radius: 12px; margin-top: 10px; font-weight: 700; display: none; }
+        .ocr-status.show { display: block; animation: popIn 0.3s ease; }
+        .ocr-status.loading { background: linear-gradient(145deg, var(--bg-yellow) 0%, #FFF3E0 100%); color: var(--accent-orange); border: 2px solid var(--accent); }
+        .ocr-status.success { background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%); color: #1E8449; border: 2px solid var(--success); }
+        .ocr-status.error { background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%); color: #922B21; border: 2px solid var(--danger); }
+        .extracted-text-area { margin-top: 16px; display: none; }
+        .extracted-text-area.show { display: block; animation: popIn 0.4s ease; }
+        .extracted-text-label { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.1em; color: var(--primary-dark); margin-bottom: 10px; font-weight: 800; }
+        .extracted-textarea { width: 100%; min-height: 120px; padding: 16px; font-size: 18px; font-family: 'Nunito', sans-serif; line-height: 1.8; border: 3px solid var(--secondary); border-radius: var(--radius-sm); outline: none; resize: vertical; color: var(--text); background: var(--bg-blue); font-weight: 600; }
+        .extracted-textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.15); }
+        .result-container { margin-top: 20px; padding: 24px; background: linear-gradient(145deg, var(--bg-cream) 0%, white 100%); border-radius: var(--radius); display: none; flex-shrink: 0; position: relative; z-index: 1; border: 3px solid var(--accent); box-shadow: var(--shadow-soft); }
+        .result-container.show { display: block; animation: celebrateIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes celebrateIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .result-header { text-align: center; margin-bottom: 20px; }
+        .trophy { font-size: 3.5em; margin-bottom: 8px; display: inline-block; animation: trophyBounce 1s ease infinite; }
+        @keyframes trophyBounce { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-10px) rotate(5deg); } }
+        .result-header h2 { color: var(--primary-dark); font-size: 1.6em; font-weight: 900; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-bubble { background: white; border-radius: var(--radius-sm); padding: 20px; text-align: center; box-shadow: var(--shadow-card); border: 3px solid transparent; transition: transform 0.3s; position: relative; overflow: hidden; }
+        .stat-bubble:hover { transform: translateY(-3px); }
+        .stat-bubble.errors { border-color: var(--danger); background: linear-gradient(145deg, #ffffff 0%, #FADBD8 100%); }
+        .stat-bubble.accuracy { border-color: var(--success); background: linear-gradient(145deg, #ffffff 0%, #D5F5E3 100%); }
+        .stat-emoji { font-size: 2.5em; margin-bottom: 8px; display: block; }
+        .stat-number { font-size: 2.8em; font-weight: 900; line-height: 1; }
+        .stat-bubble.errors .stat-number { color: var(--danger); }
+        .stat-bubble.accuracy .stat-number { color: var(--success); }
+        .stat-label { color: var(--text-light); font-weight: 700; font-size: 0.95em; margin-top: 6px; }
+        .motivation-message { text-align: center; padding: 20px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 1.2em; font-weight: 800; animation: fadeInUp 0.5s ease 0.3s both; }
+        .motivation-message.perfect { background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%); color: #1E8449; border: 3px solid var(--success); }
+        .motivation-message.great { background: linear-gradient(145deg, #FCF3CF 0%, #F9E79F 100%); color: #9A7D0A; border: 3px solid var(--accent); }
+        .motivation-message.good { background: linear-gradient(145deg, #D6EAF8 0%, #AED6F1 100%); color: #1A5276; border: 3px solid var(--secondary); }
+        .motivation-message.try { background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%); color: #922B21; border: 3px solid var(--danger); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .comparison { display: grid; gap: 16px; margin-top: 20px; }
+        .text-block { padding: 18px; background: white; border-radius: var(--radius-sm); border-left: 5px solid var(--primary); box-shadow: var(--shadow-card); word-break: break-word; }
+        .text-block h3 { color: var(--primary-dark); margin-bottom: 10px; font-size: 1.1em; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .text-content { font-size: clamp(16px, 3.5vw, 18px); line-height: 1.8; font-weight: 600; color: var(--text); }
+        .errors-section h4 { color: var(--primary-dark); font-size: 1.2em; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .error-card { background: white; padding: 18px; border-radius: var(--radius-sm); border: 3px solid var(--danger); box-shadow: var(--shadow-card); margin-bottom: 14px; word-break: break-word; position: relative; overflow: hidden; }
+        .error-card::before { content: '❌'; position: absolute; top: -5px; right: -5px; font-size: 2em; opacity: 0.1; }
+        .error-word { font-weight: 900; color: var(--danger); font-size: 1.2em; display: flex; align-items: center; gap: 8px; }
+        .error-message { color: var(--text); margin: 10px 0; font-size: 1em; font-weight: 600; line-height: 1.5; }
+        .error-suggestion { color: var(--success); font-weight: 800; font-size: 1.1em; }
+        .correction-box { background: #EAFAF1; border: 2px dashed var(--success); border-radius: 12px; padding: 10px 14px; display: inline-block; margin-top: 8px; }
+        .softcatala-link { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 10px 18px; border-radius: 50px; text-decoration: none; font-weight: 800; margin-top: 10px; box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2); font-size: 0.9em; transition: transform 0.2s; }
+        .softcatala-link:hover { transform: scale(1.05); }
+        .loading { text-align: center; padding: 30px; color: var(--primary); font-weight: 700; font-size: 1.1em; }
+        .loading::after { content: ''; display: inline-block; width: 24px; height: 24px; border: 4px solid var(--primary); border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-left: 12px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-notice { background: linear-gradient(145deg, #FADBD8 0%, #F5B7B1 100%); border: 3px solid var(--danger); border-radius: var(--radius-sm); padding: 20px; color: #922B21; font-size: 1em; margin-bottom: 16px; text-align: center; font-weight: 700; }
+        .success-notice { background: linear-gradient(145deg, #D5F5E3 0%, #ABEBC6 100%); border: 3px solid var(--success); border-radius: var(--radius-sm); padding: 12px; color: #1E8449; font-size: 0.95em; margin-bottom: 16px; text-align: center; font-weight: 800; }
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .confetti { position: absolute; width: 12px; height: 12px; animation: confettiFall 3s ease-out forwards; }
+        @keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        .app-footer { margin-top: auto; padding-top: 20px; border-top: 2px dashed var(--primary-light); text-align: center; color: var(--text-light); font-size: 0.85em; line-height: 1.6; position: relative; z-index: 1; font-weight: 600; }
+        .app-footer a { color: var(--primary-dark); text-decoration: none; font-weight: 800; }
+        .app-footer a:hover { text-decoration: underline; }
+        .lt-credit { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-pink); padding: 6px 14px; border-radius: 20px; margin-top: 6px; font-weight: 700; }
         @media (max-width: 768px) {
-            body { padding: 8px; }
-            .container { padding: 18px; border-radius: 20px; min-height: calc(100vh - 16px); }
-            .header-logo-img { width: 68px; height: 68px; border-radius: 18px; }
-            .header-text h1 { font-size: 1.8em; }
-            .dictats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .dictat-card { padding: 14px 10px; }
-            .audio-btn { width: 56px; height: 56px; font-size: 1.6em; }
-            .canvas-wrapper { min-height: 250px; }
-            #writingCanvas { min-height: 250px; }
-            .stats-grid { gap: 10px; }
-            .stat-bubble { padding: 16px; }
-            .stat-bubble .stat-number { font-size: 2.2em; }
-            .stat-bubble .stat-emoji { font-size: 2em; }
+            body { padding: 8px; } .container { padding: 18px; border-radius: 20px; min-height: calc(100vh - 16px); }
+            .header-logo-img { width: 68px; height: 68px; border-radius: 18px; } .header-text h1 { font-size: 1.8em; }
+            .dictats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .dictat-card { padding: 14px 10px; }
+            .audio-btn { width: 56px; height: 56px; font-size: 1.6em; } .canvas-wrapper { min-height: 250px; }
+            #writingCanvas { min-height: 250px; } .stats-grid { gap: 10px; } .stat-bubble { padding: 16px; }
+            .stat-bubble .stat-number { font-size: 2.2em; } .stat-bubble .stat-emoji { font-size: 2em; }
             .btn { padding: 12px 18px; font-size: 0.95em; min-height: 48px; }
         }
-
         @media (max-width: 380px) {
-            .header-logo-img { width: 56px; height: 56px; }
-            .header-text h1 { font-size: 1.6em; }
-            .btn { font-size: 0.85em; padding: 10px 14px; }
-            .dictat-name { font-size: 0.9em; }
+            .header-logo-img { width: 56px; height: 56px; } .header-text h1 { font-size: 1.6em; }
+            .btn { font-size: 0.85em; padding: 10px 14px; } .dictat-name { font-size: 0.9em; }
         }
-
         @media (max-height: 500px) and (orientation: landscape) {
-            .container { padding: 12px; }
-            .header-logo { margin-bottom: 12px; }
-            .header-logo-img { width: 52px; height: 52px; }
-            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-            .dictat-card { padding: 10px 6px; }
-            .dictat-icon { font-size: 1.8em; }
-            .writing-area { margin: 8px 0; }
-            .canvas-wrapper { min-height: 180px; }
-            #writingCanvas { min-height: 180px; }
+            .container { padding: 12px; } .header-logo { margin-bottom: 12px; } .header-logo-img { width: 52px; height: 52px; }
+            .dictats-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; } .dictat-card { padding: 10px 6px; }
+            .dictat-icon { font-size: 1.8em; } .writing-area { margin: 8px 0; }
+            .canvas-wrapper { min-height: 180px; } #writingCanvas { min-height: 180px; }
         }
-
         @media (min-width: 1024px) {
-            .container { padding: 40px; }
-            .canvas-wrapper { min-height: 450px; }
-            #writingCanvas { min-height: 450px; }
+            .container { padding: 40px; } .canvas-wrapper { min-height: 450px; } #writingCanvas { min-height: 450px; }
             .header-logo-img { width: 96px; height: 96px; border-radius: 24px; }
         }
     </style>
@@ -1158,93 +208,47 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo-bg" aria-hidden="true">
-            <img src="image.png" alt="">
-        </div>
-
+        <div class="logo-bg" aria-hidden="true"><img src="image.png" alt=""></div>
         <div class="header-logo">
             <img src="image.png" alt="DictCat" class="header-logo-img">
-            <div class="header-text">
-                <h1>DICTCAT</h1>
-                <div class="subtitle">Dictats en català</div>
-            </div>
+            <div class="header-text"><h1>DICTCAT</h1><div class="subtitle">Dictats en català</div></div>
         </div>
-
-        <div class="section-title">
-            <span class="icon-bounce">🎧</span>
-            <h2>Tria un dictat</h2>
-        </div>
-
+        <div class="section-title"><span class="icon-bounce">🎧</span><h2>Tria un dictat</h2></div>
         <div class="dictats-grid" id="dictatsGrid">
-            <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">🏆</span>
-                <div class="dictat-name">Campionat</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">🐱</span>
-                <div class="dictat-name">El gat</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">☀️</span>
-                <div class="dictat-name">Estiu</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
-            <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="seleccionarDictat(this)">
-                <span class="dictat-icon">📅</span>
-                <div class="dictat-name">Juliols</div>
-                <div class="dictat-status">Toca per escoltar</div>
-            </div>
+            <div class="dictat-card" data-audio="audio/Campionat.mp3" onclick="app.audio.select(this)"><span class="dictat-icon">🏆</span><div class="dictat-name">Campionat</div><div class="dictat-status">Toca per escoltar</div></div>
+            <div class="dictat-card" data-audio="audio/El gat.mp3" onclick="app.audio.select(this)"><span class="dictat-icon">🐱</span><div class="dictat-name">El gat</div><div class="dictat-status">Toca per escoltar</div></div>
+            <div class="dictat-card" data-audio="audio/Estiu.mp3" onclick="app.audio.select(this)"><span class="dictat-icon">☀️</span><div class="dictat-name">Estiu</div><div class="dictat-status">Toca per escoltar</div></div>
+            <div class="dictat-card" data-audio="audio/Juliols.mp3" onclick="app.audio.select(this)"><span class="dictat-icon">📅</span><div class="dictat-name">Juliols</div><div class="dictat-status">Toca per escoltar</div></div>
         </div>
-
         <div id="audioPlayer" class="audio-player">
-            <div class="audio-info">
-                <span class="audio-icon">🎵</span>
-                <span class="audio-title" id="audioTitle">Cap dictat seleccionat</span>
-            </div>
+            <div class="audio-info"><span class="audio-icon">🎵</span><span class="audio-title" id="audioTitle">Cap dictat seleccionat</span></div>
             <div class="audio-controls">
-                <button class="audio-btn play" id="playPauseBtn" onclick="togglePlayPause()" disabled>▶️</button>
+                <button class="audio-btn play" id="playPauseBtn" onclick="app.audio.togglePlay()" disabled>▶️</button>
                 <div class="progress-container">
-                    <div class="progress-bar-wrapper" id="progressBarWrapper" onclick="seekAudio(event)">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <div class="time-display">
-                        <span id="currentTime">0:00</span>
-                        <span id="duration">0:00</span>
-                    </div>
+                    <div class="progress-bar-wrapper" id="progressBarWrapper" onclick="app.audio.seek(event)"><div class="progress-bar" id="progressBar"></div></div>
+                    <div class="time-display"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
                 </div>
             </div>
             <p class="audio-hint">💡 Pausa l'àudio per escriure, reprèn quan estiguis llest</p>
         </div>
-
         <div class="toolbar">
-            <button class="btn btn-ocr" onclick="enviarOCR()" id="btnOCR">🔍 Llegir text (OCR)</button>
-            <button class="btn btn-corregir" onclick="corregirDictado()" id="btnCorregir">✅ Corregir</button>
-            <button class="btn btn-nuevo" onclick="nuevoIntento()" id="btnNuevo">🔄 Nou</button>
+            <button class="btn btn-ocr" onclick="app.ocr.process()" id="btnOCR">🔍 Llegir text (OCR)</button>
+            <button class="btn btn-corregir" onclick="app.corrector.correct()" id="btnCorregir">✅ Corregir</button>
+            <button class="btn btn-nuevo" onclick="app.reset()" id="btnNuevo">🔄 Nou</button>
         </div>
-
-        <!-- ÁREA DE ESCRITURA MANUSCRITA -->
         <div class="writing-area">
-            <label class="writing-label">
-                <span class="pen-icon">✍️</span>
-                Escriu aquí amb el S-Pen o el ratolí:
-            </label>
+            <label class="writing-label"><span class="pen-icon">✍️</span>Escriu aquí amb el S-Pen o el ratolí:</label>
             <div class="canvas-wrapper" id="canvasWrapper">
                 <div class="canvas-lines" id="canvasLines"></div>
                 <canvas id="writingCanvas"></canvas>
             </div>
             <div class="canvas-controls">
                 <div class="tool-selector" id="toolSelector">
-                    <button class="tool-btn active" id="btnLapiz" onclick="setTool('pen')" title="Escriure amb llapis">
-                        ✏️ Llapis
-                    </button>
-                    <button class="tool-btn" id="btnGoma" onclick="setTool('eraser')" title="Esborrar traços">
-                        🧽 Goma
-                    </button>
+                    <button class="tool-btn active" id="btnLapiz" onclick="app.canvas.setTool('pen')" title="Escriure amb llapis">✏️ Llapis</button>
+                    <button class="tool-btn" id="btnGoma" onclick="app.canvas.setTool('eraser')" title="Esborrar traços">🧽 Goma</button>
                 </div>
-                <button class="canvas-btn undo" onclick="deshacerTrazo()" title="Desfés l'últim traç">↩️ Desfés</button>
-                <button class="canvas-btn next-page" onclick="siguientePagina()" id="btnNextPage" title="Guarda aquesta pàgina i continua">📄 Pàgina següent</button>
+                <button class="canvas-btn undo" onclick="app.canvas.undo()" title="Desfés l'últim traç">↩️ Desfés</button>
+                <button class="canvas-btn next-page" onclick="app.canvas.nextPage()" id="btnNextPage" title="Guarda aquesta pàgina i continua">📄 Pàgina següent</button>
             </div>
             <div class="page-indicator" id="pageIndicator" style="display:none;">
                 <span>Pàgina <span id="currentPageNum">1</span></span>
@@ -1252,772 +256,609 @@
                 <span>de <span id="totalPages">1</span></span>
             </div>
             <p class="canvas-tip">💡 Escriu amb el S-Pen, el dit o el ratolí. Després prem "Llegir text" per convertir-ho a text.</p>
-            
             <div id="ocrStatus" class="ocr-status"></div>
-
-            <!-- Texto extraído editable -->
             <div id="extractedTextArea" class="extracted-text-area">
-                <div class="extracted-text-label">
-                    <span>📝</span>
-                    Text reconegut (pots editar-lo abans de corregir):
-                </div>
+                <div class="extracted-text-label"><span>📝</span>Text reconegut (pots editar-lo abans de corregir):</div>
                 <textarea id="extractedText" class="extracted-textarea" placeholder="Aquí apareixerà el text reconegut per OCR..."></textarea>
             </div>
         </div>
-
         <div id="resultContainer" class="result-container">
-            <div class="result-header">
-                <span class="trophy" id="trophyEmoji">🏆</span>
-                <h2 id="resultTitle">Resultats de la correcció</h2>
-            </div>
-
+            <div class="result-header"><span class="trophy" id="trophyEmoji">🏆</span><h2 id="resultTitle">Resultats de la correcció</h2></div>
             <div class="stats-grid">
-                <div class="stat-bubble errors">
-                    <span class="stat-emoji">🐛</span>
-                    <div class="stat-number" id="errorCount">0</div>
-                    <div class="stat-label">Errors</div>
-                </div>
-                <div class="stat-bubble accuracy">
-                    <span class="stat-emoji">⭐</span>
-                    <div class="stat-number" id="accuracy">100%</div>
-                    <div class="stat-label">Encerts</div>
-                </div>
+                <div class="stat-bubble errors"><span class="stat-emoji">🐛</span><div class="stat-number" id="errorCount">0</div><div class="stat-label">Errors</div></div>
+                <div class="stat-bubble accuracy"><span class="stat-emoji">⭐</span><div class="stat-number" id="accuracy">100%</div><div class="stat-label">Encerts</div></div>
             </div>
-
             <div id="motivationArea"></div>
-
             <div class="comparison">
-                <div class="text-block">
-                    <h3>✏️ El teu text</h3>
-                    <div class="text-content" id="escritoText"></div>
-                </div>
-                <div class="text-block">
-                    <h3>🔍 Correcció</h3>
-                    <div class="text-content" id="correccionText"></div>
-                </div>
+                <div class="text-block"><h3>✏️ El teu text</h3><div class="text-content" id="escritoText"></div></div>
+                <div class="text-block"><h3>🔍 Correcció</h3><div class="text-content" id="correccionText"></div></div>
             </div>
         </div>
-
         <div class="app-footer">
-            <div>
-                DICTCAT - Dictats en Català · 
-                <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">Correcció ortogràfica per LanguageTool</a>
-            </div>
-            <div class="lt-credit">
-                <span>🔧</span>
-                <span>Powered by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool</a> + Google Cloud Vision</span>
-            </div>
+            <div>DICTCAT - Dictats en Català · <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">Correcció ortogràfica per LanguageTool</a></div>
+            <div class="lt-credit"><span>🔧</span><span>Powered by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool</a> + Google Cloud Vision</span></div>
         </div>
     </div>
-
     <div id="confettiContainer" class="confetti-container"></div>
-
     <script>
-        // ========== AUDIO ==========
-        let audio = null;
-        let currentDictat = null;
-        let progressInterval = null;
+    // ═══════════════════════════════════════════════════════════════
+    // DICTCAT - Dictats en Català (Refactorizado)
+    // ═══════════════════════════════════════════════════════════════
+    const app = {
+        state: { isLoading: false, currentDictat: null },
 
-        function seleccionarDictat(card) {
+        init() {
+            this.canvas.init();
+            this.ui.initPointerButtons();
+            this.registerServiceWorker();
+        },
+
+        registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('sw.js?v=3')
+                        .then(reg => { console.log('SW registrat'); reg.update(); })
+                        .catch(err => console.log('Error SW:', err));
+                });
+            }
+        },
+
+        reset() {
+            this.canvas.clearAll();
+            this.audio.reset();
+            this.ui.hideResults();
+            this.ui.hideExtractedText();
+            alert('Text esborrat. Pots començar un nou intent! ✍️');
+        },
+
+        setLoading(loading) {
+            this.state.isLoading = loading;
+            document.querySelectorAll('.toolbar .btn, .canvas-btn').forEach(btn => btn.disabled = loading);
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: Audio
+    // ═══════════════════════════════════════════════════════════════
+    app.audio = {
+        element: null, interval: null, currentSrc: null,
+
+        select(card) {
             const src = card.dataset.audio;
-            const nombre = card.querySelector('.dictat-name').textContent;
-
+            const name = card.querySelector('.dictat-name').textContent;
             document.querySelectorAll('.dictat-card').forEach(c => {
                 c.classList.remove('active');
                 c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
             });
-
-            if (currentDictat === src && audio && !audio.paused) {
-                pauseAudio();
-                return;
+            if (this.currentSrc === src && this.element && !this.element.paused) {
+                this.pause(); return;
             }
-
             card.classList.add('active');
             card.querySelector('.dictat-status').textContent = 'Reproduint...';
-            currentDictat = src;
-
+            this.currentSrc = src;
             document.getElementById('audioPlayer').classList.add('show');
-            document.getElementById('audioTitle').textContent = nombre;
-
-            if (audio) {
-                audio.pause();
-                audio.src = '';
-            }
-
-            audio = new Audio(src);
-            audio.preload = 'auto';
-
+            document.getElementById('audioTitle').textContent = name;
+            if (this.element) { this.element.pause(); this.element.src = ''; }
+            this.element = new Audio(src);
+            this.element.preload = 'auto';
             const btn = document.getElementById('playPauseBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳';
-
-            audio.addEventListener('canplaythrough', () => {
-                btn.disabled = false;
-                btn.textContent = '⏸️';
-                btn.classList.remove('play');
-                btn.classList.add('pause');
-                updateDuration();
-                audio.play();
-                startProgress();
+            btn.disabled = true; btn.textContent = '⏳';
+            this.element.addEventListener('canplaythrough', () => {
+                btn.disabled = false; btn.textContent = '⏸️';
+                btn.classList.remove('play'); btn.classList.add('pause');
+                this.updateDuration(); this.element.play(); this.startProgress();
             });
+            this.element.addEventListener('timeupdate', () => this.updateProgress());
+            this.element.addEventListener('ended', () => this.onEnded(card));
+            this.element.addEventListener('error', () => this.onError(card, src));
+            this.element.load();
+        },
 
-            audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('ended', () => {
-                btn.textContent = '▶️';
-                btn.classList.remove('pause');
-                btn.classList.add('play');
-                card.querySelector('.dictat-status').textContent = 'Finalitzat';
-                stopProgress();
-                document.getElementById('progressBar').style.width = '100%';
-            });
+        togglePlay() { if (!this.element) return; this.element.paused ? this.play() : this.pause(); },
 
-            audio.addEventListener('error', () => {
-                btn.disabled = true;
-                btn.textContent = '❌';
-                card.querySelector('.dictat-status').textContent = 'Error';
-                alert('No s\'ha pogut carregar l\'àudio. Verifica que el fitxer existeix a: ' + src);
-            });
-
-            audio.load();
-        }
-
-        function togglePlayPause() {
-            if (!audio) return;
+        play() {
+            if (!this.element) return;
+            this.element.play();
             const btn = document.getElementById('playPauseBtn');
-            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
+            btn.textContent = '⏸️'; btn.classList.remove('play'); btn.classList.add('pause');
+            this.updateStatus('Reproduint...'); this.startProgress();
+        },
 
-            if (audio.paused) {
-                audio.play();
-                btn.textContent = '⏸️';
-                btn.classList.remove('play');
-                btn.classList.add('pause');
-                if (statusEl) statusEl.textContent = 'Reproduint...';
-                startProgress();
-            } else {
-                pauseAudio();
-            }
-        }
-
-        function pauseAudio() {
-            if (!audio) return;
-            audio.pause();
+        pause() {
+            if (!this.element) return;
+            this.element.pause();
             const btn = document.getElementById('playPauseBtn');
-            btn.textContent = '▶️';
-            btn.classList.remove('pause');
-            btn.classList.add('play');
-            const statusEl = document.querySelector('.dictat-card.active .dictat-status');
-            if (statusEl) statusEl.textContent = 'Pausat';
-            stopProgress();
-        }
+            btn.textContent = '▶️'; btn.classList.remove('pause'); btn.classList.add('play');
+            this.updateStatus('Pausat'); this.stopProgress();
+        },
 
-        function startProgress() {
-            stopProgress();
-            progressInterval = setInterval(updateProgress, 100);
-        }
+        onEnded(card) {
+            const btn = document.getElementById('playPauseBtn');
+            btn.textContent = '▶️'; btn.classList.remove('pause'); btn.classList.add('play');
+            card.querySelector('.dictat-status').textContent = 'Finalitzat';
+            this.stopProgress();
+            document.getElementById('progressBar').style.width = '100%';
+        },
 
-        function stopProgress() {
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
-        }
+        onError(card, src) {
+            document.getElementById('playPauseBtn').disabled = true;
+            document.getElementById('playPauseBtn').textContent = '❌';
+            card.querySelector('.dictat-status').textContent = 'Error';
+            alert("No s'ha pogut carregar l'àudio. Verifica que el fitxer existeix a: " + src);
+        },
 
-        function updateProgress() {
-            if (!audio || !audio.duration) return;
-            const pct = (audio.currentTime / audio.duration) * 100;
+        updateStatus(text) {
+            const el = document.querySelector('.dictat-card.active .dictat-status');
+            if (el) el.textContent = text;
+        },
+
+        startProgress() { this.stopProgress(); this.interval = setInterval(() => this.updateProgress(), 100); },
+        stopProgress() { if (this.interval) { clearInterval(this.interval); this.interval = null; } },
+
+        updateProgress() {
+            if (!this.element || !this.element.duration) return;
+            const pct = (this.element.currentTime / this.element.duration) * 100;
             document.getElementById('progressBar').style.width = pct + '%';
-            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
-        }
+            document.getElementById('currentTime').textContent = this.formatTime(this.element.currentTime);
+        },
 
-        function updateDuration() {
-            if (audio && audio.duration) {
-                document.getElementById('duration').textContent = formatTime(audio.duration);
+        updateDuration() {
+            if (this.element && this.element.duration) {
+                document.getElementById('duration').textContent = this.formatTime(this.element.duration);
             }
-        }
+        },
 
-        function seekAudio(event) {
-            if (!audio || !audio.duration) return;
+        seek(event) {
+            if (!this.element || !this.element.duration) return;
             const wrapper = document.getElementById('progressBarWrapper');
             const rect = wrapper.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const pct = Math.max(0, Math.min(1, x / rect.width));
-            audio.currentTime = pct * audio.duration;
-            updateProgress();
-        }
+            this.element.currentTime = pct * this.element.duration;
+            this.updateProgress();
+        },
 
-        function formatTime(seconds) {
+        formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
             const m = Math.floor(seconds / 60);
             const s = Math.floor(seconds % 60);
             return m + ':' + (s < 10 ? '0' : '') + s;
-        }
+        },
 
-        // ========== CANVAS DE ESCRITURA ==========
-        const canvas = document.getElementById('writingCanvas');
-        const ctx = canvas.getContext('2d');
-        const canvasWrapper = document.getElementById('canvasWrapper');
-        const canvasLines = document.getElementById('canvasLines');
-        let isDrawing = false;
-        let strokes = [];
-        let currentStroke = [];
-        let lastX = 0, lastY = 0;
-        let currentTool = 'pen';   // 'pen' | 'eraser'
-        const ERASER_SIZE = 24;
-        let pages = [];            // Array de dataURL de páginas completadas
-        let currentPage = 1;       // Página actual que se está escribiendo
-
-
-        function dibujarLineasCuaderno() {
-            canvasLines.innerHTML = '';
-            const rect = canvasWrapper.getBoundingClientRect();
-            const lineHeight = 60;
-            const numLines = Math.ceil(rect.height / lineHeight);
-            
-            for (let i = 1; i < numLines; i++) {
-                const line = document.createElement('div');
-                line.className = 'line-row';
-                line.style.top = (i * lineHeight) + 'px';
-                canvasLines.appendChild(line);
-            }
-        }
-
-        function setTool(tool) {
-            currentTool = tool;
-            const btnLapiz = document.getElementById('btnLapiz');
-            const btnGoma = document.getElementById('btnGoma');
-
-            if (tool === 'pen') {
-                btnLapiz.classList.add('active');
-                btnGoma.classList.remove('active');
-                canvasWrapper.classList.remove('erasing');
-                canvasWrapper.style.cursor = 'crosshair';
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = '#2D3436';
-                ctx.lineWidth = 5;
-                ctx.shadowColor = '#2D3436';
-                ctx.shadowBlur = 2;
-            } else {
-                btnLapiz.classList.remove('active');
-                btnGoma.classList.add('active');
-                canvasWrapper.classList.add('erasing');
-                canvasWrapper.style.cursor = 'cell';
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
-                ctx.lineWidth = ERASER_SIZE;
-            }
-        }
-
-        function siguientePagina() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            const imageData = ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
-            const hasContent = imageData.data.some((val, i) => i % 4 === 3 && val > 0);
-
-            if (!hasContent) {
-                alert('✍️ Si us plau, escriu alguna cosa abans de passar a la pàgina següent.');
-                return;
-            }
-
-            // Guardar página actual
-            pages.push(canvas.toDataURL('image/png'));
-            currentPage++;
-
-            // Limpiar canvas para nueva página
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            strokes = [];
-            setTool('pen');
-
-            // Actualizar indicador
-            actualizarIndicadorPaginas();
-
-            // Scroll suave al canvas
-            canvasWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function actualizarIndicadorPaginas() {
-            const indicator = document.getElementById('pageIndicator');
-            const dotsContainer = document.getElementById('pageDots');
-            const currentSpan = document.getElementById('currentPageNum');
-            const totalSpan = document.getElementById('totalPages');
-
-            const total = pages.length + 1; // páginas guardadas + la actual
-
-            if (total > 1) {
-                indicator.style.display = 'flex';
-                currentSpan.textContent = currentPage;
-                totalSpan.textContent = total;
-
-                dotsContainer.innerHTML = '';
-                for (let i = 1; i <= total; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'page-dot';
-                    if (i < currentPage) dot.classList.add('filled');
-                    if (i === currentPage) dot.classList.add('active');
-                    dotsContainer.appendChild(dot);
-                }
-            } else {
-                indicator.style.display = 'none';
-            }
-        }
-
-        function resizeCanvas() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
-            
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.drawImage(canvas, 0, 0);
-
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = rect.height + 'px';
-            
-            ctx.scale(dpr, dpr);
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            // Restaurar configuración según herramienta activa
-            if (currentTool === 'eraser') {
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.strokeStyle = 'rgba(0,0,0,1)';
-                ctx.lineWidth = ERASER_SIZE;
-            } else {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = '#2D3436';
-                ctx.lineWidth = 5;
-                ctx.shadowColor = '#2D3436';
-                ctx.shadowBlur = 2;
-            }
-
-            ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
-            
-            // Redibujar líneas del cuaderno
-            dibujarLineasCuaderno();
-        }
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX, clientY;
-            
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
-
-        function startDrawing(e) {
-            isDrawing = true;
-            canvasWrapper.classList.add('drawing');
-            const pos = getPos(e);
-            lastX = pos.x;
-            lastY = pos.y;
-
-            if (currentTool === 'eraser') {
-                // Borrar inmediatamente al tocar (puntual)
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, ERASER_SIZE / 2, 0, Math.PI * 2);
-                ctx.clip();
-                ctx.clearRect(pos.x - ERASER_SIZE / 2, pos.y - ERASER_SIZE / 2, ERASER_SIZE, ERASER_SIZE);
-                ctx.restore();
-            } else {
-                currentStroke = [{x: pos.x, y: pos.y}];
-            }
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            const pos = getPos(e);
-            
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            
-            lastX = pos.x;
-            lastY = pos.y;
-            currentStroke.push({x: pos.x, y: pos.y});
-        }
-
-        function stopDrawing(e) {
-            if (!isDrawing) return;
-            isDrawing = false;
-            canvasWrapper.classList.remove('drawing');
-            if (currentTool === 'pen' && currentStroke.length > 1) {
-                strokes.push([...currentStroke]);
-            }
-            currentStroke = [];
-        }
-
-        // Usar solo Pointer Events (cubren mouse, touch y S-Pen)
-        canvas.addEventListener('pointerdown', (e) => {
-            if (e.target !== canvas) return;
-            canvas.setPointerCapture(e.pointerId);
-            startDrawing(e);
-        });
-        canvas.addEventListener('pointermove', (e) => {
-            if (isDrawing) draw(e);
-        });
-        canvas.addEventListener('pointerup', (e) => {
-            canvas.releasePointerCapture(e.pointerId);
-            stopDrawing(e);
-        });
-        canvas.addEventListener('pointercancel', (e) => {
-            canvas.releasePointerCapture(e.pointerId);
-            stopDrawing(e);
-        });
-        canvas.addEventListener('pointerleave', (e) => {
-            if (isDrawing) stopDrawing(e);
-        });
-
-        window.addEventListener('resize', resizeCanvas);
-        
-        setTimeout(() => {
-            resizeCanvas();
-            dibujarLineasCuaderno();
-        }, 100);
-
-        function limpiarCanvas() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            strokes = [];
-            pages = [];
-            currentPage = 1;
-            document.getElementById('extractedText').value = '';
-            document.getElementById('extractedTextArea').classList.remove('show');
-            document.getElementById('pageIndicator').style.display = 'none';
-            mostrarOCRStatus('', '');
-            // Volver siempre a lápiz tras limpiar
-            setTool('pen');
-        }
-
-        function deshacerTrazo() {
-            if (strokes.length === 0) return;
-            strokes.pop();
-            const rect = canvasWrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#2D3436';
-            ctx.lineWidth = 5;
-            ctx.shadowColor = '#2D3436';
-            ctx.shadowBlur = 2;
-            
-            strokes.forEach(stroke => {
-                if (stroke.length < 2) return;
-                ctx.beginPath();
-                ctx.moveTo(stroke[0].x, stroke[0].y);
-                for (let i = 1; i < stroke.length; i++) {
-                    ctx.lineTo(stroke[i].x, stroke[i].y);
-                }
-                ctx.stroke();
-            });
-        }
-
-        function mostrarOCRStatus(mensaje, tipo) {
-            const el = document.getElementById('ocrStatus');
-            el.textContent = mensaje;
-            el.className = 'ocr-status';
-            if (tipo) el.classList.add('show', tipo);
-        }
-
-        // Limpia tokens huérfanos al final del texto OCR
-        function limpiarTextoOCR(texto) {
-            if (!texto) return texto;
-            // Palabras comunes válidas de 1-2 letras en catalán
-            const validas = new Set([
-                'a','e','i','o','u','y',           // vocales
-                'al','el','la','le','li','lo','ls','lt','lu','ly',
-                'de','di','do','du','dy',
-                'en','es','et','eu','ev','ex','ey','ez',
-                'fa','fe','fi','fo','fu',
-                'ha','he','hi','ho','hu','hy',
-                'if','ig','in','ir','is','it','iv','ix','iz',
-                'ja','je','ji','jo','ju','jy',
-                'ka','ke','ki','ko','ku','ky',
-                'ma','me','mi','mo','mu','my',
-                'na','ne','ni','no','nu','ny',
-                'oh','oi','om','on','or','os','ou','oy',
-                'pa','pe','pi','po','pu','py',
-                'qu',
-                'ra','re','ri','ro','ru','ry',
-                'sa','se','si','so','su','sy',
-                'ta','te','ti','to','tu','ty',
-                'un','us','ut','uv','uz',
-                'va','ve','vi','vo','vu','vy',
-                'xa','xe','xi','xo','xu','xy',
-                'za','ze','zi','zo','zu','zy',
-                // contracciones y artículos
-                "d'", "l'", "n'", "s'",
-                // números romanos comunes
-                'i','ii','iii','iv','v','vi','vii','viii','ix','x',
-                'xi','xii','xiii','xiv','xv','xvi','xvii','xviii','xix','xx',
-                // abreviaturas comunes
-                'sr','sra','st','dr','dra','mr','mrs','km','cm','mm','kg','mg',
-                // preposiciones catalanas
-                'a','de','en','per','amb','sense','sota','sobre','entre','davant','darrere',
-                'contra','cap','fins','des','pel','pels','del','dels','al','als',
-                // pronombres/posesivos cortos
-                'em','et','es','ens','us','hi','ho','li','ls','la','lo','les','els','en','hi'
-            ]);
-
-            let palabras = texto.trim().split(/\s+/);
-            // Recortar desde el final palabras de 1-2 chars que no estén en la lista blanca
-            while (palabras.length > 0) {
-                const ultima = palabras[palabras.length - 1].toLowerCase().replace(/[^a-zàáèéíïòóúüç']/g, "");
-                if (ultima.length <= 2 && !validas.has(ultima)) {
-                    palabras.pop();
-                } else {
-                    break;
-                }
-            }
-            return palabras.join(' ');
-        }
-
-        // ========== CLOUD VISION OCR ==========
-        async function enviarOCR() {
-            const rect = canvasWrapper.getBoundingClientRect();
-            const imageData = ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
-            const hasContent = imageData.data.some((val, i) => i % 4 === 3 && val > 0);
-            
-            if (!hasContent) {
-                alert('✍️ Si us plau, escriu alguna cosa al canvas abans de llegir el text.');
-                return;
-            }
-
-            setLoading(true);
-            mostrarOCRStatus('🔍 Llegint la teva lletra... Espera un moment.', 'loading');
-
-            try {
-                const base64Image = canvas.toDataURL('image/png').split(',')[1];
-
-                const response = await fetch('/api/ocr', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: base64Image })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                if (result.error) {
-                    throw new Error(result.error);
-                }
-
-                const texto = result.text || '';
-                
-                if (!texto.trim()) {
-                    mostrarOCRStatus('🤔 No s\'ha reconegut cap text. Prova d\'escriure més clar.', 'error');
-                } else {
-                    document.getElementById('extractedText').value = texto;
-                    document.getElementById('extractedTextArea').classList.add('show');
-                    mostrarOCRStatus(`✅ Text reconegut! ${texto.split(/\s+/).filter(w => w.length > 0).length} paraules detectades.`, 'success');
-                    document.getElementById('extractedTextArea').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-
-            } catch (error) {
-                console.error('Error OCR:', error);
-                mostrarOCRStatus('❌ Error llegint el text: ' + error.message, 'error');
-            }
-
-            setLoading(false);
-        }
-
-        // ========== CORRECCIÓ ==========
-        async function corregirDictado() {
-            const textInput = document.getElementById('extractedText');
-            const textoEscrito = textInput.value.trim();
-
-            if (!textoEscrito) {
-                alert('❌ Si us plau, escriu o reconeix text abans de corregir.');
-                textInput.focus();
-                return;
-            }
-
-            setLoading(true);
-            document.getElementById('resultContainer').classList.add('show');
-            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
-            document.getElementById('escritoText').textContent = textoEscrito;
-
-            try {
-                const response = await fetch('/api/corrector', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: textoEscrito })
-                });
-
-                if (!response.ok) throw new Error(`API HTTP ${response.status}`);
-
-                const result = await response.json();
-                if (result.fallback) throw new Error(result.error || 'El servei de correcció no està disponible');
-
-                mostrarResultados(result.matches || [], result.source || 'languagetool', textoEscrito);
-
-            } catch (error) {
-                console.error('Error API:', error.message);
-                mostrarError(error.message);
-            }
-
-            setLoading(false);
-            setTimeout(() => {
-                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
-
-        function mostrarResultados(matches, source, textoEscrito) {
-            const totalPalabras = textoEscrito.split(/\s+/).filter(p => p.length > 0).length;
-            const numErrores = matches.length;
-            const precision = totalPalabras > 0 ? Math.max(0, Math.round((1 - numErrores / totalPalabras) * 100)) : 100;
-
-            document.getElementById('errorCount').textContent = numErrores;
-            document.getElementById('accuracy').textContent = precision + '%';
-
-            const motivationArea = document.getElementById('motivationArea');
-            const trophyEmoji = document.getElementById('trophyEmoji');
-            let motivacion = '';
-            let clase = '';
-
-            if (precision === 100) {
-                trophyEmoji.textContent = '🏆';
-                clase = 'perfect';
-                motivacion = '🎉 GENIAL! Perfecte! Ets un crack! 🌟';
-                lanzarConfeti();
-            } else if (precision >= 90) {
-                trophyEmoji.textContent = '🥇';
-                clase = 'great';
-                motivacion = '👏 Molt bé! Gairebé perfecte! Segueix així! 💪';
-                lanzarConfeti();
-            } else if (precision >= 70) {
-                trophyEmoji.textContent = '🥈';
-                clase = 'good';
-                motivacion = '😊 Bon treball! Amb una mica més de pràctica seràs el millor! 📚';
-            } else {
-                trophyEmoji.textContent = '🌱';
-                clase = 'try';
-                motivacion = '💪 No et rendeixis! Cada error és una oportunitat per aprendre! 🚀';
-            }
-
-            motivationArea.innerHTML = `<div class="motivation-message ${clase}">${motivacion}</div>`;
-
-            let html = source === 'languagetool' ? '<div class="success-notice">✅ Correcció amb LanguageTool</div>' : '';
-            
-            if (numErrores === 0) {
-                html += '<p style="color: #1E8449; font-size: 1.4em; text-align: center; font-weight: 800; margin-top: 10px;">🎊 No has tingut cap error! Ets increïble! 🎊</p>';
-            } else {
-                html += '<div class="errors-section"><h4>📋 Errors detectats:</h4>';
-                matches.forEach((match, i) => {
-                    const palabra = textoEscrito.substring(match.offset, match.offset + match.length);
-                    const sugerencias = (match.replacements || []).map(r => r.value).slice(0, 3);
-                    html += `
-                        <div class="error-card">
-                            <div class="error-word">${i + 1}. "${palabra}"</div>
-                            <div class="error-message">💡 ${match.message}</div>
-                            ${sugerencias.length ? `
-                            <div class="correction-box">
-                                <span class="error-suggestion">✓ Correcció: </span>
-                                <strong>${sugerencias.join(', ')}</strong>
-                            </div>` : ''}
-                            <br>
-                            <a href="https://www.softcatala.org/corrector/?text=${encodeURIComponent(palabra)}" target="_blank" class="softcatala-link">🔍 Consultar a Softcatalà</a>
-                        </div>`;
-                });
-                html += '</div>';
-            }
-            document.getElementById('correccionText').innerHTML = html;
-        }
-
-        function mostrarError(mensaje) {
-            document.getElementById('errorCount').textContent = '—';
-            document.getElementById('accuracy').textContent = '—';
-            document.getElementById('motivationArea').innerHTML = '';
-            document.getElementById('trophyEmoji').textContent = '⚠️';
-            document.getElementById('correccionText').innerHTML = `
-                <div class="error-notice">
-                    <strong>❌ Error de connexió</strong><br>${mensaje}<br><br>
-                    <small>Torna-ho a provar d'aquí uns moments.</small>
-                </div>`;
-        }
-
-        function setLoading(loading) {
-            document.querySelectorAll('.toolbar .btn, .canvas-btn').forEach(btn => btn.disabled = loading);
-        }
-
-        function borrarTodo() {
-            limpiarCanvas();
-            document.getElementById('resultContainer').classList.remove('show');
-            document.getElementById('motivationArea').innerHTML = '';
-        }
-
-        // Alias para compatibilidad (ya no hay botón separado)
-        function limpiarCanvasYResultados() {
-            borrarTodo();
-        }
-
-        function nuevoIntento() {
-            borrarTodo();
-            pages = [];
-            currentPage = 1;
-            document.getElementById('pageIndicator').style.display = 'none';
-            if (audio && !audio.paused) {
-                pauseAudio();
-            }
+        reset() {
+            if (this.element && !this.element.paused) this.pause();
             document.querySelectorAll('.dictat-card').forEach(c => {
                 c.classList.remove('active');
                 c.querySelector('.dictat-status').textContent = 'Toca per escoltar';
             });
             document.getElementById('audioPlayer').classList.remove('show');
-            document.getElementById('extractedTextArea').classList.remove('show');
-            currentDictat = null;
-            if (audio) {
-                audio.pause();
-                audio = null;
-            }
-            alert('Text esborrat. Pots començar un nou intent! ✍️');
+            this.currentSrc = null;
+            if (this.element) { this.element.pause(); this.element = null; }
         }
+    };
 
-        // ========== CONFETI ==========
-        function lanzarConfeti() {
+    // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: Canvas
+    // ═══════════════════════════════════════════════════════════════
+    app.canvas = {
+        canvas: null, ctx: null, wrapper: null, lines: null,
+        isDrawing: false, strokes: [], currentStroke: [],
+        lastX: 0, lastY: 0, tool: 'pen',
+        pages: [], currentPage: 1, ERASER_SIZE: 24,
+
+        init() {
+            this.canvas = document.getElementById('writingCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.wrapper = document.getElementById('canvasWrapper');
+            this.lines = document.getElementById('canvasLines');
+            this.bindEvents();
+            window.addEventListener('resize', () => this.resize());
+            setTimeout(() => { this.resize(); this.drawLines(); }, 100);
+        },
+
+        bindEvents() {
+            const c = this.canvas;
+            c.addEventListener('pointerdown', (e) => {
+                if (e.target !== c) return;
+                c.setPointerCapture(e.pointerId); this.start(e);
+            });
+            c.addEventListener('pointermove', (e) => { if (this.isDrawing) this.draw(e); });
+            c.addEventListener('pointerup', (e) => { c.releasePointerCapture(e.pointerId); this.stop(e); });
+            c.addEventListener('pointercancel', (e) => { c.releasePointerCapture(e.pointerId); this.stop(e); });
+            c.addEventListener('pointerleave', (e) => { if (this.isDrawing) this.stop(e); });
+        },
+
+        getPos(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const clientX = e.touches?.[0]?.clientX ?? e.clientX;
+            const clientY = e.touches?.[0]?.clientY ?? e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        },
+
+        start(e) {
+            this.isDrawing = true; this.wrapper.classList.add('drawing');
+            const pos = this.getPos(e); this.lastX = pos.x; this.lastY = pos.y;
+            if (this.tool === 'eraser') {
+                this.ctx.save(); this.ctx.beginPath();
+                this.ctx.arc(pos.x, pos.y, this.ERASER_SIZE / 2, 0, Math.PI * 2);
+                this.ctx.clip();
+                this.ctx.clearRect(pos.x - this.ERASER_SIZE / 2, pos.y - this.ERASER_SIZE / 2, this.ERASER_SIZE, this.ERASER_SIZE);
+                this.ctx.restore();
+            } else {
+                this.currentStroke = [{ x: pos.x, y: pos.y }];
+            }
+        },
+
+        draw(e) {
+            if (!this.isDrawing) return;
+            const pos = this.getPos(e);
+            if (this.tool === 'eraser') {
+                this.ctx.save(); this.ctx.beginPath();
+                this.ctx.arc(pos.x, pos.y, this.ERASER_SIZE / 2, 0, Math.PI * 2);
+                this.ctx.clip();
+                this.ctx.clearRect(pos.x - this.ERASER_SIZE / 2, pos.y - this.ERASER_SIZE / 2, this.ERASER_SIZE, this.ERASER_SIZE);
+                this.ctx.restore();
+                this.lastX = pos.x; this.lastY = pos.y;
+            } else {
+                this.ctx.beginPath(); this.ctx.moveTo(this.lastX, this.lastY);
+                this.ctx.lineTo(pos.x, pos.y); this.ctx.stroke();
+                this.lastX = pos.x; this.lastY = pos.y;
+                this.currentStroke.push({ x: pos.x, y: pos.y });
+            }
+        },
+
+        stop(e) {
+            if (!this.isDrawing) return;
+            this.isDrawing = false; this.wrapper.classList.remove('drawing');
+            if (this.tool === 'pen' && this.currentStroke.length > 1) {
+                this.strokes.push([...this.currentStroke]);
+            }
+            this.currentStroke = [];
+        },
+
+        setTool(tool) {
+            this.tool = tool;
+            const btnLapiz = document.getElementById('btnLapiz');
+            const btnGoma = document.getElementById('btnGoma');
+            if (tool === 'pen') {
+                btnLapiz.classList.add('active'); btnGoma.classList.remove('active');
+                this.wrapper.classList.remove('erasing'); this.wrapper.style.cursor = 'crosshair';
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+                this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+            } else {
+                btnLapiz.classList.remove('active'); btnGoma.classList.add('active');
+                this.wrapper.classList.add('erasing'); this.wrapper.style.cursor = 'cell';
+                this.ctx.globalCompositeOperation = 'destination-out';
+                this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE;
+                this.ctx.shadowBlur = 0;
+            }
+        },
+
+        resize() {
+            const rect = this.wrapper.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = this.canvas.width; tempCanvas.height = this.canvas.height;
+            const tempCtx = tempCanvas.getContext('2d'); tempCtx.drawImage(this.canvas, 0, 0);
+            this.canvas.width = rect.width * dpr; this.canvas.height = rect.height * dpr;
+            this.canvas.style.width = rect.width + 'px'; this.canvas.style.height = rect.height + 'px';
+            this.ctx.scale(dpr, dpr); this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+            if (this.tool === 'eraser') {
+                this.ctx.globalCompositeOperation = 'destination-out';
+                this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
+            } else {
+                this.ctx.globalCompositeOperation = 'source-over';
+                this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+                this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+            }
+            this.ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
+            this.drawLines();
+        },
+
+        drawLines() {
+            this.lines.innerHTML = '';
+            const rect = this.wrapper.getBoundingClientRect();
+            const lineHeight = 60;
+            const numLines = Math.ceil(rect.height / lineHeight);
+            for (let i = 1; i < numLines; i++) {
+                const line = document.createElement('div');
+                line.className = 'line-row'; line.style.top = (i * lineHeight) + 'px';
+                this.lines.appendChild(line);
+            }
+        },
+
+        undo() {
+            if (this.strokes.length === 0) return;
+            this.strokes.pop();
+            const rect = this.wrapper.getBoundingClientRect();
+            this.ctx.clearRect(0, 0, rect.width, rect.height);
+            this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+            this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+            this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+            this.strokes.forEach(stroke => {
+                if (stroke.length < 2) return;
+                this.ctx.beginPath(); this.ctx.moveTo(stroke[0].x, stroke[0].y);
+                for (let i = 1; i < stroke.length; i++) this.ctx.lineTo(stroke[i].x, stroke[i].y);
+                this.ctx.stroke();
+            });
+        },
+
+        nextPage() {
+            const rect = this.wrapper.getBoundingClientRect();
+            const imageData = this.ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
+            const hasContent = imageData.data.some((val, i) => i % 4 === 3 && val > 0);
+            if (!hasContent) { alert('✍️ Si us plau, escriu alguna cosa abans de passar a la pàgina següent.'); return; }
+            this.pages.push(this.canvas.toDataURL('image/png'));
+            this.currentPage++;
+            this.ctx.clearRect(0, 0, rect.width, rect.height); this.strokes = [];
+            this.setTool('pen'); this.updatePageIndicator();
+            this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+
+        updatePageIndicator() {
+            const indicator = document.getElementById('pageIndicator');
+            const dotsContainer = document.getElementById('pageDots');
+            const total = this.pages.length + 1;
+            if (total > 1) {
+                indicator.style.display = 'flex';
+                document.getElementById('currentPageNum').textContent = this.currentPage;
+                document.getElementById('totalPages').textContent = total;
+                dotsContainer.innerHTML = '';
+                for (let i = 1; i <= total; i++) {
+                    const dot = document.createElement('div'); dot.className = 'page-dot';
+                    if (i < this.currentPage) dot.classList.add('filled');
+                    if (i === this.currentPage) dot.classList.add('active');
+                    dotsContainer.appendChild(dot);
+                }
+            } else { indicator.style.display = 'none'; }
+        },
+
+        clear() {
+            const rect = this.wrapper.getBoundingClientRect();
+            this.ctx.clearRect(0, 0, rect.width, rect.height);
+            this.strokes = []; this.pages = []; this.currentPage = 1;
+            this.setTool('pen'); this.updatePageIndicator();
+        },
+
+        clearAll() {
+            this.clear();
+            document.getElementById('extractedText').value = '';
+            document.getElementById('extractedTextArea').classList.remove('show');
+            app.ui.hideOCRStatus();
+        },
+
+        hasContent() {
+            const rect = this.wrapper.getBoundingClientRect();
+            const imageData = this.ctx.getImageData(0, 0, rect.width * (window.devicePixelRatio || 1), rect.height * (window.devicePixelRatio || 1));
+            return imageData.data.some((val, i) => i % 4 === 3 && val > 0);
+        },
+
+        getAllImages() {
+            const images = [...this.pages];
+            if (this.hasContent()) images.push(this.canvas.toDataURL('image/png'));
+            return images;
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: OCR
+    // ═══════════════════════════════════════════════════════════════
+    app.ocr = {
+        validWords: new Set([
+            'a','e','i','o','u','y','al','el','la','le','li','lo','ls','lt','lu','ly',
+            'de','di','do','du','dy','en','es','et','eu','ev','ex','ey','ez',
+            'fa','fe','fi','fo','fu','ha','he','hi','ho','hu','hy',
+            'if','ig','in','ir','is','it','iv','ix','iz',
+            'ja','je','ji','jo','ju','jy','ka','ke','ki','ko','ku','ky',
+            'ma','me','mi','mo','mu','my','na','ne','ni','no','nu','ny',
+            'oh','oi','om','on','or','os','ou','oy','pa','pe','pi','po','pu','py','qu',
+            'ra','re','ri','ro','ru','ry','sa','se','si','so','su','sy',
+            'ta','te','ti','to','tu','ty','un','us','ut','uv','uz',
+            'va','ve','vi','vo','vu','vy','xa','xe','xi','xo','xu','xy',
+            'za','ze','zi','zo','zu','zy',
+            "d'","l'","n'","s'",
+            'i','ii','iii','iv','v','vi','vii','viii','ix','x',
+            'xi','xii','xiii','xiv','xv','xvi','xvii','xviii','xix','xx',
+            'sr','sra','st','dr','dra','mr','mrs','km','cm','mm','kg','mg',
+            'a','de','en','per','amb','sense','sota','sobre','entre','davant','darrere',
+            'contra','cap','fins','des','pel','pels','del','dels','al','als',
+            'em','et','es','ens','us','hi','ho','li','ls','la','lo','les','els','en','hi'
+        ]),
+
+        async process() {
+            const images = app.canvas.getAllImages();
+            if (images.length === 0) {
+                alert("✍️ Si us plau, escriu alguna cosa abans de llegir el text."); return;
+            }
+            app.setLoading(true);
+            app.ui.showOCRStatus('🔍 Llegint la teva lletra... Espera un moment.', 'loading');
+            try {
+                const results = await Promise.all(images.map(async (imgBase64, idx) => {
+                    app.ui.showOCRStatus(`🔍 Llegint pàgina ${idx + 1} de ${images.length}...`, 'loading');
+                    const response = await fetch('/api/ocr', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: imgBase64.split(',')[1] })
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status} a pàgina ${idx + 1}`);
+                    const result = await response.json();
+                    if (result.error) throw new Error(result.error);
+                    let text = result.text || '';
+                    text = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+                    return this.clean(text);
+                }));
+                const finalText = results.join(' ').trim();
+                if (!finalText) {
+                    app.ui.showOCRStatus("🤔 No s'ha reconegut cap text. Prova d'escriure més clar.", 'error');
+                } else {
+                    document.getElementById('extractedText').value = finalText;
+                    document.getElementById('extractedTextArea').classList.add('show');
+                    const wordCount = finalText.split(/\s+/).filter(w => w.length > 0).length;
+                    app.ui.showOCRStatus(`✅ Text reconegut! ${wordCount} paraules en ${images.length} pàgina(es).`, 'success');
+                    document.getElementById('extractedTextArea').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } catch (error) {
+                console.error('Error OCR:', error);
+                app.ui.showOCRStatus('❌ Error llegint el text: ' + error.message, 'error');
+            }
+            app.setLoading(false);
+        },
+
+        clean(text) {
+            if (!text) return text;
+            let words = text.trim().split(/\s+/);
+            while (words.length > 0) {
+                const last = words[words.length - 1].toLowerCase().replace(/[^a-zàáèéíïòóúüç\']/g, '');
+                if (last.length <= 2 && !this.validWords.has(last)) { words.pop(); }
+                else { break; }
+            }
+            return words.join(' ');
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: Corrector
+    // ═══════════════════════════════════════════════════════════════
+    app.corrector = {
+        async correct() {
+            const textInput = document.getElementById('extractedText');
+            const text = textInput.value.trim();
+            if (!text) { alert("❌ Si us plau, escriu o reconeix text abans de corregir."); textInput.focus(); return; }
+            app.setLoading(true);
+            document.getElementById('resultContainer').classList.add('show');
+            document.getElementById('correccionText').innerHTML = '<div class="loading">Comprovant ortografia...</div>';
+            document.getElementById('escritoText').textContent = text;
+            try {
+                const response = await fetch('/api/corrector', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+                if (!response.ok) throw new Error(`API HTTP ${response.status}`);
+                const result = await response.json();
+                if (result.fallback) throw new Error(result.error || 'El servei no està disponible');
+                this.showResults(result.matches || [], result.source || 'languagetool', text);
+            } catch (error) {
+                console.error('Error API:', error.message);
+                this.showError(error.message);
+            }
+            app.setLoading(false);
+            setTimeout(() => document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        },
+
+        showResults(matches, source, text) {
+            const totalWords = text.split(/\s+/).filter(p => p.length > 0).length;
+            const numErrors = matches.length;
+            const accuracy = totalWords > 0 ? Math.max(0, Math.round((1 - numErrors / totalWords) * 100)) : 100;
+            document.getElementById('errorCount').textContent = numErrors;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            const motivationArea = document.getElementById('motivationArea');
+            const trophyEmoji = document.getElementById('trophyEmoji');
+            let motivacion = '', clase = '';
+            if (accuracy === 100) {
+                trophyEmoji.textContent = '🏆'; clase = 'perfect';
+                motivacion = '🎉 GENIAL! Perfecte! Ets un crack! 🌟';
+                app.ui.launchConfetti();
+            } else if (accuracy >= 90) {
+                trophyEmoji.textContent = '🥇'; clase = 'great';
+                motivacion = '👏 Molt bé! Gairebé perfecte! Segueix així! 💪';
+                app.ui.launchConfetti();
+            } else if (accuracy >= 70) {
+                trophyEmoji.textContent = '🥈'; clase = 'good';
+                motivacion = '😊 Bon treball! Amb una mica més de pràctica seràs el millor! 📚';
+            } else {
+                trophyEmoji.textContent = '🌱'; clase = 'try';
+                motivacion = '💪 No et rendeixis! Cada error és una oportunitat per aprendre! 🚀';
+            }
+            motivationArea.innerHTML = `<div class="motivation-message ${clase}">${motivacion}</div>`;
+            let html = source === 'languagetool' ? '<div class="success-notice">✅ Correcció amb LanguageTool</div>' : '';
+            if (numErrors === 0) {
+                html += '<p style="color: #1E8449; font-size: 1.4em; text-align: center; font-weight: 800; margin-top: 10px;">🎊 No has tingut cap error! Ets increïble! 🎊</p>';
+            } else {
+                html += '<div class="errors-section"><h4>📋 Errors detectats:</h4>';
+                matches.forEach((match, i) => {
+                    const word = text.substring(match.offset, match.offset + match.length);
+                    const suggestions = (match.replacements || []).map(r => r.value).slice(0, 3);
+                    html += `<div class="error-card">
+                        <div class="error-word">${i + 1}. "${word}"</div>
+                        <div class="error-message">💡 ${match.message}</div>
+                        ${suggestions.length ? `<div class="correction-box"><span class="error-suggestion">✓ Correcció: </span><strong>${suggestions.join(', ')}</strong></div>` : ''}
+                        <br><a href="https://www.softcatala.org/corrector/?text=${encodeURIComponent(word)}" target="_blank" class="softcatala-link">🔍 Consultar a Softcatalà</a>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+            document.getElementById('correccionText').innerHTML = html;
+        },
+
+        showError(message) {
+            document.getElementById('errorCount').textContent = '—';
+            document.getElementById('accuracy').textContent = '—';
+            document.getElementById('motivationArea').innerHTML = '';
+            document.getElementById('trophyEmoji').textContent = '⚠️';
+            document.getElementById('correccionText').innerHTML = `
+                <div class="error-notice"><strong>❌ Error de connexió</strong><br>${message}<br><br><small>Torna-ho a provar d'aquí uns moments.</small></div>`;
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: UI
+    // ═══════════════════════════════════════════════════════════════
+    app.ui = {
+        initPointerButtons() {
+            document.querySelectorAll('.dictat-card, .tool-btn, .canvas-btn, .toolbar .btn').forEach(btn => {
+                btn.addEventListener('pointerdown', (e) => {
+                    if (e.pointerType === 'pen' || e.pointerType === 'touch') {
+                        e.preventDefault(); e.stopPropagation(); btn.click();
+                    }
+                });
+            });
+        },
+
+        showOCRStatus(message, type) {
+            const el = document.getElementById('ocrStatus');
+            el.textContent = message;
+            el.className = 'ocr-status';
+            if (type) el.classList.add('show', type);
+        },
+
+        hideOCRStatus() {
+            const el = document.getElementById('ocrStatus');
+            el.textContent = ''; el.className = 'ocr-status';
+        },
+
+        hideResults() {
+            document.getElementById('resultContainer').classList.remove('show');
+            document.getElementById('motivationArea').innerHTML = '';
+        },
+
+        hideExtractedText() {
+            document.getElementById('extractedTextArea').classList.remove('show');
+        },
+
+        launchConfetti() {
             const container = document.getElementById('confettiContainer');
             container.innerHTML = '';
-            const colores = ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF9F43', '#2ECC71', '#9B59B6', '#E74C3C'];
-            
+            const colors = ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF9F43', '#2ECC71', '#9B59B6', '#E74C3C'];
             for (let i = 0; i < 50; i++) {
-                const confeti = document.createElement('div');
-                confeti.className = 'confetti';
-                confeti.style.left = Math.random() * 100 + '%';
-                confeti.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
-                confeti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confeti.style.animationDelay = Math.random() * 2 + 's';
-                confeti.style.animationDuration = (2 + Math.random() * 2) + 's';
-                container.appendChild(confeti);
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(confetti);
             }
-            
             setTimeout(() => { container.innerHTML = ''; }, 4000);
         }
+    };
 
-        // Inicializar soporte S-Pen para botones
-        initPointerButtons();
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=3')
-                    .then(reg => { console.log('Service Worker registrat'); reg.update(); })
-                    .catch(err => console.log('Error en Service Worker:', err));
-            });
-        }
+    // ═══════════════════════════════════════════════════════════════
+    // Inicializar
+    // ═══════════════════════════════════════════════════════════════
+    app.init();
     </script>
 </body>
 </html>
