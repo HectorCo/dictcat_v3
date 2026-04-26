@@ -48,7 +48,10 @@ export default async function handler(req, res) {
     const payload = {
       requests: [{
         image: { content: base64Image },
-        features: [{ type: 'DOCUMENT_TEXT_DETECTION' }]
+        features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+        imageContext: {
+          languageHints: ['ca']
+        }
       }]
     };
 
