@@ -598,9 +598,11 @@
 
         init() {
             this.canvas = document.getElementById('writingCanvas');
-            this.ctx = this.canvas.getContext('2d');
+            this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
             this.wrapper = document.getElementById('canvasWrapper');
             this.lines = document.getElementById('canvasLines');
+            this.isDirty = false; // Track if current page has unsaved changes
+            this.isLoadingPage = false; // Prevent navigation during page load
             this.bindEvents();
             window.addEventListener('resize', () => this.resize());
             setTimeout(() => { this.resize(); this.drawLines(); }, 100);
@@ -627,6 +629,7 @@
 
         start(e) {
             this.isDrawing = true; this.wrapper.classList.add('drawing');
+            this.isDirty = true; // Mark page as changed
             const pos = this.getPos(e); this.lastX = pos.x; this.lastY = pos.y;
             if (this.tool === 'eraser') {
                 this.ctx.save(); this.ctx.beginPath();
@@ -667,6 +670,7 @@
             // Auto-guardar borrador si estamos editando una página completada
             if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
                 this.saveDraftToPage();
+                this.isDirty = false;
             }
         },
 
@@ -697,7 +701,9 @@
             const tempCtx = tempCanvas.getContext('2d'); tempCtx.drawImage(this.canvas, 0, 0);
             this.canvas.width = rect.width * dpr; this.canvas.height = rect.height * dpr;
             this.canvas.style.width = rect.width + 'px'; this.canvas.style.height = rect.height + 'px';
-            this.ctx.scale(dpr, dpr); this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+            this.ctx.scale(dpr, dpr);
+            this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
             if (this.tool === 'eraser') {
                 this.ctx.globalCompositeOperation = 'destination-out';
                 this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
@@ -706,7 +712,8 @@
                 this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
                 this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
             }
-            this.ctx.drawImage(tempCanvas, 0, 0, rect.width, rect.height);
+            // Draw tempCanvas at full resolution to avoid quality loss
+            this.ctx.drawImage(tempCanvas, 0, 0, this.canvas.width, this.canvas.height);
             this.drawLines();
         },
 
@@ -726,14 +733,18 @@
             if (this.strokes.length === 0) return;
             this.strokes.pop();
             this.redrawStrokes();
+            this.isDirty = true;
             if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
                 this.saveDraftToPage();
+                this.isDirty = false;
             }
         },
 
         redrawStrokes() {
-            const rect = this.wrapper.getBoundingClientRect();
-            this.ctx.clearRect(0, 0, rect.width, rect.height);
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            const dpr = window.devicePixelRatio || 1;
+            this.ctx.scale(dpr, dpr);
             this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
             this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
             this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
@@ -750,45 +761,91 @@
         saveDraftToPage() {
             const idx = this.currentPageIndex - 1;
             if (idx < 0 || idx >= this.completedPages.length) return;
+            const offscreen = this._createOffscreenCanvas();
             this.completedPages[idx] = {
-                image: this.canvas.toDataURL('image/png'),
+                canvas: offscreen,
                 strokes: [...this.strokes]
             };
         },
 
         // ─── NAVEGACIÓN ENTRE PÁGINAS ───
         goToPage(delta) {
-            const total = this.completedPages.length + 1; // +1 para la página nueva
+            if (this.isLoadingPage) return;
+
+            const total = this.completedPages.length + 1;
             const target = this.currentPageIndex + delta;
             if (target < 0 || target > total) return;
 
-            // GUARDAR ESTADO ACTUAL ANTES DE NAVEGAR (desde cualquier página)
+            const needsSave = this.isDirty || (this.currentPageIndex === 0 && this.hasContent());
+
+            if (needsSave) {
+                this._doSaveAndNavigate(target);
+            } else {
+                this._doNavigate(target);
+            }
+        },
+
+        _doSaveAndNavigate(target) {
             if (this.currentPageIndex === 0 && this.hasContent()) {
-                // Página nueva con contenido → añadir al final
+                const offscreen = this._createOffscreenCanvas();
                 this.completedPages.push({
-                    image: this.canvas.toDataURL('image/png'),
+                    canvas: offscreen,
                     strokes: [...this.strokes]
                 });
             } else if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
-                // Página completada editada → guardar cambios
                 this.saveDraftToPage();
             }
+            this.isDirty = false;
+            this._doNavigate(target);
+        },
 
+        _doNavigate(target) {
+            this.isLoadingPage = true;
             this.currentPageIndex = target;
 
             if (target === 0) {
-                // Página nueva (la última, en blanco)
-                const rect = this.wrapper.getBoundingClientRect();
-                this.ctx.clearRect(0, 0, rect.width, rect.height);
+                // Página nueva en blanco
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.strokes = [];
+                const dpr = window.devicePixelRatio || 1;
+                this.ctx.scale(dpr, dpr);
+                this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+                if (this.tool === 'eraser') {
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
+                } else {
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+                    this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+                }
+                this.isLoadingPage = false;
             } else {
-                // Cargar página completada
+                // Cargar página completada - usar drawImage desde offscreen canvas (síncrono!)
                 const page = this.completedPages[target - 1];
-                this.loadImageToCanvas(page.image);
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                if (page.canvas) {
+                    this.ctx.drawImage(page.canvas, 0, 0);
+                }
                 this.strokes = [...page.strokes];
+                // Re-apply DPR scaling for subsequent drawing
+                const dpr = window.devicePixelRatio || 1;
+                this.ctx.scale(dpr, dpr);
+                this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+                if (this.tool === 'eraser') {
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
+                } else {
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+                    this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+                }
+                this.isLoadingPage = false;
             }
 
             this.updatePageIndicator();
+            this.isDirty = false;
         },
 
         jumpToPage(pageNum) {
@@ -800,19 +857,33 @@
 
         loadImageToCanvas(dataURL) {
             if (!dataURL) {
-                const rect = this.wrapper.getBoundingClientRect();
-                this.ctx.clearRect(0, 0, rect.width, rect.height);
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.isLoadingPage = false;
                 return;
             }
             const img = new Image();
             img.onload = () => {
-                const rect = this.wrapper.getBoundingClientRect();
-                this.ctx.clearRect(0, 0, rect.width, rect.height);
-                this.ctx.drawImage(img, 0, 0, rect.width, rect.height);
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+                const dpr = window.devicePixelRatio || 1;
+                this.ctx.scale(dpr, dpr);
+                this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
+                if (this.tool === 'eraser') {
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
+                } else {
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
+                    this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
+                }
+                this.isLoadingPage = false;
             };
             img.onerror = () => {
-                const rect = this.wrapper.getBoundingClientRect();
-                this.ctx.clearRect(0, 0, rect.width, rect.height);
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.isLoadingPage = false;
             };
             img.src = dataURL;
         },
@@ -879,9 +950,14 @@
 
         // ─── LIMPIEZA ───
         clear() {
-            const rect = this.wrapper.getBoundingClientRect();
-            this.ctx.clearRect(0, 0, rect.width, rect.height);
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // Liberar offscreen canvases para evitar memory leaks
+            for (const page of this.completedPages) {
+                if (page.canvas) page.canvas.width = 0;
+            }
             this.strokes = []; this.completedPages = []; this.currentPageIndex = 0;
+            this.isDirty = false;
             this.setTool('pen'); this.updatePageIndicator();
         },
 
@@ -899,17 +975,20 @@
         },
 
         getAllImages() {
-            const images = this.completedPages.map(p => p.image);
-            // SIEMPRE incluir el canvas actual si tiene contenido
-            if (this.hasContent()) {
-                const currentImage = this.canvas.toDataURL('image/png');
-                const isCurrentInCompleted = this.currentPageIndex > 0 && 
-                    this.currentPageIndex <= this.completedPages.length;
-                // Si estamos en página nueva (0) o fuera de rango, añadir
-                if (!isCurrentInCompleted) {
-                    images.push(currentImage);
+            const images = [];
+
+            // Generate dataURLs from offscreen canvases
+            for (const page of this.completedPages) {
+                if (page.canvas) {
+                    images.push(page.canvas.toDataURL('image/png'));
                 }
             }
+
+            // Include current page if it has content and is not saved
+            if (this.currentPageIndex === 0 && this.hasContent()) {
+                images.push(this.canvas.toDataURL('image/png'));
+            }
+
             return images;
         },
 
