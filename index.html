@@ -905,16 +905,14 @@
                 const currentImage = this.canvas.toDataURL('image/png');
                 const isCurrentInCompleted = this.currentPageIndex > 0 && 
                     this.currentPageIndex <= this.completedPages.length;
-                // Si estamos en página nueva (0) o en una página fuera de rango, añadir
-                // Si estamos en página completada, los cambios ya están en completedPages
-                // pero solo si se guardaron correctamente
+                // Si estamos en página nueva (0) o fuera de rango, añadir
                 if (!isCurrentInCompleted) {
                     images.push(currentImage);
                 }
             }
             return images;
-        }
-    };
+        },
+
         // ─── EDITAR PÀGINA ACTUAL (botó ocult) ───
         editCurrentPage() {
             if (this.currentPageIndex === 0) {
@@ -923,8 +921,8 @@
             }
             this.saveDraftToPage();
             alert('✅ Canvis guardats! Pots continuar editant aquesta pàgina.');
-        },
-
+        }
+    };
     // ═══════════════════════════════════════════════════════════════
     // MÓDULO: OCR
     // ═══════════════════════════════════════════════════════════════
