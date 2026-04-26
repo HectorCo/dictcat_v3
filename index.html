@@ -340,6 +340,7 @@
 
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <div class="container">
@@ -584,16 +585,15 @@
     };
 
     // ═══════════════════════════════════════════════════════════════
-    // MÓDULO: Canvas (con edición in-situ de páginas guardadas)
+    // MÓDULO: Canvas (arquitectura: páginas completadas + borrador actual)
     // ═══════════════════════════════════════════════════════════════
     app.canvas = {
         canvas: null, ctx: null, wrapper: null, lines: null,
         isDrawing: false, strokes: [], currentStroke: [],
         lastX: 0, lastY: 0, tool: 'pen',
-        pages: [],      // Array de { image: dataURL, strokes: [] }
-        currentPage: 1, // 1-based
-        viewingPage: null, // null = página actual editable, número = viendo página guardada
-        isEditingSavedPage: false, // true cuando estamos editando una página ya guardada
+        completedPages: [],  // Páginas bloqueadas con "Pàgina següent"
+        draft: { image: null, strokes: [] },  // Borrador de la página actual
+        currentPageIndex: 0,  // 0 = nueva página, 1..N = índice en completedPages (1-based para UI)
         ERASER_SIZE: 24,
 
         init() {
@@ -664,10 +664,9 @@
                 this.strokes.push([...this.currentStroke]);
             }
             this.currentStroke = [];
-
-            // Si estamos editando una página guardada, auto-guardar el cambio
-            if (this.isEditingSavedPage && this.viewingPage !== null) {
-                this.saveCurrentPageEdit();
+            // Auto-guardar borrador si estamos editando una página completada
+            if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
+                this.saveDraftToPage();
             }
         },
 
@@ -727,8 +726,8 @@
             if (this.strokes.length === 0) return;
             this.strokes.pop();
             this.redrawStrokes();
-            if (this.isEditingSavedPage && this.viewingPage !== null) {
-                this.saveCurrentPageEdit();
+            if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
+                this.saveDraftToPage();
             }
         },
 
@@ -747,11 +746,11 @@
             });
         },
 
-        // ─── GUARDAR EDICIÓN DE PÁGINA ───
-        saveCurrentPageEdit() {
-            if (this.viewingPage === null || this.viewingPage > this.pages.length) return;
-            const pageIndex = this.viewingPage - 1;
-            this.pages[pageIndex] = {
+        // ─── GUARDAR BORRADOR EN PÁGINA COMPLETADA ───
+        saveDraftToPage() {
+            const idx = this.currentPageIndex - 1;
+            if (idx < 0 || idx >= this.completedPages.length) return;
+            this.completedPages[idx] = {
                 image: this.canvas.toDataURL('image/png'),
                 strokes: [...this.strokes]
             };
@@ -759,43 +758,61 @@
 
         // ─── NAVEGACIÓN ENTRE PÁGINAS ───
         goToPage(delta) {
-            const totalPages = this.pages.length + 1;
-            const targetPage = this.currentPage + delta;
-            if (targetPage < 1 || targetPage > totalPages) return;
+            const total = this.completedPages.length + 1; // +1 para la página nueva
+            const target = this.currentPageIndex + delta;
+            if (target < 0 || target > total) return;
 
-            // Si estamos en la página actual editable (la última) y tenemos contenido, guardarla
-            if (this.currentPage === totalPages && !this.isEditingSavedPage && this.hasContent()) {
-                this.pages.push({
+            // GUARDAR ESTADO ACTUAL ANTES DE NAVEGAR (desde cualquier página)
+            if (this.currentPageIndex === 0 && this.hasContent()) {
+                // Página nueva con contenido → añadir al final
+                this.completedPages.push({
                     image: this.canvas.toDataURL('image/png'),
                     strokes: [...this.strokes]
                 });
+            } else if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
+                // Página completada editada → guardar cambios
+                this.saveDraftToPage();
             }
 
-            this.currentPage = targetPage;
-            this.viewingPage = targetPage <= this.pages.length ? targetPage : null;
-            this.isEditingSavedPage = this.viewingPage !== null;
+            this.currentPageIndex = target;
 
-            // Cargar la página seleccionada
-            if (this.viewingPage !== null) {
-                const pageData = this.pages[this.viewingPage - 1];
-                this.loadImageToCanvas(pageData.image);
-                this.strokes = [...pageData.strokes];
-            } else {
+            if (target === 0) {
+                // Página nueva (la última, en blanco)
                 const rect = this.wrapper.getBoundingClientRect();
                 this.ctx.clearRect(0, 0, rect.width, rect.height);
                 this.strokes = [];
+            } else {
+                // Cargar página completada
+                const page = this.completedPages[target - 1];
+                this.loadImageToCanvas(page.image);
+                this.strokes = [...page.strokes];
             }
 
             this.updatePageIndicator();
-            this.updateEditButton();
+        },
+
+        jumpToPage(pageNum) {
+            // pageNum es 1-based para UI. 0 = página nueva
+            const target = pageNum - 1;
+            const delta = target - this.currentPageIndex;
+            if (delta !== 0) this.goToPage(delta);
         },
 
         loadImageToCanvas(dataURL) {
+            if (!dataURL) {
+                const rect = this.wrapper.getBoundingClientRect();
+                this.ctx.clearRect(0, 0, rect.width, rect.height);
+                return;
+            }
             const img = new Image();
             img.onload = () => {
                 const rect = this.wrapper.getBoundingClientRect();
                 this.ctx.clearRect(0, 0, rect.width, rect.height);
                 this.ctx.drawImage(img, 0, 0, rect.width, rect.height);
+            };
+            img.onerror = () => {
+                const rect = this.wrapper.getBoundingClientRect();
+                this.ctx.clearRect(0, 0, rect.width, rect.height);
             };
             img.src = dataURL;
         },
@@ -807,30 +824,26 @@
                 return;
             }
 
-            // Si estamos editando una página guardada, guardar cambios y salir del modo edición
-            if (this.isEditingSavedPage && this.viewingPage !== null) {
-                this.saveCurrentPageEdit();
-                this.isEditingSavedPage = false;
-            } else {
-                // Guardar página actual como nueva
-                this.pages.push({
+            // Guardar página actual como completada
+            if (this.currentPageIndex === 0) {
+                // Página nueva → añadir al final
+                this.completedPages.push({
                     image: this.canvas.toDataURL('image/png'),
                     strokes: [...this.strokes]
                 });
+            } else {
+                // Edición de página existente → ya guardada en stop(), pero por si acaso
+                this.saveDraftToPage();
             }
 
-            this.currentPage = this.pages.length + 1;
-            this.viewingPage = null;
-            this.isEditingSavedPage = false;
-
-            // Limpiar canvas para nueva página
+            // Ir a página nueva
+            this.currentPageIndex = 0;
             const rect = this.wrapper.getBoundingClientRect();
             this.ctx.clearRect(0, 0, rect.width, rect.height);
             this.strokes = [];
             this.setTool('pen');
 
             this.updatePageIndicator();
-            this.updateEditButton();
             this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
         },
 
@@ -838,21 +851,24 @@
         updatePageIndicator() {
             const indicator = document.getElementById('pageIndicator');
             const dotsContainer = document.getElementById('pageDots');
-            const total = this.pages.length + 1;
+            const total = this.completedPages.length + 1;
+            const currentDisplay = this.currentPageIndex === 0 ? this.completedPages.length + 1 : this.currentPageIndex;
 
-            document.getElementById('btnPrevPage').disabled = this.currentPage <= 1;
-            document.getElementById('btnNextPageNav').disabled = this.currentPage >= total;
+            document.getElementById('btnPrevPage').disabled = currentDisplay <= 1;
+            document.getElementById('btnNextPageNav').disabled = currentDisplay >= total;
 
             if (total > 1) {
                 indicator.style.display = 'flex';
-                document.getElementById('currentPageNum').textContent = this.currentPage;
+                document.getElementById('currentPageNum').textContent = currentDisplay;
                 document.getElementById('totalPages').textContent = total;
                 dotsContainer.innerHTML = '';
                 for (let i = 1; i <= total; i++) {
                     const dot = document.createElement('div');
                     dot.className = 'page-dot';
-                    if (i < this.currentPage) dot.classList.add('filled');
-                    if (i === this.currentPage) dot.classList.add('active');
+                    const isActive = (i === currentDisplay);
+                    const isFilled = (i < currentDisplay) || (this.currentPageIndex === 0 && i <= this.completedPages.length);
+                    if (isFilled && !isActive) dot.classList.add('filled');
+                    if (isActive) dot.classList.add('active');
                     dot.onclick = () => this.jumpToPage(i);
                     dotsContainer.appendChild(dot);
                 }
@@ -861,24 +877,12 @@
             }
         },
 
-        jumpToPage(pageNum) {
-            const delta = pageNum - this.currentPage;
-            if (delta !== 0) this.goToPage(delta);
-        },
-
-        updateEditButton() {
-            const btn = document.getElementById('btnEditPage');
-            // Ocultar el botón de reescribir - ahora la edición es directa
-            btn.style.display = 'none';
-        },
-
         // ─── LIMPIEZA ───
         clear() {
             const rect = this.wrapper.getBoundingClientRect();
             this.ctx.clearRect(0, 0, rect.width, rect.height);
-            this.strokes = []; this.pages = []; this.currentPage = 1;
-            this.viewingPage = null; this.isEditingSavedPage = false;
-            this.setTool('pen'); this.updatePageIndicator(); this.updateEditButton();
+            this.strokes = []; this.completedPages = []; this.currentPageIndex = 0;
+            this.setTool('pen'); this.updatePageIndicator();
         },
 
         clearAll() {
@@ -895,17 +899,32 @@
         },
 
         getAllImages() {
-            const images = [];
-            for (let i = 0; i < this.pages.length; i++) {
-                images.push(this.pages[i].image);
-            }
-            // Si estamos en la página actual (no guardada aún) y tiene contenido
-            if (this.viewingPage === null && this.hasContent()) {
-                images.push(this.canvas.toDataURL('image/png'));
+            const images = this.completedPages.map(p => p.image);
+            // SIEMPRE incluir el canvas actual si tiene contenido
+            if (this.hasContent()) {
+                const currentImage = this.canvas.toDataURL('image/png');
+                const isCurrentInCompleted = this.currentPageIndex > 0 && 
+                    this.currentPageIndex <= this.completedPages.length;
+                // Si estamos en página nueva (0) o en una página fuera de rango, añadir
+                // Si estamos en página completada, los cambios ya están en completedPages
+                // pero solo si se guardaron correctamente
+                if (!isCurrentInCompleted) {
+                    images.push(currentImage);
+                }
             }
             return images;
         }
     };
+        // ─── EDITAR PÀGINA ACTUAL (botó ocult) ───
+        editCurrentPage() {
+            if (this.currentPageIndex === 0) {
+                alert("No hi ha cap pàgina per editar. Escriu algo primer.");
+                return;
+            }
+            this.saveDraftToPage();
+            alert('✅ Canvis guardats! Pots continuar editant aquesta pàgina.');
+        },
+
     // ═══════════════════════════════════════════════════════════════
     // MÓDULO: OCR
     // ═══════════════════════════════════════════════════════════════
