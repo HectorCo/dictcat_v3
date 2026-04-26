@@ -585,15 +585,17 @@
     };
 
     // ═══════════════════════════════════════════════════════════════
+    // MÓDULO: Canvas 
+    // ═══════════════════════════════════════════════════════════════
     // MÓDULO: Canvas (arquitectura: páginas completadas + borrador actual)
     // ═══════════════════════════════════════════════════════════════
     app.canvas = {
         canvas: null, ctx: null, wrapper: null, lines: null,
         isDrawing: false, strokes: [], currentStroke: [],
         lastX: 0, lastY: 0, tool: 'pen',
-        completedPages: [],  // Páginas bloqueadas con "Pàgina següent"
-        draft: { image: null, strokes: [] },  // Borrador de la página actual
-        currentPageIndex: 0,  // 0 = nueva página, 1..N = índice en completedPages (1-based para UI)
+        completedPages: [],  // Array of {canvas: offscreenCanvas, strokes: []}
+        currentPageIndex: 0,  // 0 = página nueva (borrador), 1..N = índice en completedPages
+        isDirty: false,
         ERASER_SIZE: 24,
 
         init() {
@@ -601,8 +603,6 @@
             this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
             this.wrapper = document.getElementById('canvasWrapper');
             this.lines = document.getElementById('canvasLines');
-            this.isDirty = false; // Track if current page has unsaved changes
-            this.isLoadingPage = false; // Prevent navigation during page load
             this.bindEvents();
             window.addEventListener('resize', () => this.resize());
             setTimeout(() => { this.resize(); this.drawLines(); }, 100);
@@ -629,7 +629,7 @@
 
         start(e) {
             this.isDrawing = true; this.wrapper.classList.add('drawing');
-            this.isDirty = true; // Mark page as changed
+            this.isDirty = true;
             const pos = this.getPos(e); this.lastX = pos.x; this.lastY = pos.y;
             if (this.tool === 'eraser') {
                 this.ctx.save(); this.ctx.beginPath();
@@ -667,10 +667,9 @@
                 this.strokes.push([...this.currentStroke]);
             }
             this.currentStroke = [];
-            // Auto-guardar borrador si estamos editando una página completada
+            // Auto-save si estamos editando una página completada
             if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
                 this.saveDraftToPage();
-                this.isDirty = false;
             }
         },
 
@@ -701,7 +700,7 @@
             const tempCtx = tempCanvas.getContext('2d'); tempCtx.drawImage(this.canvas, 0, 0);
             this.canvas.width = rect.width * dpr; this.canvas.height = rect.height * dpr;
             this.canvas.style.width = rect.width + 'px'; this.canvas.style.height = rect.height + 'px';
-            this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
             this.ctx.scale(dpr, dpr);
             this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
             if (this.tool === 'eraser') {
@@ -712,7 +711,6 @@
                 this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
                 this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
             }
-            // Draw tempCanvas at full resolution to avoid quality loss
             this.ctx.drawImage(tempCanvas, 0, 0, this.canvas.width, this.canvas.height);
             this.drawLines();
         },
@@ -736,7 +734,6 @@
             this.isDirty = true;
             if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
                 this.saveDraftToPage();
-                this.isDirty = false;
             }
         },
 
@@ -757,6 +754,16 @@
             });
         },
 
+        // ─── CREAR OFFSCREEN CANVAS ───
+        _createOffscreenCanvas() {
+            const offscreen = document.createElement('canvas');
+            offscreen.width = this.canvas.width;
+            offscreen.height = this.canvas.height;
+            const offCtx = offscreen.getContext('2d');
+            offCtx.drawImage(this.canvas, 0, 0);
+            return offscreen;
+        },
+
         // ─── GUARDAR BORRADOR EN PÁGINA COMPLETADA ───
         saveDraftToPage() {
             const idx = this.currentPageIndex - 1;
@@ -766,41 +773,28 @@
                 canvas: offscreen,
                 strokes: [...this.strokes]
             };
+            this.isDirty = false;
         },
 
         // ─── NAVEGACIÓN ENTRE PÁGINAS ───
         goToPage(delta) {
-            if (this.isLoadingPage) return;
-
             const total = this.completedPages.length + 1;
             const target = this.currentPageIndex + delta;
             if (target < 0 || target > total) return;
 
-            const needsSave = this.isDirty || (this.currentPageIndex === 0 && this.hasContent());
-
-            if (needsSave) {
-                this._doSaveAndNavigate(target);
-            } else {
-                this._doNavigate(target);
-            }
-        },
-
-        _doSaveAndNavigate(target) {
+            // Guardar estado actual antes de navegar
             if (this.currentPageIndex === 0 && this.hasContent()) {
+                // Página nueva con contenido → añadir al final
                 const offscreen = this._createOffscreenCanvas();
                 this.completedPages.push({
                     canvas: offscreen,
                     strokes: [...this.strokes]
                 });
-            } else if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length) {
+            } else if (this.currentPageIndex > 0 && this.currentPageIndex <= this.completedPages.length && this.isDirty) {
+                // Página completada editada → guardar cambios
                 this.saveDraftToPage();
             }
-            this.isDirty = false;
-            this._doNavigate(target);
-        },
 
-        _doNavigate(target) {
-            this.isLoadingPage = true;
             this.currentPageIndex = target;
 
             if (target === 0) {
@@ -819,17 +813,16 @@
                     this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
                     this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
                 }
-                this.isLoadingPage = false;
             } else {
-                // Cargar página completada - usar drawImage desde offscreen canvas (síncrono!)
+                // Cargar página completada - usar drawImage sincrono desde offscreen canvas
                 const page = this.completedPages[target - 1];
                 this.ctx.setTransform(1, 0, 0, 1, 0, 0);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                if (page.canvas) {
+                if (page && page.canvas) {
                     this.ctx.drawImage(page.canvas, 0, 0);
                 }
-                this.strokes = [...page.strokes];
-                // Re-apply DPR scaling for subsequent drawing
+                this.strokes = page && page.strokes ? [...page.strokes] : [];
+                // Re-aplicar DPR scaling para dibujo posterior
                 const dpr = window.devicePixelRatio || 1;
                 this.ctx.scale(dpr, dpr);
                 this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
@@ -841,11 +834,10 @@
                     this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
                     this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
                 }
-                this.isLoadingPage = false;
             }
 
-            this.updatePageIndicator();
             this.isDirty = false;
+            this.updatePageIndicator();
         },
 
         jumpToPage(pageNum) {
@@ -853,39 +845,6 @@
             const target = pageNum - 1;
             const delta = target - this.currentPageIndex;
             if (delta !== 0) this.goToPage(delta);
-        },
-
-        loadImageToCanvas(dataURL) {
-            if (!dataURL) {
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.isLoadingPage = false;
-                return;
-            }
-            const img = new Image();
-            img.onload = () => {
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-                const dpr = window.devicePixelRatio || 1;
-                this.ctx.scale(dpr, dpr);
-                this.ctx.lineCap = 'round'; this.ctx.lineJoin = 'round';
-                if (this.tool === 'eraser') {
-                    this.ctx.globalCompositeOperation = 'destination-out';
-                    this.ctx.strokeStyle = 'rgba(0,0,0,1)'; this.ctx.lineWidth = this.ERASER_SIZE; this.ctx.shadowBlur = 0;
-                } else {
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    this.ctx.strokeStyle = '#2D3436'; this.ctx.lineWidth = 5;
-                    this.ctx.shadowColor = '#2D3436'; this.ctx.shadowBlur = 2;
-                }
-                this.isLoadingPage = false;
-            };
-            img.onerror = () => {
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.isLoadingPage = false;
-            };
-            img.src = dataURL;
         },
 
         // ─── BOTÓN PÀGINA SEGÜENT ───
@@ -897,20 +856,19 @@
 
             // Guardar página actual como completada
             if (this.currentPageIndex === 0) {
-                // Página nueva → añadir al final
+                const offscreen = this._createOffscreenCanvas();
                 this.completedPages.push({
-                    image: this.canvas.toDataURL('image/png'),
+                    canvas: offscreen,
                     strokes: [...this.strokes]
                 });
             } else {
-                // Edición de página existente → ya guardada en stop(), pero por si acaso
                 this.saveDraftToPage();
             }
 
             // Ir a página nueva
             this.currentPageIndex = 0;
-            const rect = this.wrapper.getBoundingClientRect();
-            this.ctx.clearRect(0, 0, rect.width, rect.height);
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.strokes = [];
             this.setTool('pen');
 
@@ -952,7 +910,7 @@
         clear() {
             this.ctx.setTransform(1, 0, 0, 1, 0, 0);
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            // Liberar offscreen canvases para evitar memory leaks
+            // Liberar offscreen canvases
             for (const page of this.completedPages) {
                 if (page.canvas) page.canvas.width = 0;
             }
@@ -976,23 +934,20 @@
 
         getAllImages() {
             const images = [];
-
-            // Generate dataURLs from offscreen canvases
+            // Generar dataURLs desde offscreen canvases
             for (const page of this.completedPages) {
                 if (page.canvas) {
                     images.push(page.canvas.toDataURL('image/png'));
                 }
             }
-
-            // Include current page if it has content and is not saved
+            // Incluir página actual si tiene contenido y no está guardada
             if (this.currentPageIndex === 0 && this.hasContent()) {
                 images.push(this.canvas.toDataURL('image/png'));
             }
-
             return images;
         },
 
-        // ─── EDITAR PÀGINA ACTUAL (botó ocult) ───
+        // ─── EDITAR PÀGINA ACTUAL ───
         editCurrentPage() {
             if (this.currentPageIndex === 0) {
                 alert("No hi ha cap pàgina per editar. Escriu algo primer.");
